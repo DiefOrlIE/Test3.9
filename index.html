@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>今天吃什么 🍜</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Nunito:wght@400;700;900&display=swap');
+
+  :root {
+    --bg: #FFF8F0;
+    --card: #FFFFFF;
+    --accent1: #FF6B6B;
+    --accent2: #FFD93D;
+    --accent3: #6BCB77;
+    --accent4: #4D96FF;
+    --text: #2D2D2D;
+    --muted: #999;
+    --shadow: 0 8px 32px rgba(0,0,0,0.10);
+    --radius: 20px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'Nunito', 'PingFang SC', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px 40px;
+    background-image: radial-gradient(circle at 20% 10%, #FFE0E0 0%, transparent 40%),
+                      radial-gradient(circle at 80% 80%, #E0F0FF 0%, transparent 40%);
+  }
+
+  h1 {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 2.4rem;
+    color: var(--text);
+    margin-bottom: 6px;
+    letter-spacing: 4px;
+    text-shadow: 3px 3px 0 var(--accent2);
+  }
+
+  .subtitle {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 28px;
+    letter-spacing: 1px;
+  }
+
+  /* ── 结果展示卡片 ── */
+  .result-card {
+    width: 100%;
+    max-width: 360px;
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 36px 24px 28px;
+    text-align: center;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    border: 3px solid transparent;
+    transition: border-color 0.3s;
+  }
+  .result-card.spinning { border-color: var(--accent1); }
+
+  .result-emoji {
+    font-size: 3.5rem;
+    display: block;
+    margin-bottom: 10px;
+    transition: transform 0.15s;
+  }
+
+  .result-name {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 2rem;
+    color: var(--text);
+    min-height: 2.5rem;
+    letter-spacing: 2px;
+    transition: opacity 0.1s;
+  }
+
+  .result-name.flash { opacity: 0.3; }
+
+  .confetti-bar {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, var(--accent1), var(--accent2), var(--accent3), var(--accent4));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s ease;
+    border-radius: 0 0 var(--radius) var(--radius);
+  }
+  .result-card.done .confetti-bar { transform: scaleX(1); }
+
+  /* ── 随机按钮 ── */
+  .spin-btn {
+    width: 100%;
+    max-width: 360px;
+    padding: 18px;
+    border: none;
+    border-radius: var(--radius);
+    background: linear-gradient(135deg, var(--accent1), #FF8E53);
+    color: white;
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.5rem;
+    letter-spacing: 3px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(255,107,107,0.35);
+    transition: transform 0.15s, box-shadow 0.15s;
+    margin-bottom: 28px;
+    -webkit-appearance: none;
+  }
+  .spin-btn:active {
+    transform: scale(0.96);
+    box-shadow: 0 2px 8px rgba(255,107,107,0.25);
+  }
+  .spin-btn:disabled { opacity: 0.6; }
+
+  /* ── 菜单管理区 ── */
+  .section-title {
+    width: 100%;
+    max-width: 360px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #EEE;
+  }
+
+  .menu-list {
+    width: 100%;
+    max-width: 360px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .menu-tag {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--card);
+    border: 2px solid #F0F0F0;
+    border-radius: 50px;
+    padding: 8px 14px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text);
+    transition: border-color 0.2s, background 0.2s;
+    cursor: default;
+    user-select: none;
+  }
+  .menu-tag .del {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: #FFE0E0;
+    color: var(--accent1);
+    border: none;
+    font-size: 0.8rem;
+    line-height: 18px;
+    text-align: center;
+    cursor: pointer;
+    padding: 0;
+    font-weight: 900;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+  .menu-tag .del:active { background: var(--accent1); color: white; }
+
+  /* ── 添加输入框 ── */
+  .add-row {
+    width: 100%;
+    max-width: 360px;
+    display: flex;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .add-input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 2px solid #EEE;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-family: inherit;
+    color: var(--text);
+    background: var(--card);
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+  .add-input:focus { border-color: var(--accent4); }
+  .add-btn {
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    border: none;
+    background: var(--accent3);
+    color: white;
+    font-size: 1.5rem;
+    line-height: 46px;
+    text-align: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(107,203,119,0.35);
+    transition: transform 0.15s;
+    -webkit-appearance: none;
+  }
+  .add-btn:active { transform: scale(0.92); }
+
+  .empty-hint {
+    color: var(--muted);
+    font-size: 0.85rem;
+    text-align: center;
+    padding: 12px;
+    width: 100%;
+    max-width: 360px;
+  }
+
+  /* ── 高亮动画 ── */
+  @keyframes pop {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.18); }
+    70% { transform: scale(0.95); }
+    100% { transform: scale(1); }
+  }
+  .result-emoji.pop { animation: pop 0.4s ease; }
+</style>
+</head>
+<body>
+
+<h1>今天吃什么</h1>
+<p class="subtitle">选不好就交给命运吧 🎲</p>
+
+<div class="result-card" id="resultCard">
+  <span class="result-emoji" id="resultEmoji">🍽️</span>
+  <div class="result-name" id="resultName">点击按钮开始抽签</div>
+  <div class="confetti-bar"></div>
+</div>
+
+<button class="spin-btn" id="spinBtn" onclick="spin()">🎰 帮我决定！</button>
+
+<div class="section-title">我的菜单</div>
+
+<div class="menu-list" id="menuList"></div>
+
+<div class="add-row">
+  <input class="add-input" id="addInput" type="text" placeholder="添加新选项，如：黄焖鸡" maxlength="20"
+         onkeydown="if(event.key==='Enter') addItem()">
+  <button class="add-btn" onclick="addItem()">＋</button>
+</div>
+
+<script>
+  // ── 初始菜单 ──
+  const DEFAULT_ITEMS = [
+    { name: '黄焖鸡米饭', emoji: '🍗' },
+    { name: '麻辣烫', emoji: '🌶️' },
+    { name: '沙县小吃', emoji: '🥟' },
+    { name: '兰州拉面', emoji: '🍜' },
+    { name: '炒饭', emoji: '🍳' },
+    { name: '螺蛳粉', emoji: '🦺' },
+    { name: '烧烤', emoji: '🍖' },
+    { name: '寿司', emoji: '🍣' },
+    { name: '汉堡', emoji: '🍔' },
+    { name: '火锅', emoji: '🫕' },
+    { name: '米线', emoji: '🍝' },
+    { name: '便利店随便买', emoji: '🏪' },
+  ];
+
+  const STORAGE_KEY = 'eat_today_menu_v1';
+  const EMOJIS = ['🍜','🍛','🍝','🥗','🍱','🥘','🍲','🥙','🌮','🍔','🍕','🥪','🍤','🥩','🍗','🥚','🥟','🍣','🫕','🍖'];
+
+  // ── 数据管理（localStorage 在 Safari 本地文件下可用）──
+  function loadItems() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      return saved ? JSON.parse(saved) : DEFAULT_ITEMS.slice();
+    } catch(e) { return DEFAULT_ITEMS.slice(); }
+  }
+
+  function saveItems(items) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); } catch(e) {}
+  }
+
+  let items = loadItems();
+
+  function renderMenu() {
+    const list = document.getElementById('menuList');
+    list.innerHTML = '';
+    if (items.length === 0) {
+      list.innerHTML = '<p class="empty-hint">菜单是空的，快去添加吧！</p>';
+      return;
+    }
+    items.forEach((item, idx) => {
+      const tag = document.createElement('div');
+      tag.className = 'menu-tag';
+      tag.innerHTML = `<span>${item.emoji} ${item.name}</span><button class="del" onclick="removeItem(${idx})">×</button>`;
+      list.appendChild(tag);
+    });
+  }
+
+  function addItem() {
+    const input = document.getElementById('addInput');
+    const name = input.value.trim();
+    if (!name) return;
+    const emoji = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+    items.push({ name, emoji });
+    saveItems(items);
+    renderMenu();
+    input.value = '';
+    input.focus();
+  }
+
+  function removeItem(idx) {
+    items.splice(idx, 1);
+    saveItems(items);
+    renderMenu();
+  }
+
+  // ── 老虎机效果 ──
+  let spinning = false;
+
+  function spin() {
+    if (spinning || items.length === 0) {
+      if (items.length === 0) {
+        document.getElementById('resultName').textContent = '菜单是空的啦～';
+        document.getElementById('resultEmoji').textContent = '😅';
+      }
+      return;
+    }
+    spinning = true;
+
+    const card = document.getElementById('resultCard');
+    const nameEl = document.getElementById('resultName');
+    const emojiEl = document.getElementById('resultEmoji');
+    const btn = document.getElementById('spinBtn');
+
+    card.classList.remove('done');
+    card.classList.add('spinning');
+    btn.disabled = true;
+
+    const totalFrames = 22;
+    const intervalMs = 80;
+    let frame = 0;
+
+    const interval = setInterval(() => {
+      const rand = items[Math.floor(Math.random() * items.length)];
+      nameEl.textContent = rand.name;
+      emojiEl.textContent = rand.emoji;
+      nameEl.classList.toggle('flash');
+      frame++;
+
+      if (frame >= totalFrames) {
+        clearInterval(interval);
+        nameEl.classList.remove('flash');
+
+        // 最终结果
+        const winner = items[Math.floor(Math.random() * items.length)];
+        nameEl.textContent = winner.name;
+        emojiEl.textContent = winner.emoji;
+
+        // 弹跳 + 彩条
+        emojiEl.classList.remove('pop');
+        void emojiEl.offsetWidth;
+        emojiEl.classList.add('pop');
+
+        card.classList.remove('spinning');
+        card.classList.add('done');
+        btn.disabled = false;
+        spinning = false;
+      }
+    }, intervalMs);
+  }
+
+  renderMenu();
+</script>
+</body>
+</html>
