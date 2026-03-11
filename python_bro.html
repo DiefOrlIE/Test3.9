@@ -1,0 +1,2926 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python List & Dict 语法手册</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Noto+Serif+SC:wght@400;700;900&family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --bg2: #141720;
+    --bg3: #1c2030;
+    --surface: #1e2235;
+    --surface2: #252a40;
+    --border: #2e3450;
+    --border2: #3d4466;
+
+    --list: #4fc3f7;
+    --list-dim: #1a4a5e;
+    --list-glow: rgba(79,195,247,0.15);
+
+    --dict: #a78bfa;
+    --dict-dim: #2e1f5e;
+    --dict-glow: rgba(167,139,250,0.15);
+
+    --tuple: #34d399;
+    --tuple-dim: #0d3a28;
+    --tuple-glow: rgba(52,211,153,0.15);
+
+    --str: #f472b6;
+    --str-dim: #4a1030;
+    --str-glow: rgba(244,114,182,0.15);
+
+    --accent: #f59e0b;
+    --green: #34d399;
+    --red: #f87171;
+    --pink: #f472b6;
+    --orange: #fb923c;
+
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+
+    --code-bg: #0a0c10;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  .hero {
+    position: relative;
+    padding: 60px 40px 50px;
+    text-align: center;
+    background: linear-gradient(180deg, #0a0c14 0%, var(--bg) 100%);
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 25% 50%, rgba(79,195,247,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 75% 50%, rgba(167,139,250,0.08) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+  .hero-badges {
+    display: flex; justify-content: center; gap: 12px; margin-bottom: 24px;
+    position: relative;
+  }
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 16px; border-radius: 999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+  .badge-list {
+    background: var(--list-dim);
+    border: 1.5px solid var(--list);
+    color: var(--list);
+  }
+  .badge-dict {
+    background: var(--dict-dim);
+    border: 1.5px solid var(--dict);
+    color: var(--dict);
+  }
+  .badge-tuple {
+    background: var(--tuple-dim);
+    border: 1.5px solid var(--tuple);
+    color: var(--tuple);
+  }
+  .badge-str {
+    background: var(--str-dim);
+    border: 1.5px solid var(--str);
+    color: var(--str);
+  }
+  .hero h1 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    position: relative;
+    margin-bottom: 12px;
+  }
+  .hero h1 span.py { color: var(--accent); }
+  .hero h1 span.list-col { color: var(--list); }
+  .hero h1 span.dict-col { color: var(--dict); }
+  .hero h1 span.tuple-col { color: var(--tuple); }
+  .hero h1 span.str-col { color: var(--str); }
+  .hero-sub {
+    color: var(--text2); font-size: 15px; margin-bottom: 36px;
+    position: relative;
+  }
+  .hero-stats {
+    display: flex; justify-content: center; gap: 32px; flex-wrap: wrap;
+    position: relative;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 28px; font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), var(--orange));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .stat-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; }
+
+  /* ── NAV ── */
+  .nav-wrapper {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13,15,20,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav {
+    display: flex; align-items: center; gap: 4px;
+    padding: 0 24px;
+    max-width: 1200px; margin: 0 auto;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav-section {
+    padding: 10px 4px;
+    font-size: 11px; font-weight: 600;
+    color: var(--text3); text-transform: uppercase;
+    letter-spacing: 0.08em; white-space: nowrap;
+    margin-right: 4px; flex-shrink: 0;
+  }
+  .nav-btn {
+    padding: 6px 12px; border-radius: 6px;
+    font-size: 12px; font-weight: 500;
+    cursor: pointer; border: none;
+    background: transparent; color: var(--text2);
+    transition: all 0.2s; white-space: nowrap; flex-shrink: 0;
+    text-decoration: none; display: inline-flex; align-items: center; gap: 5px;
+  }
+  .nav-btn:hover { background: var(--surface); color: var(--text); }
+  .nav-btn.list-btn:hover { color: var(--list); }
+  .nav-btn.dict-btn:hover { color: var(--dict); }
+  .nav-btn.tuple-btn:hover { color: var(--tuple); }
+  .nav-btn.str-btn:hover { color: var(--str); }
+  .nav-divider {
+    width: 1px; height: 16px; background: var(--border);
+    flex-shrink: 0; margin: 0 4px;
+  }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  /* ── SECTION HEADER ── */
+  .section-block { margin-top: 64px; }
+  .section-header {
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 28px; padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-icon {
+    width: 44px; height: 44px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .section-icon.list { background: var(--list-dim); border: 1.5px solid var(--list); }
+  .section-icon.dict { background: var(--dict-dim); border: 1.5px solid var(--dict); }
+  .section-icon.tuple { background: var(--tuple-dim); border: 1.5px solid var(--tuple); }
+  .section-icon.str { background: var(--str-dim); border: 1.5px solid var(--str); }
+  .section-title h2 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 22px; font-weight: 700; letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  .section-title h2 span.list-col { color: var(--list); }
+  .section-title h2 span.dict-col { color: var(--dict); }
+  .section-title h2 span.tuple-col { color: var(--tuple); }
+  .section-title h2 span.str-col { color: var(--str); }
+  .section-title p { font-size: 13px; color: var(--text3); margin-top: 2px; }
+  .section-num {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--text3);
+    background: var(--surface); padding: 4px 10px; border-radius: 99px;
+    border: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  /* ── SUBSECTION ── */
+  .subsection { margin-bottom: 32px; }
+  .subsection-title {
+    font-size: 13px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--text3); margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .subsection-title::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+
+  /* ── METHOD CARDS ── */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 14px;
+  }
+  .cards-grid.wide { grid-template-columns: 1fr; }
+  .cards-grid.two { grid-template-columns: 1fr 1fr; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    animation: fadeUp 0.4s ease both;
+  }
+  .card:hover {
+    border-color: var(--border2);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+  }
+  .card.list-card:hover { border-color: rgba(79,195,247,0.4); box-shadow: 0 4px 24px var(--list-glow); }
+  .card.dict-card:hover { border-color: rgba(167,139,250,0.4); box-shadow: 0 4px 24px var(--dict-glow); }
+  .card.tuple-card:hover { border-color: rgba(52,211,153,0.4); box-shadow: 0 4px 24px var(--tuple-glow); }
+  .card.str-card:hover { border-color: rgba(244,114,182,0.4); box-shadow: 0 4px 24px var(--str-glow); }
+
+  .card-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 14px 10px;
+    border-bottom: 1px solid var(--border);
+    gap: 8px;
+  }
+  .card-method {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; font-weight: 700;
+    color: var(--text); flex: 1;
+    word-break: break-all;
+  }
+  .card-method .list-col { color: var(--list); }
+  .card-method .dict-col { color: var(--dict); }
+  .card-method .tuple-col { color: var(--tuple); }
+  .card-method .str-col { color: var(--str); }
+  .card-method .accent { color: var(--accent); }
+  .card-method .dim { color: var(--text3); }
+
+  .tag {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
+    padding: 2px 7px; border-radius: 4px; white-space: nowrap; flex-shrink: 0;
+    text-transform: uppercase;
+  }
+  .tag-O1 { background: rgba(52,211,153,0.15); color: var(--green); border: 1px solid rgba(52,211,153,0.3); }
+  .tag-On { background: rgba(248,113,113,0.15); color: var(--red); border: 1px solid rgba(248,113,113,0.3); }
+  .tag-new { background: rgba(245,158,11,0.15); color: var(--accent); border: 1px solid rgba(245,158,11,0.3); }
+  .tag-mut { background: rgba(251,146,60,0.15); color: var(--orange); border: 1px solid rgba(251,146,60,0.3); }
+  .tag-safe { background: rgba(52,211,153,0.1); color: var(--green); border: 1px solid rgba(52,211,153,0.2); }
+
+  .card-body { padding: 12px 14px; }
+  .card-desc {
+    font-size: 13px; color: var(--text2); margin-bottom: 10px; line-height: 1.5;
+  }
+  .card-desc code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px; color: var(--accent);
+    background: var(--code-bg); padding: 1px 5px; border-radius: 3px;
+  }
+
+  /* ── CODE BLOCK ── */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    overflow-x: auto;
+    position: relative;
+  }
+  .code-block .copy-btn {
+    position: absolute; top: 8px; right: 8px;
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--text3); border-radius: 4px;
+    padding: 3px 8px; font-size: 10px; cursor: pointer;
+    transition: all 0.2s; font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600; letter-spacing: 0.05em;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .code-block:hover .copy-btn { opacity: 1; }
+  .code-block .copy-btn:hover { background: var(--surface2); color: var(--text); }
+  .code-block .copy-btn.copied { color: var(--green); border-color: rgba(52,211,153,0.4); }
+
+  /* syntax colors */
+  .kw { color: #c792ea; }        /* keyword */
+  .fn { color: #82aaff; }        /* function/method */
+  .str { color: #c3e88d; }       /* string */
+  .num { color: #f78c6c; }       /* number */
+  .cm { color: #546e7a; font-style: italic; } /* comment */
+  .var { color: #eeffff; }       /* variable */
+  .op { color: #89ddff; }        /* operator */
+  .cls { color: #ffcb6b; }       /* class */
+  .bool { color: #ff5874; }      /* bool */
+  .key { color: #a78bfa; }       /* dict key */
+  .ret { color: #34d399; }       /* return value comment */
+
+  /* ── HIGHLIGHT BOX ── */
+  .info-box {
+    background: var(--surface);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-size: 13px; color: var(--text2);
+  }
+  .info-box.tip { border-left-color: var(--green); }
+  .info-box.warn { border-left-color: var(--red); }
+  .info-box.list-box { border-left-color: var(--list); }
+  .info-box.dict-box { border-left-color: var(--dict); }
+  .info-box strong { color: var(--text); }
+  .info-box code {
+    font-family: 'JetBrains Mono', monospace; font-size: 11.5px;
+    color: var(--accent); background: var(--code-bg);
+    padding: 1px 5px; border-radius: 3px;
+  }
+
+  /* ── COMPARISON TABLE ── */
+  .comp-table {
+    width: 100%; border-collapse: collapse;
+    font-size: 13px; margin: 16px 0;
+    background: var(--surface);
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .comp-table th {
+    background: var(--surface2);
+    padding: 10px 14px; text-align: left;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text3); border-bottom: 1px solid var(--border);
+  }
+  .comp-table td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text2);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  .comp-table tr:last-child td { border-bottom: none; }
+  .comp-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .comp-table td:first-child {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    font-weight: 700; color: var(--text); white-space: nowrap;
+  }
+  .comp-table td code {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--accent); background: var(--code-bg);
+    padding: 1px 5px; border-radius: 3px;
+  }
+  .comp-table td .green { color: var(--green); font-weight: 600; }
+  .comp-table td .red { color: var(--red); font-weight: 600; }
+
+  /* ── DIVIDER ── */
+  .big-divider {
+    margin: 72px 0 0;
+    display: flex; align-items: center; gap: 20px;
+    position: relative;
+  }
+  .big-divider::before {
+    content: ''; flex: 1; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border));
+  }
+  .big-divider::after {
+    content: ''; flex: 1; height: 1px;
+    background: linear-gradient(90deg, var(--border), transparent);
+  }
+  .divider-label {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 28px; font-weight: 900;
+    padding: 8px 24px; border-radius: 8px;
+  }
+  .divider-label.list { color: var(--list); background: var(--list-dim); border: 1.5px solid var(--list); }
+  .divider-label.dict { color: var(--dict); background: var(--dict-dim); border: 1.5px solid var(--dict); }
+  .divider-label.tuple { color: var(--tuple); background: var(--tuple-dim); border: 1.5px solid var(--tuple); }
+  .divider-label.str { color: var(--str); background: var(--str-dim); border: 1.5px solid var(--str); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @media (max-width: 700px) {
+    .cards-grid.two { grid-template-columns: 1fr; }
+    .hero { padding: 40px 20px 36px; }
+    .container { padding: 0 16px 60px; }
+    .hero-stats { gap: 20px; }
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: 24px 24px;
+    text-align: center;
+    font-size: 12px; color: var(--text3);
+    background: var(--bg2);
+  }
+  .footer code {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text2); font-size: 11px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-badges">
+    <span class="badge badge-list">[ ] list</span>
+    <span class="badge badge-dict">{ } dict</span>
+    <span class="badge badge-tuple">( ) tuple</span>
+    <span class="badge badge-str">" " str</span>
+  </div>
+  <h1><span class="py">Python</span> <span class="list-col">List</span> · <span class="dict-col">Dict</span> · <span class="tuple-col">Tuple</span> · <span class="str-col">Str</span><br>语法完全手册</h1>
+  <p class="hero-sub">涵盖所有常用方法 · 含时间复杂度 · 代码即文档 · Python 3.8+</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">30+</div><div class="stat-label">List 方法 &amp; 技巧</div></div>
+    <div class="stat"><div class="stat-num">30+</div><div class="stat-label">Dict 方法 &amp; 技巧</div></div>
+    <div class="stat"><div class="stat-num">25+</div><div class="stat-label">Tuple 方法 &amp; 技巧</div></div>
+    <div class="stat"><div class="stat-num">40+</div><div class="stat-label">Str 方法 &amp; 技巧</div></div>
+    <div class="stat"><div class="stat-num">200+</div><div class="stat-label">代码示例</div></div>
+    <div class="stat"><div class="stat-num">26</div><div class="stat-label">专题章节</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════ NAV ═══════════════ -->
+<div class="nav-wrapper">
+  <nav class="nav">
+    <span class="nav-section">List</span>
+    <a class="nav-btn list-btn" href="#list-create">创建</a>
+    <a class="nav-btn list-btn" href="#list-access">访问/切片</a>
+    <a class="nav-btn list-btn" href="#list-add">增加</a>
+    <a class="nav-btn list-btn" href="#list-remove">删除</a>
+    <a class="nav-btn list-btn" href="#list-search">查找</a>
+    <a class="nav-btn list-btn" href="#list-sort">排序/反转</a>
+    <a class="nav-btn list-btn" href="#list-iter">迭代</a>
+    <a class="nav-btn list-btn" href="#list-transform">变换</a>
+    <a class="nav-btn list-btn" href="#list-advanced">进阶</a>
+    <div class="nav-divider"></div>
+    <span class="nav-section">Dict</span>
+    <a class="nav-btn dict-btn" href="#dict-create">创建</a>
+    <a class="nav-btn dict-btn" href="#dict-access">访问</a>
+    <a class="nav-btn dict-btn" href="#dict-modify">增/改/删</a>
+    <a class="nav-btn dict-btn" href="#dict-views">视图</a>
+    <a class="nav-btn dict-btn" href="#dict-iter">迭代</a>
+    <a class="nav-btn dict-btn" href="#dict-advanced">进阶</a>
+    <a class="nav-btn dict-btn" href="#dict-patterns">实战模式</a>
+    <div class="nav-divider"></div>
+    <span class="nav-section">Tuple</span>
+    <a class="nav-btn tuple-btn" href="#tuple-create">创建</a>
+    <a class="nav-btn tuple-btn" href="#tuple-access">访问/切片</a>
+    <a class="nav-btn tuple-btn" href="#tuple-ops">操作</a>
+    <a class="nav-btn tuple-btn" href="#tuple-advanced">进阶</a>
+    <div class="nav-divider"></div>
+    <span class="nav-section">Str</span>
+    <a class="nav-btn str-btn" href="#str-create">创建</a>
+    <a class="nav-btn str-btn" href="#str-query">查找/判断</a>
+    <a class="nav-btn str-btn" href="#str-transform">变换</a>
+    <a class="nav-btn str-btn" href="#str-split">分割/拼接</a>
+    <a class="nav-btn str-btn" href="#str-format">格式化</a>
+    <a class="nav-btn str-btn" href="#str-advanced">进阶</a>
+  </nav>
+</div>
+
+<!-- ═══════════════ MAIN ═══════════════ -->
+<div class="container">
+
+<!-- ╔══════════════════════════════════╗ -->
+<!-- ║           LIST  SECTION          ║ -->
+<!-- ╚══════════════════════════════════╝ -->
+
+<div class="big-divider">
+  <span class="divider-label list">[ ]  List 列表</span>
+</div>
+
+<!-- ① 创建 -->
+<div class="section-block" id="list-create">
+  <div class="section-header">
+    <div class="section-icon list">📋</div>
+    <div class="section-title">
+      <h2>① <span class="list-col">创建</span> List</h2>
+      <p>Creating Lists — 各种初始化方式</p>
+    </div>
+    <div class="section-num">§ 1 · List</div>
+  </div>
+
+  <div class="cards-grid">
+
+    <div class="card list-card">
+      <div class="card-header">
+        <div class="card-method"><span class="list-col">[ ]</span> &nbsp;字面量 / 直接初始化</div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">empty</span> <span class="op">=</span> []
+<span class="var">nums</span>  <span class="op">=</span> [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>]
+<span class="var">mixed</span> <span class="op">=</span> [<span class="num">1</span>, <span class="str">"hello"</span>, <span class="bool">True</span>, <span class="num">3.14</span>, <span class="bool">None</span>]
+<span class="var">nested</span><span class="op">=</span> [[<span class="num">1</span>,<span class="num">2</span>], [<span class="num">3</span>,<span class="num">4</span>], [<span class="num">5</span>,<span class="num">6</span>]]</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card list-card">
+      <div class="card-header">
+        <div class="card-method"><span class="fn">list</span><span class="dim">(iterable)</span></div>
+        <span class="tag tag-new">转换</span>
+      </div>
+      <div class="card-body">
+        <div class="card-desc">从任意可迭代对象构造列表</div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="fn">list</span>(<span class="str">'hello'</span>)       <span class="ret"># ['h','e','l','l','o']</span>
+<span class="fn">list</span>(<span class="fn">range</span>(<span class="num">5</span>))    <span class="ret"># [0, 1, 2, 3, 4]</span>
+<span class="fn">list</span>((<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>))   <span class="ret"># tuple → list</span>
+<span class="fn">list</span>({<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>})   <span class="ret"># set → list (无序)</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card list-card">
+      <div class="card-header">
+        <div class="card-method"><span class="dim">[</span><span class="var">expr</span> <span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="var">it</span><span class="dim">]</span> &nbsp;推导式</div>
+        <span class="tag tag-new">推荐</span>
+      </div>
+      <div class="card-body">
+        <div class="card-desc">比 for 循环快 ~35%，支持条件过滤</div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="cm"># 基础</span>
+[<span class="var">x</span><span class="op">**</span><span class="num">2</span> <span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">6</span>)]         <span class="ret"># [0,1,4,9,16,25]</span>
+<span class="cm"># 带条件</span>
+[<span class="var">x</span> <span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>) <span class="kw">if</span> <span class="var">x</span><span class="op">%</span><span class="num">2</span><span class="op">==</span><span class="num">0</span>]  <span class="ret"># [0,2,4,6,8]</span>
+<span class="cm"># 三元表达式</span>
+[<span class="var">x</span> <span class="kw">if</span> <span class="var">x</span><span class="op">></span><span class="num">0</span> <span class="kw">else</span> <span class="num">0</span> <span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="var">lst</span>]    <span class="ret"># ReLU</span>
+<span class="cm"># 嵌套（扁平化二维）</span>
+[<span class="var">x</span> <span class="kw">for</span> <span class="var">row</span> <span class="kw">in</span> <span class="var">matrix</span> <span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="var">row</span>]</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card list-card">
+      <div class="card-header">
+        <div class="card-method"><span class="dim">[</span><span class="var">v</span><span class="dim">] *</span> <span class="var">n</span> &nbsp;重复填充</div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre>[<span class="num">0</span>] <span class="op">*</span> <span class="num">5</span>                    <span class="ret"># [0,0,0,0,0]</span>
+[<span class="bool">None</span>] <span class="op">*</span> <span class="num">3</span>                 <span class="ret"># [None,None,None]</span>
+<span class="cm"># ⚠ 二维必须用推导式！</span>
+<span class="cm"># 错误：[[0]*3]*3 各行共享引用</span>
+[[<span class="num">0</span>]<span class="op">*</span><span class="num">3</span> <span class="kw">for</span> <span class="var">_</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">3</span>)]   <span class="ret"># ✓ 正确</span></pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ② 访问/切片 -->
+<div class="section-block" id="list-access">
+  <div class="section-header">
+    <div class="section-icon list">🔍</div>
+    <div class="section-title">
+      <h2>② <span class="list-col">访问</span> &amp; 切片</h2>
+      <p>Indexing &amp; Slicing — 负索引、步长、赋值切片</p>
+    </div>
+    <div class="section-num">§ 2 · List</div>
+  </div>
+
+  <div class="cards-grid wide">
+    <div class="card list-card">
+      <div class="card-header">
+        <div class="card-method"><span class="var">list</span><span class="dim">[i]</span> &nbsp;索引 &amp; <span class="var">list</span><span class="dim">[start:stop:step]</span> &nbsp;切片</div>
+        <span class="tag tag-O1">O(1)</span>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">a</span> <span class="op">=</span> [<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>, <span class="num">40</span>, <span class="num">50</span>]
+
+<span class="cm"># ── 正索引 / 负索引 ──────────────────</span>
+<span class="var">a</span>[<span class="num">0</span>]    <span class="ret"># 10       第一个</span>
+<span class="var">a</span>[<span class="op">-</span><span class="num">1</span>]   <span class="ret"># 50       最后一个</span>
+<span class="var">a</span>[<span class="op">-</span><span class="num">2</span>]   <span class="ret"># 40       倒数第二</span>
+
+<span class="cm"># ── 切片 list[start:stop:step] ───────</span>
+<span class="var">a</span>[<span class="num">1</span>:<span class="num">4</span>]   <span class="ret"># [20,30,40]    索引1到3</span>
+<span class="var">a</span>[:<span class="num">3</span>]    <span class="ret"># [10,20,30]    前3个</span>
+<span class="var">a</span>[<span class="num">2</span>:]    <span class="ret"># [30,40,50]    第3个起</span>
+<span class="var">a</span>[::]    <span class="ret"># [10,20,30,40,50]  全部</span>
+<span class="var">a</span>[<span class="num">1</span>:<span class="num">4</span>:<span class="num">2</span>] <span class="ret"># [20,40]       步长2</span>
+<span class="var">a</span>[::<span class="num">2</span>]   <span class="ret"># [10,30,50]    每隔一个</span>
+<span class="var">a</span>[::<span class="op">-</span><span class="num">1</span>]  <span class="ret"># [50,40,30,20,10]  反转副本</span>
+
+<span class="cm"># ── 切片赋值（可改变长度）────────────</span>
+<span class="var">a</span>[<span class="num">1</span>:<span class="num">3</span>] <span class="op">=</span> [<span class="num">200</span>, <span class="num">300</span>, <span class="num">400</span>]  <span class="ret"># 替换并扩展</span>
+<span class="var">a</span>[<span class="num">1</span>:<span class="num">3</span>] <span class="op">=</span> []               <span class="ret"># 删除中间元素</span>
+
+<span class="cm"># ── 解包（Python 3+）────────────────</span>
+<span class="var">first</span>, <span class="op">*</span><span class="var">rest</span>  <span class="op">=</span> [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>]  <span class="ret"># first=1, rest=[2,3,4]</span>
+<span class="op">*</span><span class="var">init</span>, <span class="var">last</span>   <span class="op">=</span> [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>]  <span class="ret"># init=[1,2,3], last=4</span>
+<span class="var">a</span>, <span class="op">*</span><span class="var">_</span>, <span class="var">z</span>       <span class="op">=</span> [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>] <span class="ret"># 忽略中间</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ③ 增加 -->
+<div class="section-block" id="list-add">
+  <div class="section-header">
+    <div class="section-icon list">➕</div>
+    <div class="section-title">
+      <h2>③ <span class="list-col">增加</span>元素</h2>
+      <p>Adding Elements</p>
+    </div>
+    <div class="section-num">§ 3 · List</div>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card list-card">
+      <div class="card-header">
+        <div class="card-method"><span class="var">list</span><span class="op">.</span><span class="fn">append</span><span class="dim">(x)</span></div>
+        <span class="tag tag-O1">O(1)</span><span class="tag tag-mut">原地</span>
+      </div>
+      <div class="card-body">
+        <div class="card-desc">末尾追加一个元素，均摊 O(1)</div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">a</span> <span class="op">=</span> [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+<span class="var">a</span>.<span class="fn">append</span>(<span class="num">4</span>)    <span class="ret"># [1, 2, 3, 4]</span>
+<span class="var">a</span>.<span class="fn">append</span>([<span class="num">5</span>,<span class="num">6</span>]) <span class="ret"># [1,2,3,4,[5,6]] 追加列表本身</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card list-card">
+      <div class="card-header">
+        <div class="card-method"><span class="var">list</span><span class="op">.</span><span class="fn">insert</span><span class="dim">(i, x)</span></div>
+        <span class="tag tag-On">O(n)</span><span class="tag tag-mut">原地</span>
+      </div>
+      <div class="card-body">
+        <div class="card-desc">在位置 i 插入 x，其后元素右移</div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">a</span> <span class="op">=</span> [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+<span class="var">a</span>.<span class="fn">insert</span>(<span class="num">1</span>, <span class="num">99</span>)   <span class="ret"># [1, 99, 2, 3]</span>
+<span class="var">a</span>.<span class="fn">insert</span>(<span class="num">0</span>, <span class="num">0</span>)    <span class="ret"># 头部插入，慎用大列表</span>
+<span class="var">a</span>.<span class="fn">insert</span>(<span class="fn">len</span>(<span class="var">a</span>),<span class="num">9</span>) <span class="ret"># 等价 append</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card list-card">
+      <div class="card-header">
+        <div class="card-method"><span class="var">list</span><span class="op">.</span><span class="fn">extend</span><span class="dim">(iterable)</span></div>
+        <span class="tag tag-mut">原地</span>
+      </div>
+      <div class="card-body">
+        <div class="card-desc">将可迭代对象所有元素追加到末尾</div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">a</span> <span class="op">=</span> [<span class="num">1</span>, <span class="num">2</span>]
+<span class="var">a</span>.<span class="fn">extend</span>([<span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>])  <span class="ret"># [1, 2, 3, 4, 5]</span>
+<span class="var">a</span>.<span class="fn">extend</span>(<span class="str">'hi'</span>)       <span class="ret"># [1,2,3,4,5,'h','i']</span>
+<span class="var">a</span> <span class="op">+=</span> [<span class="num">6</span>, <span class="num">7</span>]           <span class="ret"># 等价 extend，推荐</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card list-card">
+      <div class="card-header">
+        <div class="card-method"><span class="var">list1</span> <span class="op">+</span> <span class="var">list2</span></div>
+        <span class="tag tag-new">新列表</span>
+      </div>
+      <div class="card-body">
+        <div class="card-desc">拼接，返回新列表，原列表不变</div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre>[<span class="num">1</span>,<span class="num">2</span>] <span class="op">+</span> [<span class="num">3</span>,<span class="num">4</span>]   <span class="ret"># [1, 2, 3, 4]</span>
+[<span class="num">0</span>] <span class="op">*</span> <span class="num">3</span>          <span class="ret"># [0, 0, 0]  重复</span></pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ④ 删除 -->
+<div class="section-block" id="list-remove">
+  <div class="section-header">
+    <div class="section-icon list">🗑️</div>
+    <div class="section-title">
+      <h2>④ <span class="list-col">删除</span>元素</h2>
+      <p>Removing Elements</p>
+    </div>
+    <div class="section-num">§ 4 · List</div>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card list-card">
+      <div class="card-header">
+        <div class="card-method"><span class="var">list</span><span class="op">.</span><span class="fn">remove</span><span class="dim">(x)</span></div>
+        <span class="tag tag-On">O(n)</span><span class="tag tag-mut">原地</span>
+      </div>
+      <div class="card-body">
+        <div class="card-desc">删除第一个值等于 x 的元素；不存在抛 <code>ValueError</code></div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">a</span> <span class="op">=</span> [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">2</span>]
+<span class="var">a</span>.<span class="fn">remove</span>(<span class="num">2</span>)         <span class="ret"># [1, 3, 2]</span>
+<span class="cm"># 安全删除</span>
+<span class="kw">if</span> <span class="num">9</span> <span class="kw">in</span> <span class="var">a</span>: <span class="var">a</span>.<span class="fn">remove</span>(<span class="num">9</span>)
+<span class="cm"># 删除所有匹配</span>
+<span class="var">a</span> <span class="op">=</span> [<span class="var">x</span> <span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="var">a</span> <span class="kw">if</span> <span class="var">x</span> <span class="op">!=</span> <span class="num">2</span>]</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card list-card">
+      <div class="card-header">
+        <div class="card-method"><span class="var">list</span><span class="op">.</span><span class="fn">pop</span><span class="dim">([i])</span></div>
+        <span class="tag tag-O1">末尾O(1)</span><span class="tag tag-mut">原地</span>
+      </div>
+      <div class="card-body">
+        <div class="card-desc">删除并<strong>返回</strong>索引 i 的元素；默认末尾</div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">a</span> <span class="op">=</span> [<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>, <span class="num">40</span>]
+<span class="var">a</span>.<span class="fn">pop</span>()    <span class="ret"># 返回 40，a=[10,20,30]</span>
+<span class="var">a</span>.<span class="fn">pop</span>(<span class="num">0</span>)   <span class="ret"># 返回 10，O(n) 慎用</span>
+<span class="var">a</span>.<span class="fn">pop</span>(<span class="op">-</span><span class="num">1</span>)  <span class="ret"># 等价 pop()</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card list-card">
+      <div class="card-header">
+        <div class="card-method"><span class="kw">del</span> <span class="var">list</span><span class="dim">[i]</span> &nbsp;/&nbsp; <span class="dim">[i:j]</span></div>
+        <span class="tag tag-mut">原地</span>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">a</span> <span class="op">=</span> [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>]
+<span class="kw">del</span> <span class="var">a</span>[<span class="num">2</span>]        <span class="ret"># [1,2,4,5]</span>
+<span class="kw">del</span> <span class="var">a</span>[<span class="num">1</span>:<span class="num">3</span>]      <span class="ret"># 删除切片</span>
+<span class="kw">del</span> <span class="var">a</span>[::<span class="num">2</span>]      <span class="ret"># 删除奇数位</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card list-card">
+      <div class="card-header">
+        <div class="card-method"><span class="var">list</span><span class="op">.</span><span class="fn">clear</span><span class="dim">()</span></div>
+        <span class="tag tag-O1">O(1)</span><span class="tag tag-mut">原地</span>
+      </div>
+      <div class="card-body">
+        <div class="card-desc">清空所有元素，等价于 <code>del a[:]</code></div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">a</span>.<span class="fn">clear</span>()    <span class="ret"># a = []</span>
+<span class="cm"># a = [] 是重绑定变量，clear()是原地清空</span></pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ⑤ 查找 -->
+<div class="section-block" id="list-search">
+  <div class="section-header">
+    <div class="section-icon list">🔎</div>
+    <div class="section-title">
+      <h2>⑤ <span class="list-col">查找</span> &amp; 统计</h2>
+      <p>Searching &amp; Counting</p>
+    </div>
+    <div class="section-num">§ 5 · List</div>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card list-card">
+      <div class="card-header">
+        <div class="card-method"><span class="var">list</span><span class="op">.</span><span class="fn">index</span><span class="dim">(x[, start, end])</span></div>
+        <span class="tag tag-On">O(n)</span>
+      </div>
+      <div class="card-body">
+        <div class="card-desc">返回第一个值为 x 的索引；未找到抛 <code>ValueError</code></div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">a</span> <span class="op">=</span> [<span class="str">'a'</span>,<span class="str">'b'</span>,<span class="str">'c'</span>,<span class="str">'b'</span>]
+<span class="var">a</span>.<span class="fn">index</span>(<span class="str">'b'</span>)       <span class="ret"># 1</span>
+<span class="var">a</span>.<span class="fn">index</span>(<span class="str">'b'</span>, <span class="num">2</span>)    <span class="ret"># 3  从索引2开始搜索</span>
+<span class="var">a</span>.<span class="fn">index</span>(<span class="str">'b'</span>, <span class="num">0</span>, <span class="num">3</span>) <span class="ret"># 在 [0,3) 范围内搜索</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card list-card">
+      <div class="card-header">
+        <div class="card-method"><span class="var">x</span> <span class="kw">in</span> / <span class="kw">not in</span> <span class="var">list</span></div>
+        <span class="tag tag-On">O(n)</span>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="num">3</span> <span class="kw">in</span> [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>]        <span class="ret"># True</span>
+<span class="num">9</span> <span class="kw">not in</span> [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>]    <span class="ret"># True</span>
+<span class="cm"># 高频查找建议转 set</span>
+<span class="var">s</span> <span class="op">=</span> <span class="fn">set</span>(<span class="var">a</span>)
+<span class="num">3</span> <span class="kw">in</span> <span class="var">s</span>              <span class="ret"># O(1)</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card list-card">
+      <div class="card-header">
+        <div class="card-method"><span class="var">list</span><span class="op">.</span><span class="fn">count</span><span class="dim">(x)</span></div>
+        <span class="tag tag-On">O(n)</span>
+      </div>
+      <div class="card-body">
+        <div class="card-desc">统计值 x 出现次数</div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre>[<span class="num">1</span>,<span class="num">2</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">2</span>].<span class="fn">count</span>(<span class="num">2</span>)  <span class="ret"># 3</span>
+<span class="cm"># 统计多个值用 Counter</span>
+<span class="kw">from</span> collections <span class="kw">import</span> <span class="cls">Counter</span>
+<span class="cls">Counter</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">2</span>,<span class="num">3</span>])    <span class="ret"># {2:2, 1:1, 3:1}</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card list-card">
+      <div class="card-header">
+        <div class="card-method"><span class="fn">min</span> / <span class="fn">max</span> / <span class="fn">sum</span> / <span class="fn">len</span></div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">a</span> <span class="op">=</span> [<span class="num">3</span>, <span class="num">1</span>, <span class="num">4</span>, <span class="num">1</span>, <span class="num">5</span>]
+<span class="fn">min</span>(<span class="var">a</span>)                  <span class="ret"># 1</span>
+<span class="fn">max</span>(<span class="var">a</span>)                  <span class="ret"># 5</span>
+<span class="fn">sum</span>(<span class="var">a</span>)                  <span class="ret"># 14</span>
+<span class="fn">len</span>(<span class="var">a</span>)                  <span class="ret"># 5</span>
+<span class="fn">min</span>(<span class="var">a</span>, key<span class="op">=</span><span class="fn">abs</span>)         <span class="ret"># 按绝对值最小</span>
+<span class="fn">any</span>(<span class="var">x</span><span class="op">></span><span class="num">4</span> <span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="var">a</span>)   <span class="ret"># True</span>
+<span class="fn">all</span>(<span class="var">x</span><span class="op">></span><span class="num">0</span> <span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="var">a</span>)   <span class="ret"># True</span></pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ⑥ 排序/反转 -->
+<div class="section-block" id="list-sort">
+  <div class="section-header">
+    <div class="section-icon list">🔀</div>
+    <div class="section-title">
+      <h2>⑥ <span class="list-col">排序</span> &amp; 反转</h2>
+      <p>sort() vs sorted() · Timsort 稳定排序</p>
+    </div>
+    <div class="section-num">§ 6 · List</div>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card list-card">
+      <div class="card-header">
+        <div class="card-method"><span class="var">list</span><span class="op">.</span><span class="fn">sort</span><span class="dim">(key=None, reverse=False)</span></div>
+        <span class="tag tag-mut">原地</span>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">a</span> <span class="op">=</span> [<span class="num">3</span>,<span class="num">1</span>,<span class="num">4</span>,<span class="num">1</span>,<span class="num">5</span>]
+<span class="var">a</span>.<span class="fn">sort</span>()                    <span class="ret"># [1,1,3,4,5]  升序</span>
+<span class="var">a</span>.<span class="fn">sort</span>(reverse<span class="op">=</span><span class="bool">True</span>)        <span class="ret"># [5,4,3,1,1]  降序</span>
+
+<span class="cm"># key 函数</span>
+<span class="var">ws</span> <span class="op">=</span> [<span class="str">'banana'</span>,<span class="str">'apple'</span>,<span class="str">'fig'</span>]
+<span class="var">ws</span>.<span class="fn">sort</span>(key<span class="op">=</span>len)             <span class="ret"># 按长度升序</span>
+<span class="var">ws</span>.<span class="fn">sort</span>(key<span class="op">=</span><span class="kw">lambda</span> <span class="var">s</span>: <span class="var">s</span>[<span class="op">-</span><span class="num">1</span>]) <span class="ret"># 按末字母</span>
+
+<span class="cm"># 多级排序（元组 key）</span>
+<span class="var">data</span> <span class="op">=</span> [(<span class="str">'Bob'</span>,<span class="num">85</span>),(<span class="str">'Alice'</span>,<span class="num">92</span>),(<span class="str">'Bob'</span>,<span class="num">78</span>)]
+<span class="var">data</span>.<span class="fn">sort</span>(key<span class="op">=</span><span class="kw">lambda</span> <span class="var">x</span>: (<span class="var">x</span>[<span class="num">0</span>], <span class="op">-</span><span class="var">x</span>[<span class="num">1</span>]))</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card list-card">
+      <div class="card-header">
+        <div class="card-method"><span class="fn">sorted</span><span class="dim">(iterable, key, reverse)</span></div>
+        <span class="tag tag-new">新列表</span>
+      </div>
+      <div class="card-body">
+        <div class="card-desc">参数与 sort() 相同，原对象不变，可用于任何可迭代</div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="fn">sorted</span>([<span class="num">3</span>,<span class="num">1</span>,<span class="num">2</span>])                  <span class="ret"># [1,2,3]</span>
+<span class="fn">sorted</span>(<span class="str">'hello'</span>)                  <span class="ret"># ['e','h','l','l','o']</span>
+<span class="fn">sorted</span>(<span class="var">d</span>.<span class="fn">items</span>(), key<span class="op">=</span><span class="kw">lambda</span> <span class="var">kv</span>: <span class="var">kv</span>[<span class="num">1</span>])
+
+<span class="cm"># operator 模块替代 lambda（更快）</span>
+<span class="kw">from</span> operator <span class="kw">import</span> itemgetter, attrgetter
+<span class="fn">sorted</span>(<span class="var">rows</span>, key<span class="op">=</span><span class="fn">itemgetter</span>(<span class="num">1</span>))   <span class="ret"># 按第2列</span>
+<span class="fn">sorted</span>(<span class="var">objs</span>, key<span class="op">=</span><span class="fn">attrgetter</span>(<span class="str">'age'</span>)) <span class="ret"># 按属性</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card list-card">
+      <div class="card-header">
+        <div class="card-method"><span class="var">list</span><span class="op">.</span><span class="fn">reverse</span><span class="dim">()</span> &amp; <span class="fn">reversed</span><span class="dim">()</span></div>
+        <span class="tag tag-mut">原地</span><span class="tag tag-new">迭代器</span>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">a</span> <span class="op">=</span> [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>]
+<span class="var">a</span>.<span class="fn">reverse</span>()           <span class="ret"># 原地 [5,4,3,2,1]</span>
+<span class="var">b</span> <span class="op">=</span> <span class="var">a</span>[::<span class="op">-</span><span class="num">1</span>]            <span class="ret"># 新列表反转</span>
+<span class="fn">list</span>(<span class="fn">reversed</span>(<span class="var">a</span>))     <span class="ret"># 惰性迭代器转列表</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card list-card">
+      <div class="card-header">
+        <div class="card-method"><span class="fn">heapq</span> &nbsp;优先队列排序</div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="kw">import</span> heapq
+<span class="var">a</span> <span class="op">=</span> [<span class="num">3</span>,<span class="num">1</span>,<span class="num">4</span>,<span class="num">1</span>,<span class="num">5</span>,<span class="num">9</span>]
+heapq.<span class="fn">heapify</span>(<span class="var">a</span>)          <span class="ret"># 原地建最小堆</span>
+heapq.<span class="fn">nlargest</span>(<span class="num">3</span>, <span class="var">a</span>)      <span class="ret"># [9,5,4] Top-K</span>
+heapq.<span class="fn">nsmallest</span>(<span class="num">3</span>, <span class="var">a</span>)    <span class="ret"># [1,1,3]</span></pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ⑦ 迭代 -->
+<div class="section-block" id="list-iter">
+  <div class="section-header">
+    <div class="section-icon list">🔄</div>
+    <div class="section-title">
+      <h2>⑦ <span class="list-col">迭代</span> &amp; 枚举</h2>
+      <p>Iteration — enumerate · zip · map · filter</p>
+    </div>
+    <div class="section-num">§ 7 · List</div>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card list-card">
+      <div class="card-header">
+        <div class="card-method"><span class="fn">enumerate</span><span class="dim">(list, start=0)</span></div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="kw">for</span> <span class="var">i</span>, <span class="var">v</span> <span class="kw">in</span> <span class="fn">enumerate</span>([<span class="str">'a'</span>,<span class="str">'b'</span>,<span class="str">'c'</span>]):
+    <span class="fn">print</span>(<span class="var">i</span>, <span class="var">v</span>)    <span class="ret"># 0 a  1 b  2 c</span>
+
+<span class="cm"># 从1开始编号</span>
+<span class="kw">for</span> <span class="var">i</span>, <span class="var">v</span> <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="var">lst</span>, <span class="num">1</span>): ...</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card list-card">
+      <div class="card-header">
+        <div class="card-method"><span class="fn">zip</span><span class="dim">(list1, list2, ...)</span></div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="kw">for</span> <span class="var">a</span>,<span class="var">b</span> <span class="kw">in</span> <span class="fn">zip</span>([<span class="num">1</span>,<span class="num">2</span>],[<span class="num">3</span>,<span class="num">4</span>]):
+    <span class="fn">print</span>(<span class="var">a</span><span class="op">+</span><span class="var">b</span>)   <span class="ret"># 4  6</span>
+<span class="cm"># 解压缩</span>
+<span class="var">pairs</span> <span class="op">=</span> [(<span class="num">1</span>,<span class="str">'a'</span>),(<span class="num">2</span>,<span class="str">'b'</span>)]
+<span class="var">nums</span>, <span class="var">chars</span> <span class="op">=</span> <span class="fn">zip</span>(<span class="op">*</span><span class="var">pairs</span>)
+<span class="cm"># zip_longest 补 None</span>
+<span class="kw">from</span> itertools <span class="kw">import</span> zip_longest</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card list-card">
+      <div class="card-header">
+        <div class="card-method"><span class="fn">map</span> / <span class="fn">filter</span> / <span class="fn">reduce</span></div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="fn">list</span>(<span class="fn">map</span>(str, [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>]))         <span class="ret"># ['1','2','3']</span>
+<span class="fn">list</span>(<span class="fn">filter</span>(<span class="kw">lambda</span> <span class="var">x</span>:<span class="var">x</span><span class="op">></span><span class="num">2</span>,[<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>])) <span class="ret"># [3,4]</span>
+<span class="fn">list</span>(<span class="fn">filter</span>(<span class="bool">None</span>,[<span class="num">0</span>,<span class="num">1</span>,<span class="str">''</span>,<span class="num">2</span>]))     <span class="ret"># [1,2] 去假值</span>
+
+<span class="kw">from</span> functools <span class="kw">import</span> reduce
+<span class="fn">reduce</span>(<span class="kw">lambda</span> <span class="var">a</span>,<span class="var">b</span>:<span class="var">a</span><span class="op">*</span><span class="var">b</span>,[<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>]) <span class="ret"># 24</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card list-card">
+      <div class="card-header">
+        <div class="card-method"><span class="fn">itertools</span> 工具箱</div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="kw">from</span> itertools <span class="kw">import</span> chain, islice, groupby, product, combinations, permutations
+
+<span class="fn">list</span>(<span class="fn">chain</span>([<span class="num">1</span>,<span class="num">2</span>],[<span class="num">3</span>,<span class="num">4</span>]))     <span class="ret"># [1,2,3,4]</span>
+<span class="fn">list</span>(<span class="fn">islice</span>(<span class="fn">range</span>(<span class="num">100</span>),<span class="num">5</span>))   <span class="ret"># [0,1,2,3,4]</span>
+<span class="fn">list</span>(<span class="fn">combinations</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>],<span class="num">2</span>)) <span class="ret"># [(1,2),(1,3),(2,3)]</span>
+<span class="fn">list</span>(<span class="fn">permutations</span>([<span class="num">1</span>,<span class="num">2</span>],<span class="num">2</span>))  <span class="ret"># [(1,2),(2,1)]</span>
+<span class="fn">list</span>(<span class="fn">product</span>([<span class="num">0</span>,<span class="num">1</span>], repeat<span class="op">=</span><span class="num">2</span>)) <span class="ret"># 笛卡尔积</span></pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ⑧ 变换 -->
+<div class="section-block" id="list-transform">
+  <div class="section-header">
+    <div class="section-icon list">⚙️</div>
+    <div class="section-title">
+      <h2>⑧ <span class="list-col">变换</span> &amp; 复制</h2>
+      <p>Transforming · Copying · Flattening</p>
+    </div>
+    <div class="section-num">§ 8 · List</div>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card list-card">
+      <div class="card-header">
+        <div class="card-method">浅拷贝 / 深拷贝</div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="cm"># 三种浅拷贝（等价）</span>
+<span class="var">b</span> <span class="op">=</span> <span class="var">a</span>.<span class="fn">copy</span>()
+<span class="var">b</span> <span class="op">=</span> <span class="var">a</span>[:]
+<span class="var">b</span> <span class="op">=</span> <span class="fn">list</span>(<span class="var">a</span>)
+<span class="cm"># ⚠ 嵌套对象仍共享引用</span>
+
+<span class="cm"># 深拷贝</span>
+<span class="kw">import</span> copy
+<span class="var">b</span> <span class="op">=</span> copy.<span class="fn">deepcopy</span>(<span class="var">a</span>)  <span class="ret"># 完全独立</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card list-card">
+      <div class="card-header">
+        <div class="card-method">扁平化 &amp; 去重</div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="cm"># 推导式扁平化（推荐）</span>
+[<span class="var">x</span> <span class="kw">for</span> <span class="var">row</span> <span class="kw">in</span> [[<span class="num">1</span>,<span class="num">2</span>],[<span class="num">3</span>,<span class="num">4</span>]] <span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="var">row</span>]
+
+<span class="cm"># itertools 惰性扁平化</span>
+<span class="fn">list</span>(chain.<span class="fn">from_iterable</span>([[<span class="num">1</span>,<span class="num">2</span>],[<span class="num">3</span>]]))
+
+<span class="cm"># 去重（不保序）</span>
+<span class="fn">list</span>(<span class="fn">set</span>([<span class="num">3</span>,<span class="num">1</span>,<span class="num">2</span>,<span class="num">1</span>]))
+
+<span class="cm"># 去重（保持原顺序）Python 3.7+</span>
+<span class="fn">list</span>(<span class="fn">dict</span>.<span class="fn">fromkeys</span>([<span class="num">3</span>,<span class="num">1</span>,<span class="num">2</span>,<span class="num">1</span>]))   <span class="ret"># [3,1,2]</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card list-card">
+      <div class="card-header">
+        <div class="card-method">堆栈 / 队列 模式</div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="cm"># Stack LIFO</span>
+<span class="var">stack</span> <span class="op">=</span> []
+<span class="var">stack</span>.<span class="fn">append</span>(<span class="num">1</span>); <span class="var">stack</span>.<span class="fn">pop</span>()  <span class="ret"># O(1)</span>
+
+<span class="cm"># Queue FIFO（推荐 deque）</span>
+<span class="kw">from</span> collections <span class="kw">import</span> <span class="cls">deque</span>
+<span class="var">q</span> <span class="op">=</span> <span class="cls">deque</span>()
+<span class="var">q</span>.<span class="fn">append</span>(<span class="num">1</span>)      <span class="ret"># 入队右侧</span>
+<span class="var">q</span>.<span class="fn">appendleft</span>(<span class="num">0</span>)  <span class="ret"># 入队左侧</span>
+<span class="var">q</span>.<span class="fn">popleft</span>()      <span class="ret"># 出队 O(1)</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card list-card">
+      <div class="card-header">
+        <div class="card-method">转换 &amp; 互操作</div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="str">','</span>.<span class="fn">join</span>(<span class="fn">map</span>(str,[<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>]))  <span class="ret"># '1,2,3'</span>
+<span class="str">'a b c'</span>.<span class="fn">split</span>()            <span class="ret"># ['a','b','c']</span>
+<span class="fn">tuple</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>])            <span class="ret"># (1,2,3)</span>
+<span class="fn">set</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">2</span>,<span class="num">3</span>])            <span class="ret"># {1,2,3}</span>
+<span class="fn">dict</span>(<span class="fn">zip</span>(<span class="var">keys</span>,<span class="var">vals</span>))       <span class="ret"># 列表→字典</span></pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ⑨ 进阶 -->
+<div class="section-block" id="list-advanced">
+  <div class="section-header">
+    <div class="section-icon list">🚀</div>
+    <div class="section-title">
+      <h2>⑨ <span class="list-col">进阶</span>技巧 &amp; 性能</h2>
+      <p>Advanced Patterns &amp; Performance Tips</p>
+    </div>
+    <div class="section-num">§ 9 · List</div>
+  </div>
+  <div class="cards-grid wide">
+    <div class="card list-card">
+      <div class="card-header">
+        <div class="card-method">运算符 · 解包 · 性能对比</div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="cm"># ── 运算符 ──────────────────────────────</span>
+[<span class="num">1</span>,<span class="num">2</span>] <span class="op">+</span> [<span class="num">3</span>,<span class="num">4</span>]          <span class="ret"># [1,2,3,4]  拼接</span>
+[<span class="num">1</span>,<span class="num">2</span>] <span class="op">*</span> <span class="num">3</span>              <span class="ret"># [1,2,1,2,1,2]  重复</span>
+[<span class="num">1</span>,<span class="num">2</span>] <span class="op">==</span> [<span class="num">1</span>,<span class="num">2</span>]         <span class="ret"># True  深值比较</span>
+[<span class="num">1</span>,<span class="num">2</span>] <span class="op"><</span> [<span class="num">1</span>,<span class="num">3</span>]          <span class="ret"># True  字典序比较</span>
+<span class="var">a</span> <span class="kw">is</span> <span class="var">b</span>                  <span class="ret"># 同一对象（引用）</span>
+
+<span class="cm"># ── 解包技巧 ────────────────────────────</span>
+<span class="var">a</span>, <span class="var">b</span> <span class="op">=</span> <span class="var">b</span>, <span class="var">a</span>             <span class="ret"># 变量交换，无临时变量</span>
+<span class="fn">func</span>(<span class="op">*</span>[<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>])          <span class="ret"># 等价 func(1,2,3)</span>
+[<span class="op">*</span><span class="var">a</span>, <span class="op">*</span><span class="var">b</span>]               <span class="ret"># 合并（Python 3.5+）</span>
+
+<span class="cm"># ── 性能贴士 ────────────────────────────</span>
+<span class="cm"># append O(1)均摊 vs insert(0) O(n) → 用 deque</span>
+<span class="cm"># 推导式比 for+append 快 ~35%</span>
+<span class="cm"># in 是 O(n)，高频查找转 set O(1)</span>
+<span class="cm"># sort() 比手写 O(n²) 算法快得多</span>
+<span class="cm"># 大数据用 array / numpy 而非 list</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ╔══════════════════════════════════╗ -->
+<!-- ║           DICT  SECTION          ║ -->
+<!-- ╚══════════════════════════════════╝ -->
+
+<div class="big-divider">
+  <span class="divider-label dict">{ }  Dict 字典</span>
+</div>
+
+<!-- ① 创建 dict -->
+<div class="section-block" id="dict-create">
+  <div class="section-header">
+    <div class="section-icon dict">📖</div>
+    <div class="section-title">
+      <h2>① <span class="dict-col">创建</span> Dict</h2>
+      <p>Creating Dictionaries — 各种初始化方式</p>
+    </div>
+    <div class="section-num">§ 1 · Dict</div>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card dict-card">
+      <div class="card-header">
+        <div class="card-method"><span class="dict-col">{ }</span> &nbsp;字面量 / 推导式</div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">empty</span> <span class="op">=</span> {}
+<span class="var">d</span> <span class="op">=</span> {<span class="str">'name'</span>: <span class="str">'Alice'</span>, <span class="str">'age'</span>: <span class="num">25</span>}
+
+<span class="cm"># 字典推导式</span>
+{<span class="var">k</span>: <span class="var">v</span><span class="op">**</span><span class="num">2</span> <span class="kw">for</span> <span class="var">k</span>,<span class="var">v</span> <span class="kw">in</span> <span class="var">items</span>}
+{<span class="var">x</span>: <span class="var">x</span><span class="op">**</span><span class="num">2</span> <span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>)}      <span class="ret"># {0:0,1:1,...}</span>
+{<span class="var">k</span>: <span class="var">v</span> <span class="kw">for</span> <span class="var">k</span>,<span class="var">v</span> <span class="kw">in</span> <span class="var">d</span>.<span class="fn">items</span>() <span class="kw">if</span> <span class="var">v</span><span class="op">></span><span class="num">0</span>}  <span class="ret"># 过滤</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card dict-card">
+      <div class="card-header">
+        <div class="card-method"><span class="fn">dict</span><span class="dim">(...)</span> 构造</div>
+        <span class="tag tag-new">多种写法</span>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="fn">dict</span>(name<span class="op">=</span><span class="str">'Alice'</span>, age<span class="op">=</span><span class="num">25</span>)         <span class="ret"># 关键字参数</span>
+<span class="fn">dict</span>([(<span class="str">'a'</span>,<span class="num">1</span>),(<span class="str">'b'</span>,<span class="num">2</span>)])           <span class="ret"># 键值对列表</span>
+<span class="fn">dict</span>(<span class="fn">zip</span>([<span class="str">'a'</span>,<span class="str">'b'</span>],[<span class="num">1</span>,<span class="num">2</span>]))        <span class="ret"># zip 两个列表</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card dict-card">
+      <div class="card-header">
+        <div class="card-method"><span class="fn">dict</span><span class="op">.</span><span class="fn">fromkeys</span><span class="dim">(keys[, value])</span></div>
+        <span class="tag tag-new">类方法</span>
+      </div>
+      <div class="card-body">
+        <div class="card-desc">用相同默认值初始化，<code>value</code> 默认为 <code>None</code></div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="fn">dict</span>.<span class="fn">fromkeys</span>([<span class="str">'a'</span>,<span class="str">'b'</span>,<span class="str">'c'</span>])      <span class="ret"># {'a':None,'b':None,...}</span>
+<span class="fn">dict</span>.<span class="fn">fromkeys</span>([<span class="str">'x'</span>,<span class="str">'y'</span>], <span class="num">0</span>)       <span class="ret"># {'x':0,'y':0}</span>
+<span class="cm"># ⚠ value 不能是可变对象（共享引用）</span>
+<span class="cm"># ✓ 可变默认值用 defaultdict</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card dict-card">
+      <div class="card-header">
+        <div class="card-method">特殊字典类型</div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="kw">from</span> collections <span class="kw">import</span> defaultdict, OrderedDict, Counter
+
+<span class="cm"># 缺失键自动初始化</span>
+<span class="var">dd</span> <span class="op">=</span> <span class="fn">defaultdict</span>(list)
+<span class="var">dd</span>[<span class="str">'k'</span>].<span class="fn">append</span>(<span class="num">1</span>)         <span class="ret"># 无需预先初始化</span>
+
+<span class="cm"># 有序字典（Python 3.7+ 普通dict也保序）</span>
+<span class="var">od</span> <span class="op">=</span> <span class="fn">OrderedDict</span>()
+<span class="var">od</span>.<span class="fn">move_to_end</span>(<span class="str">'key'</span>)    <span class="ret"># 移到末尾</span>
+
+<span class="cm"># 计数器</span>
+<span class="fn">Counter</span>(<span class="str">'abracadabra'</span>)    <span class="ret"># {'a':5,'b':2,...}</span></pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ② 访问 dict -->
+<div class="section-block" id="dict-access">
+  <div class="section-header">
+    <div class="section-icon dict">🔑</div>
+    <div class="section-title">
+      <h2>② <span class="dict-col">访问</span>元素</h2>
+      <p>Accessing Values — d[key] vs d.get()</p>
+    </div>
+    <div class="section-num">§ 2 · Dict</div>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card dict-card">
+      <div class="card-header">
+        <div class="card-method"><span class="var">d</span><span class="dim">[key]</span></div>
+        <span class="tag tag-O1">O(1)</span>
+      </div>
+      <div class="card-body">
+        <div class="card-desc">直接访问，键不存在抛 <code>KeyError</code></div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">d</span> <span class="op">=</span> {<span class="str">'a'</span>: <span class="num">1</span>, <span class="str">'b'</span>: <span class="num">2</span>}
+<span class="var">d</span>[<span class="str">'a'</span>]      <span class="ret"># 1</span>
+<span class="var">d</span>[<span class="str">'z'</span>]      <span class="ret"># ❌ KeyError</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card dict-card">
+      <div class="card-header">
+        <div class="card-method"><span class="var">d</span><span class="op">.</span><span class="fn">get</span><span class="dim">(key[, default])</span></div>
+        <span class="tag tag-O1">O(1)</span><span class="tag tag-safe">安全</span>
+      </div>
+      <div class="card-body">
+        <div class="card-desc">键不存在时返回 default（默认 None），不抛异常</div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">d</span>.<span class="fn">get</span>(<span class="str">'a'</span>)          <span class="ret"># 1</span>
+<span class="var">d</span>.<span class="fn">get</span>(<span class="str">'z'</span>)          <span class="ret"># None</span>
+<span class="var">d</span>.<span class="fn">get</span>(<span class="str">'z'</span>, <span class="num">0</span>)       <span class="ret"># 0  默认值</span>
+<span class="cm"># 常用于计数</span>
+<span class="var">count</span>[<span class="var">k</span>] <span class="op">=</span> <span class="var">count</span>.<span class="fn">get</span>(<span class="var">k</span>, <span class="num">0</span>) <span class="op">+</span> <span class="num">1</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card dict-card">
+      <div class="card-header">
+        <div class="card-method"><span class="var">d</span><span class="op">.</span><span class="fn">setdefault</span><span class="dim">(key[, default])</span></div>
+        <span class="tag tag-O1">O(1)</span>
+      </div>
+      <div class="card-body">
+        <div class="card-desc">键存在则返回值；键不存在则插入 default 并返回</div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">d</span> <span class="op">=</span> {}
+<span class="var">d</span>.<span class="fn">setdefault</span>(<span class="str">'hits'</span>, <span class="num">0</span>)     <span class="ret"># d = {'hits':0}</span>
+<span class="var">d</span>.<span class="fn">setdefault</span>(<span class="str">'hits'</span>, <span class="num">99</span>)    <span class="ret"># 仍为 0，不覆盖</span>
+<span class="cm"># 分组聚合惯用法</span>
+<span class="var">groups</span>.<span class="fn">setdefault</span>(<span class="var">key</span>, []).<span class="fn">append</span>(<span class="var">val</span>)</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card dict-card">
+      <div class="card-header">
+        <div class="card-method"><span class="kw">in</span> / <span class="kw">not in</span> &amp; 成员判断</div>
+        <span class="tag tag-O1">O(1)</span>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="str">'a'</span> <span class="kw">in</span> <span class="var">d</span>           <span class="ret"># True  判断键</span>
+<span class="str">'z'</span> <span class="kw">not in</span> <span class="var">d</span>      <span class="ret"># True</span>
+<span class="num">1</span> <span class="kw">in</span> <span class="var">d</span>.<span class="fn">values</span>()    <span class="ret"># 判断值，O(n)</span></pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ③ 增/改/删 -->
+<div class="section-block" id="dict-modify">
+  <div class="section-header">
+    <div class="section-icon dict">✏️</div>
+    <div class="section-title">
+      <h2>③ <span class="dict-col">增 / 改 / 删</span></h2>
+      <p>Adding · Updating · Removing</p>
+    </div>
+    <div class="section-num">§ 3 · Dict</div>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card dict-card">
+      <div class="card-header">
+        <div class="card-method"><span class="var">d</span><span class="dim">[key] =</span> value &nbsp;增 / 改</div>
+        <span class="tag tag-O1">O(1)</span><span class="tag tag-mut">原地</span>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">d</span>[<span class="str">'new'</span>] <span class="op">=</span> <span class="num">99</span>     <span class="ret"># 不存在则新增</span>
+<span class="var">d</span>[<span class="str">'a'</span>]   <span class="op">=</span> <span class="num">100</span>    <span class="ret"># 已存在则覆盖</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card dict-card">
+      <div class="card-header">
+        <div class="card-method"><span class="var">d</span><span class="op">.</span><span class="fn">update</span><span class="dim">(...)</span></div>
+        <span class="tag tag-mut">原地</span>
+      </div>
+      <div class="card-body">
+        <div class="card-desc">批量更新，多种传参方式</div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">d</span>.<span class="fn">update</span>({<span class="str">'x'</span>:<span class="num">1</span>, <span class="str">'y'</span>:<span class="num">2</span>})   <span class="ret"># 传字典</span>
+<span class="var">d</span>.<span class="fn">update</span>(x<span class="op">=</span><span class="num">1</span>, y<span class="op">=</span><span class="num">2</span>)        <span class="ret"># 关键字参数</span>
+<span class="var">d</span>.<span class="fn">update</span>([(<span class="str">'x'</span>,<span class="num">1</span>),(<span class="str">'y'</span>,<span class="num">2</span>)]) <span class="ret"># 键值对列表</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card dict-card">
+      <div class="card-header">
+        <div class="card-method"><span class="var">d1</span> <span class="op">|</span> <span class="var">d2</span> &nbsp;/&nbsp; <span class="var">d1</span> <span class="op">|=</span> <span class="var">d2</span></div>
+        <span class="tag tag-new">Python 3.9+</span>
+      </div>
+      <div class="card-body">
+        <div class="card-desc"><code>|</code> 返回新字典，<code>|=</code> 原地合并（后者优先）</div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">a</span> <span class="op">=</span> {<span class="str">'x'</span>:<span class="num">1</span>}; <span class="var">b</span> <span class="op">=</span> {<span class="str">'y'</span>:<span class="num">2</span>, <span class="str">'x'</span>:<span class="num">9</span>}
+<span class="var">a</span> <span class="op">|</span> <span class="var">b</span>     <span class="ret"># {'x':9,'y':2}  新字典，b覆盖a</span>
+<span class="var">a</span> <span class="op">|=</span> <span class="var">b</span>    <span class="ret"># a 原地被更新</span>
+<span class="cm"># 3.9 以前</span>
+{<span class="op">**</span><span class="var">a</span>, <span class="op">**</span><span class="var">b</span>}  <span class="ret"># 解包合并</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card dict-card">
+      <div class="card-header">
+        <div class="card-method"><span class="var">d</span><span class="op">.</span><span class="fn">pop</span><span class="dim">(key[, default])</span></div>
+        <span class="tag tag-O1">O(1)</span><span class="tag tag-mut">原地</span>
+      </div>
+      <div class="card-body">
+        <div class="card-desc">删除并<strong>返回</strong>值；键不存在且无 default 则抛 <code>KeyError</code></div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">d</span>.<span class="fn">pop</span>(<span class="str">'a'</span>)          <span class="ret"># 删除并返回值</span>
+<span class="var">d</span>.<span class="fn">pop</span>(<span class="str">'z'</span>, <span class="bool">None</span>)    <span class="ret"># 安全删除</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card dict-card">
+      <div class="card-header">
+        <div class="card-method"><span class="var">d</span><span class="op">.</span><span class="fn">popitem</span><span class="dim">()</span></div>
+        <span class="tag tag-O1">O(1)</span>
+      </div>
+      <div class="card-body">
+        <div class="card-desc">删除并返回最后插入的 (key, value) 对（LIFO，Python 3.7+）</div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">d</span> <span class="op">=</span> {<span class="str">'a'</span>:<span class="num">1</span>, <span class="str">'b'</span>:<span class="num">2</span>}
+<span class="var">d</span>.<span class="fn">popitem</span>()    <span class="ret"># ('b', 2)</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card dict-card">
+      <div class="card-header">
+        <div class="card-method"><span class="kw">del</span> <span class="var">d</span><span class="dim">[key]</span> &nbsp;/&nbsp; <span class="var">d</span><span class="op">.</span><span class="fn">clear</span><span class="dim">()</span></div>
+        <span class="tag tag-mut">原地</span>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="kw">del</span> <span class="var">d</span>[<span class="str">'a'</span>]     <span class="ret"># 删除键，不存在抛 KeyError</span>
+<span class="var">d</span>.<span class="fn">clear</span>()      <span class="ret"># 清空所有 → {}</span></pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ④ 视图 -->
+<div class="section-block" id="dict-views">
+  <div class="section-header">
+    <div class="section-icon dict">👁️</div>
+    <div class="section-title">
+      <h2>④ <span class="dict-col">视图对象</span></h2>
+      <p>keys() · values() · items() — 动态反映字典变化</p>
+    </div>
+    <div class="section-num">§ 4 · Dict</div>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card dict-card">
+      <div class="card-header">
+        <div class="card-method"><span class="var">d</span><span class="op">.</span><span class="fn">keys</span><span class="dim">()</span> · <span class="var">d</span><span class="op">.</span><span class="fn">values</span><span class="dim">()</span> · <span class="var">d</span><span class="op">.</span><span class="fn">items</span><span class="dim">()</span></div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">d</span> <span class="op">=</span> {<span class="str">'a'</span>:<span class="num">1</span>, <span class="str">'b'</span>:<span class="num">2</span>, <span class="str">'c'</span>:<span class="num">3</span>}
+
+<span class="var">d</span>.<span class="fn">keys</span>()     <span class="ret"># dict_keys(['a','b','c'])</span>
+<span class="var">d</span>.<span class="fn">values</span>()   <span class="ret"># dict_values([1,2,3])</span>
+<span class="var">d</span>.<span class="fn">items</span>()    <span class="ret"># dict_items([('a',1),('b',2),...])</span>
+
+<span class="cm"># 视图支持集合运算</span>
+<span class="var">d1</span>.<span class="fn">keys</span>() <span class="op">&</span> <span class="var">d2</span>.<span class="fn">keys</span>()   <span class="ret"># 公共键</span>
+<span class="var">d1</span>.<span class="fn">keys</span>() <span class="op">|</span> <span class="var">d2</span>.<span class="fn">keys</span>()   <span class="ret"># 所有键</span>
+<span class="var">d1</span>.<span class="fn">keys</span>() <span class="op">-</span> <span class="var">d2</span>.<span class="fn">keys</span>()   <span class="ret"># d1 独有的键</span>
+
+<span class="cm"># 转列表</span>
+<span class="fn">list</span>(<span class="var">d</span>.<span class="fn">keys</span>())
+<span class="fn">list</span>(<span class="var">d</span>.<span class="fn">values</span>())</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card dict-card">
+      <div class="card-header">
+        <div class="card-method">拷贝字典</div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="cm"># 浅拷贝</span>
+<span class="var">b</span> <span class="op">=</span> <span class="var">d</span>.<span class="fn">copy</span>()
+<span class="var">b</span> <span class="op">=</span> <span class="fn">dict</span>(<span class="var">d</span>)
+<span class="var">b</span> <span class="op">=</span> {<span class="op">**</span><span class="var">d</span>}          <span class="ret"># 解包拷贝</span>
+
+<span class="cm"># 深拷贝</span>
+<span class="kw">import</span> copy
+<span class="var">b</span> <span class="op">=</span> copy.<span class="fn">deepcopy</span>(<span class="var">d</span>)</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ⑤ 迭代 dict -->
+<div class="section-block" id="dict-iter">
+  <div class="section-header">
+    <div class="section-icon dict">🔄</div>
+    <div class="section-title">
+      <h2>⑤ <span class="dict-col">迭代</span> &amp; 遍历</h2>
+      <p>Iteration Patterns</p>
+    </div>
+    <div class="section-num">§ 5 · Dict</div>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card dict-card">
+      <div class="card-header">
+        <div class="card-method">遍历键 / 值 / 键值对</div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">d</span> <span class="op">=</span> {<span class="str">'a'</span>:<span class="num">1</span>, <span class="str">'b'</span>:<span class="num">2</span>}
+
+<span class="cm"># 遍历键（默认）</span>
+<span class="kw">for</span> <span class="var">k</span> <span class="kw">in</span> <span class="var">d</span>: ...
+<span class="kw">for</span> <span class="var">k</span> <span class="kw">in</span> <span class="var">d</span>.<span class="fn">keys</span>(): ...
+
+<span class="cm"># 遍历值</span>
+<span class="kw">for</span> <span class="var">v</span> <span class="kw">in</span> <span class="var">d</span>.<span class="fn">values</span>(): ...
+
+<span class="cm"># 遍历键值对（推荐）</span>
+<span class="kw">for</span> <span class="var">k</span>, <span class="var">v</span> <span class="kw">in</span> <span class="var">d</span>.<span class="fn">items</span>():
+    <span class="fn">print</span>(<span class="var">k</span>, <span class="str">'→'</span>, <span class="var">v</span>)
+
+<span class="cm"># 带索引</span>
+<span class="kw">for</span> <span class="var">i</span>, (<span class="var">k</span>,<span class="var">v</span>) <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="var">d</span>.<span class="fn">items</span>()):
+    <span class="fn">print</span>(<span class="var">i</span>, <span class="var">k</span>, <span class="var">v</span>)</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card dict-card">
+      <div class="card-header">
+        <div class="card-method">排序遍历</div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="cm"># 按键排序</span>
+<span class="kw">for</span> <span class="var">k</span> <span class="kw">in</span> <span class="fn">sorted</span>(<span class="var">d</span>):
+    <span class="fn">print</span>(<span class="var">k</span>, <span class="var">d</span>[<span class="var">k</span>])
+
+<span class="cm"># 按值排序</span>
+<span class="kw">for</span> <span class="var">k</span>, <span class="var">v</span> <span class="kw">in</span> <span class="fn">sorted</span>(<span class="var">d</span>.<span class="fn">items</span>(), key<span class="op">=</span><span class="kw">lambda</span> <span class="var">kv</span>: <span class="var">kv</span>[<span class="num">1</span>]):
+    <span class="fn">print</span>(<span class="var">k</span>, <span class="var">v</span>)
+
+<span class="cm"># 按值降序</span>
+<span class="fn">sorted</span>(<span class="var">d</span>.<span class="fn">items</span>(), key<span class="op">=</span><span class="kw">lambda</span> <span class="var">kv</span>:<span class="var">kv</span>[<span class="num">1</span>], reverse<span class="op">=</span><span class="bool">True</span>)</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ⑥ 进阶 dict -->
+<div class="section-block" id="dict-advanced">
+  <div class="section-header">
+    <div class="section-icon dict">⚡</div>
+    <div class="section-title">
+      <h2>⑥ <span class="dict-col">进阶</span>用法</h2>
+      <p>Advanced — defaultdict · Counter · ChainMap · merge</p>
+    </div>
+    <div class="section-num">§ 6 · Dict</div>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card dict-card">
+      <div class="card-header">
+        <div class="card-method"><span class="cls">defaultdict</span></div>
+        <span class="tag tag-new">collections</span>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="kw">from</span> collections <span class="kw">import</span> defaultdict
+
+<span class="cm"># 分组</span>
+<span class="var">groups</span> <span class="op">=</span> <span class="fn">defaultdict</span>(list)
+<span class="kw">for</span> <span class="var">name</span>, <span class="var">dept</span> <span class="kw">in</span> <span class="var">data</span>:
+    <span class="var">groups</span>[<span class="var">dept</span>].<span class="fn">append</span>(<span class="var">name</span>)
+
+<span class="cm"># 计数</span>
+<span class="var">count</span> <span class="op">=</span> <span class="fn">defaultdict</span>(int)
+<span class="kw">for</span> <span class="var">w</span> <span class="kw">in</span> <span class="var">words</span>: <span class="var">count</span>[<span class="var">w</span>] <span class="op">+=</span> <span class="num">1</span>
+
+<span class="cm"># 嵌套字典</span>
+<span class="var">tree</span> <span class="op">=</span> <span class="fn">defaultdict</span>(<span class="kw">lambda</span>: <span class="fn">defaultdict</span>(int))</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card dict-card">
+      <div class="card-header">
+        <div class="card-method"><span class="cls">Counter</span></div>
+        <span class="tag tag-new">collections</span>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="kw">from</span> collections <span class="kw">import</span> <span class="cls">Counter</span>
+<span class="var">c</span> <span class="op">=</span> <span class="cls">Counter</span>([<span class="str">'a'</span>,<span class="str">'b'</span>,<span class="str">'a'</span>,<span class="str">'c'</span>,<span class="str">'b'</span>,<span class="str">'a'</span>])
+<span class="ret"># Counter({'a':3,'b':2,'c':1})</span>
+
+<span class="var">c</span>.<span class="fn">most_common</span>(<span class="num">2</span>)     <span class="ret"># [('a',3),('b',2)]</span>
+<span class="var">c</span>[<span class="str">'a'</span>]               <span class="ret"># 3</span>
+<span class="var">c</span>[<span class="str">'z'</span>]               <span class="ret"># 0（不抛错）</span>
+<span class="var">c1</span> <span class="op">+</span> <span class="var">c2</span>              <span class="ret"># 合并计数</span>
+<span class="var">c1</span> <span class="op">-</span> <span class="var">c2</span>              <span class="ret"># 差值（仅正值）</span>
+<span class="var">c1</span> <span class="op">&</span> <span class="var">c2</span>              <span class="ret"># 取最小计数</span>
+<span class="var">c</span>.<span class="fn">update</span>([<span class="str">'a'</span>,<span class="str">'b'</span>])  <span class="ret"># 追加计数</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card dict-card">
+      <div class="card-header">
+        <div class="card-method"><span class="cls">ChainMap</span> &amp; 嵌套合并</div>
+        <span class="tag tag-new">collections</span>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="kw">from</span> collections <span class="kw">import</span> <span class="cls">ChainMap</span>
+
+<span class="cm"># 多字典按优先级查找，不复制</span>
+<span class="var">env</span>  <span class="op">=</span> {<span class="str">'x'</span>:<span class="num">1</span>}
+<span class="var">base</span> <span class="op">=</span> {<span class="str">'x'</span>:<span class="num">9</span>, <span class="str">'y'</span>:<span class="num">2</span>}
+<span class="var">cm</span> <span class="op">=</span> <span class="cls">ChainMap</span>(<span class="var">env</span>, <span class="var">base</span>)
+<span class="var">cm</span>[<span class="str">'x'</span>]   <span class="ret"># 1  (env优先)</span>
+<span class="var">cm</span>[<span class="str">'y'</span>]   <span class="ret"># 2  (从base找)</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card dict-card">
+      <div class="card-header">
+        <div class="card-method">字典解包 &amp; 合并</div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">a</span> <span class="op">=</span> {<span class="str">'x'</span>:<span class="num">1</span>}; <span class="var">b</span> <span class="op">=</span> {<span class="str">'y'</span>:<span class="num">2</span>}; <span class="var">c</span> <span class="op">=</span> {<span class="str">'z'</span>:<span class="num">3</span>}
+
+<span class="cm"># 合并多个字典</span>
+<span class="var">merged</span> <span class="op">=</span> {<span class="op">**</span><span class="var">a</span>, <span class="op">**</span><span class="var">b</span>, <span class="op">**</span><span class="var">c</span>}  <span class="ret"># {'x':1,'y':2,'z':3}</span>
+
+<span class="cm"># 函数调用解包</span>
+<span class="kw">def</span> <span class="fn">func</span>(<span class="var">x</span>, <span class="var">y</span>): ...
+<span class="fn">func</span>(<span class="op">**</span>{<span class="str">'x'</span>:<span class="num">1</span>, <span class="str">'y'</span>:<span class="num">2</span>})
+
+<span class="cm"># 覆盖特定键</span>
+{<span class="op">**</span><span class="var">defaults</span>, <span class="str">'timeout'</span>: <span class="num">30</span>}</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ⑦ 实战模式 -->
+<div class="section-block" id="dict-patterns">
+  <div class="section-header">
+    <div class="section-icon dict">🏗️</div>
+    <div class="section-title">
+      <h2>⑦ <span class="dict-col">实战模式</span></h2>
+      <p>Common Patterns — 分组 · 反转 · 缓存 · 频率统计</p>
+    </div>
+    <div class="section-num">§ 7 · Dict</div>
+  </div>
+  <div class="cards-grid wide">
+    <div class="card dict-card">
+      <div class="card-header">
+        <div class="card-method">高频实战代码模板</div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="cm"># ── 1. 频率统计 ─────────────────────────────────────</span>
+<span class="var">freq</span> <span class="op">=</span> {}
+<span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="var">data</span>: <span class="var">freq</span>[<span class="var">x</span>] <span class="op">=</span> <span class="var">freq</span>.<span class="fn">get</span>(<span class="var">x</span>, <span class="num">0</span>) <span class="op">+</span> <span class="num">1</span>
+<span class="cm"># 或</span>
+<span class="var">freq</span> <span class="op">=</span> <span class="cls">Counter</span>(<span class="var">data</span>)
+
+<span class="cm"># ── 2. 按键分组（Groupby） ─────────────────────────</span>
+<span class="var">groups</span> <span class="op">=</span> <span class="fn">defaultdict</span>(list)
+<span class="kw">for</span> <span class="var">item</span> <span class="kw">in</span> <span class="var">items</span>:
+    <span class="var">groups</span>[<span class="var">item</span>[<span class="str">'dept'</span>]].<span class="fn">append</span>(<span class="var">item</span>)
+
+<span class="cm"># ── 3. 反转字典（值→键，值唯一时）──────────────────</span>
+<span class="var">inv</span> <span class="op">=</span> {<span class="var">v</span>: <span class="var">k</span> <span class="kw">for</span> <span class="var">k</span>, <span class="var">v</span> <span class="kw">in</span> <span class="var">d</span>.<span class="fn">items</span>()}
+
+<span class="cm"># ── 4. 嵌套 get（避免 KeyError 链）──────────────────</span>
+<span class="var">val</span> <span class="op">=</span> <span class="var">data</span>.<span class="fn">get</span>(<span class="str">'user'</span>, {}).<span class="fn">get</span>(<span class="str">'addr'</span>, {}).<span class="fn">get</span>(<span class="str">'city'</span>)
+
+<span class="cm"># ── 5. 条件更新（不覆盖已有键）─────────────────────</span>
+<span class="var">d</span>.<span class="fn">setdefault</span>(<span class="str">'created_at'</span>, <span class="fn">datetime</span>.<span class="fn">now</span>())
+
+<span class="cm"># ── 6. 列表转字典（id 作 key）────────────────────────</span>
+<span class="var">users_by_id</span> <span class="op">=</span> {<span class="var">u</span>[<span class="str">'id'</span>]: <span class="var">u</span> <span class="kw">for</span> <span class="var">u</span> <span class="kw">in</span> <span class="var">user_list</span>}
+
+<span class="cm"># ── 7. Top-N 键（按值）───────────────────────────────</span>
+<span class="fn">sorted</span>(<span class="var">d</span>, key<span class="op">=</span><span class="var">d</span>.<span class="fn">get</span>, reverse<span class="op">=</span><span class="bool">True</span>)[:<span class="num">5</span>]
+
+<span class="cm"># ── 8. 函数式过滤字典 ────────────────────────────────</span>
+{<span class="var">k</span>:<span class="var">v</span> <span class="kw">for</span> <span class="var">k</span>,<span class="var">v</span> <span class="kw">in</span> <span class="var">d</span>.<span class="fn">items</span>() <span class="kw">if</span> <span class="var">v</span> <span class="kw">is</span> <span class="kw">not</span> <span class="bool">None</span>}   <span class="ret"># 过滤 None 值</span>
+{<span class="var">k</span>:<span class="var">v</span> <span class="kw">for</span> <span class="var">k</span>,<span class="var">v</span> <span class="kw">in</span> <span class="var">d</span>.<span class="fn">items</span>() <span class="kw">if</span> <span class="var">k</span> <span class="kw">in</span> <span class="var">whitelist</span>} <span class="ret"># 白名单键</span>
+
+<span class="cm"># ── 9. 字典转 JSON / JSON 转字典 ──────────────────────</span>
+<span class="kw">import</span> json
+<span class="var">s</span> <span class="op">=</span> json.<span class="fn">dumps</span>(<span class="var">d</span>, ensure_ascii<span class="op">=</span><span class="bool">False</span>, indent<span class="op">=</span><span class="num">2</span>)
+<span class="var">d</span> <span class="op">=</span> json.<span class="fn">loads</span>(<span class="var">s</span>)</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- List vs Dict 对比表 -->
+<div class="section-block">
+  <div class="section-header">
+    <div class="section-icon" style="background:#1e293b;border:1.5px solid #475569;">📊</div>
+    <div class="section-title">
+      <h2>List vs Dict — <span style="color:var(--accent)">速查对比表</span></h2>
+      <p>常用操作时间复杂度 &amp; 选型建议</p>
+    </div>
+  </div>
+  <table class="comp-table">
+    <thead>
+      <tr>
+        <th>操作</th>
+        <th>List</th>
+        <th>Dict</th>
+        <th>说明</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>按位置/键访问</td>
+        <td><code>a[i]</code> <span class="green">O(1)</span></td>
+        <td><code>d[k]</code> <span class="green">O(1)</span></td>
+        <td>均为常数时间</td>
+      </tr>
+      <tr>
+        <td>末尾追加</td>
+        <td><code>append</code> <span class="green">O(1)</span></td>
+        <td><code>d[k]=v</code> <span class="green">O(1)</span></td>
+        <td>均摊 O(1)</td>
+      </tr>
+      <tr>
+        <td>头部插入</td>
+        <td><code>insert(0)</code> <span class="red">O(n)</span></td>
+        <td>-</td>
+        <td>List 头部插入慢，用 deque</td>
+      </tr>
+      <tr>
+        <td>成员判断</td>
+        <td><code>x in list</code> <span class="red">O(n)</span></td>
+        <td><code>k in d</code> <span class="green">O(1)</span></td>
+        <td>高频查找优先用 dict/set</td>
+      </tr>
+      <tr>
+        <td>删除末尾/键</td>
+        <td><code>pop()</code> <span class="green">O(1)</span></td>
+        <td><code>pop(k)</code> <span class="green">O(1)</span></td>
+        <td>均为常数时间</td>
+      </tr>
+      <tr>
+        <td>排序</td>
+        <td><code>sort()</code> O(n log n)</td>
+        <td>需转 items()</td>
+        <td>Timsort 稳定</td>
+      </tr>
+      <tr>
+        <td>内存占用</td>
+        <td>较小（连续内存）</td>
+        <td>较大（哈希表）</td>
+        <td>大数据量时差异明显</td>
+      </tr>
+      <tr>
+        <td>有序性</td>
+        <td>插入有序 ✓</td>
+        <td>插入有序 ✓ (3.7+)</td>
+        <td>Python 3.7+ 字典保持插入顺序</td>
+      </tr>
+      <tr>
+        <td>适用场景</td>
+        <td>有序序列、索引访问、排序</td>
+        <td>键值映射、快速查找、计数</td>
+        <td>-</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</div><!-- /container -->
+
+
+<!-- ╔══════════════════════════════════╗ -->
+<!-- ║         TUPLE  SECTION           ║ -->
+<!-- ╚══════════════════════════════════╝ -->
+<div class="container">
+
+<div class="big-divider">
+  <span class="divider-label tuple">( )  Tuple 元组</span>
+</div>
+
+<!-- ① 创建 tuple -->
+<div class="section-block" id="tuple-create">
+  <div class="section-header">
+    <div class="section-icon tuple">📦</div>
+    <div class="section-title">
+      <h2>① <span class="tuple-col">创建</span> Tuple</h2>
+      <p>Creating Tuples — 不可变有序序列</p>
+    </div>
+    <div class="section-num">§ 1 · Tuple</div>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card tuple-card">
+      <div class="card-header">
+        <div class="card-method"><span class="tuple-col">( )</span> &nbsp;字面量 &amp; <span class="fn">tuple</span><span class="dim">()</span></div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">empty</span>  <span class="op">=</span> ()
+<span class="var">single</span> <span class="op">=</span> (<span class="num">1</span>,)           <span class="ret"># ⚠ 单元素必须有逗号</span>
+<span class="var">t</span>      <span class="op">=</span> (<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>)
+<span class="var">t2</span>     <span class="op">=</span> <span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>        <span class="ret"># 括号可省略（打包）</span>
+<span class="fn">tuple</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>])        <span class="ret"># list → tuple</span>
+<span class="fn">tuple</span>(<span class="str">'abc'</span>)          <span class="ret"># ('a','b','c')</span>
+<span class="fn">tuple</span>(<span class="fn">range</span>(<span class="num">5</span>))       <span class="ret"># (0,1,2,3,4)</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card tuple-card">
+      <div class="card-header">
+        <div class="card-method">打包 &amp; 解包（Unpacking）</div>
+        <span class="tag tag-new">核心特性</span>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="cm"># 打包</span>
+<span class="var">point</span> <span class="op">=</span> <span class="num">3</span>, <span class="num">4</span>             <span class="ret"># (3, 4)</span>
+<span class="cm"># 解包</span>
+<span class="var">x</span>, <span class="var">y</span> <span class="op">=</span> <span class="var">point</span>             <span class="ret"># x=3, y=4</span>
+<span class="var">a</span>, <span class="var">b</span>, <span class="var">c</span> <span class="op">=</span> (<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>)
+<span class="cm"># 扩展解包</span>
+<span class="var">first</span>, <span class="op">*</span><span class="var">rest</span> <span class="op">=</span> (<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>) <span class="ret"># first=1, rest=[2,3,4]</span>
+<span class="op">*</span><span class="var">init</span>, <span class="var">last</span> <span class="op">=</span> (<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>)  <span class="ret"># init=[1,2,3], last=4</span>
+<span class="cm"># 变量交换</span>
+<span class="var">a</span>, <span class="var">b</span> <span class="op">=</span> <span class="var">b</span>, <span class="var">a</span>              <span class="ret"># 底层是元组打包/解包</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card tuple-card">
+      <div class="card-header">
+        <div class="card-method">具名元组 <span class="fn">namedtuple</span></div>
+        <span class="tag tag-new">collections</span>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="kw">from</span> collections <span class="kw">import</span> namedtuple
+<span class="cls">Point</span> <span class="op">=</span> <span class="fn">namedtuple</span>(<span class="str">'Point'</span>, [<span class="str">'x'</span>, <span class="str">'y'</span>])
+<span class="var">p</span> <span class="op">=</span> <span class="cls">Point</span>(<span class="num">3</span>, <span class="num">4</span>)
+<span class="var">p</span>.<span class="var">x</span>            <span class="ret"># 3  按名访问</span>
+<span class="var">p</span>[<span class="num">0</span>]           <span class="ret"># 3  按索引访问</span>
+<span class="var">p</span>.<span class="fn">_asdict</span>()    <span class="ret"># {'x':3,'y':4}</span>
+<span class="var">p</span>.<span class="fn">_replace</span>(x<span class="op">=</span><span class="num">9</span>) <span class="ret"># Point(x=9,y=4) 新对象</span>
+<span class="cls">Point</span>.<span class="fn">_fields</span>  <span class="ret"># ('x','y')</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card tuple-card">
+      <div class="card-header">
+        <div class="card-method">元组推导式 → 生成器</div>
+        <span class="tag tag-new">惰性</span>
+      </div>
+      <div class="card-body">
+        <div class="card-desc">圆括号推导式得到的是<strong>生成器对象</strong>，不是元组</div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="cm"># 生成器（不是元组推导式）</span>
+<span class="var">gen</span> <span class="op">=</span> (<span class="var">x</span><span class="op">**</span><span class="num">2</span> <span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>))  <span class="ret"># generator</span>
+<span class="fn">tuple</span>(<span class="var">gen</span>)                    <span class="ret"># (0,1,4,9,16)</span>
+
+<span class="cm"># 要得到元组推导式用 tuple()</span>
+<span class="var">t</span> <span class="op">=</span> <span class="fn">tuple</span>(<span class="var">x</span><span class="op">**</span><span class="num">2</span> <span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>))</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ② 访问/切片 tuple -->
+<div class="section-block" id="tuple-access">
+  <div class="section-header">
+    <div class="section-icon tuple">🔍</div>
+    <div class="section-title">
+      <h2>② <span class="tuple-col">访问</span> &amp; 切片</h2>
+      <p>Indexing &amp; Slicing — 与 List 完全相同，但只读</p>
+    </div>
+    <div class="section-num">§ 2 · Tuple</div>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card tuple-card">
+      <div class="card-header">
+        <div class="card-method">索引 &amp; 切片</div>
+        <span class="tag tag-O1">O(1)</span>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">t</span> <span class="op">=</span> (<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>, <span class="num">40</span>, <span class="num">50</span>)
+<span class="var">t</span>[<span class="num">0</span>]      <span class="ret"># 10</span>
+<span class="var">t</span>[<span class="op">-</span><span class="num">1</span>]     <span class="ret"># 50</span>
+<span class="var">t</span>[<span class="num">1</span>:<span class="num">3</span>]    <span class="ret"># (20, 30)</span>
+<span class="var">t</span>[::<span class="op">-</span><span class="num">1</span>]   <span class="ret"># (50,40,30,20,10)</span>
+<span class="cm"># 切片返回新元组</span>
+<span class="cm"># ❌ t[0] = 99  → TypeError（不可变）</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card tuple-card">
+      <div class="card-header">
+        <div class="card-method">查找 &amp; 统计</div>
+        <span class="tag tag-On">O(n)</span>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">t</span> <span class="op">=</span> (<span class="num">1</span>, <span class="num">2</span>, <span class="num">2</span>, <span class="num">3</span>)
+<span class="var">t</span>.<span class="fn">index</span>(<span class="num">2</span>)     <span class="ret"># 1</span>
+<span class="var">t</span>.<span class="fn">count</span>(<span class="num">2</span>)     <span class="ret"># 2</span>
+<span class="num">3</span> <span class="kw">in</span> <span class="var">t</span>         <span class="ret"># True</span>
+<span class="fn">len</span>(<span class="var">t</span>)         <span class="ret"># 4</span>
+<span class="fn">min</span>(<span class="var">t</span>)         <span class="ret"># 1</span>
+<span class="fn">max</span>(<span class="var">t</span>)         <span class="ret"># 3</span>
+<span class="fn">sum</span>(<span class="var">t</span>)         <span class="ret"># 8</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card tuple-card">
+      <div class="card-header">
+        <div class="card-method">迭代 &amp; 枚举</div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> (<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>): <span class="fn">print</span>(<span class="var">x</span>)
+
+<span class="kw">for</span> <span class="var">i</span>, <span class="var">v</span> <span class="kw">in</span> <span class="fn">enumerate</span>((<span class="str">'a'</span>,<span class="str">'b'</span>,<span class="str">'c'</span>)):
+    <span class="fn">print</span>(<span class="var">i</span>, <span class="var">v</span>)
+
+<span class="cm"># 多元组并行</span>
+<span class="kw">for</span> <span class="var">a</span>,<span class="var">b</span> <span class="kw">in</span> <span class="fn">zip</span>((<span class="num">1</span>,<span class="num">2</span>),(<span class="num">3</span>,<span class="num">4</span>)):
+    <span class="fn">print</span>(<span class="var">a</span><span class="op">+</span><span class="var">b</span>)</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card tuple-card">
+      <div class="card-header">
+        <div class="card-method">嵌套元组 &amp; 解包</div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">matrix</span> <span class="op">=</span> ((<span class="num">1</span>,<span class="num">2</span>),(<span class="num">3</span>,<span class="num">4</span>),(<span class="num">5</span>,<span class="num">6</span>))
+<span class="kw">for</span> <span class="var">a</span>, <span class="var">b</span> <span class="kw">in</span> <span class="var">matrix</span>:
+    <span class="fn">print</span>(<span class="var">a</span>, <span class="var">b</span>)
+
+<span class="cm"># 嵌套解包</span>
+((<span class="var">a</span>, <span class="var">b</span>), <span class="var">c</span>) <span class="op">=</span> ((<span class="num">1</span>, <span class="num">2</span>), <span class="num">3</span>)
+<span class="cm"># a=1, b=2, c=3</span></pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ③ 元组操作 -->
+<div class="section-block" id="tuple-ops">
+  <div class="section-header">
+    <div class="section-icon tuple">⚙️</div>
+    <div class="section-title">
+      <h2>③ <span class="tuple-col">操作</span> &amp; 运算符</h2>
+      <p>Operations — 拼接、重复、比较、转换</p>
+    </div>
+    <div class="section-num">§ 3 · Tuple</div>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card tuple-card">
+      <div class="card-header">
+        <div class="card-method">拼接 &amp; 重复 &amp; 比较</div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre>(<span class="num">1</span>,<span class="num">2</span>) <span class="op">+</span> (<span class="num">3</span>,<span class="num">4</span>)      <span class="ret"># (1,2,3,4)  新元组</span>
+(<span class="num">1</span>,<span class="num">2</span>) <span class="op">*</span> <span class="num">3</span>           <span class="ret"># (1,2,1,2,1,2)</span>
+(<span class="num">1</span>,<span class="num">2</span>) <span class="op">==</span> (<span class="num">1</span>,<span class="num">2</span>)      <span class="ret"># True  深值比较</span>
+(<span class="num">1</span>,<span class="num">2</span>) <span class="op"><</span> (<span class="num">1</span>,<span class="num">3</span>)       <span class="ret"># True  字典序</span>
+<span class="cm"># "修改"元组（实际创建新对象）</span>
+<span class="var">t</span> <span class="op">=</span> (<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>)
+<span class="var">t</span> <span class="op">=</span> <span class="var">t</span>[:<span class="num">1</span>] <span class="op">+</span> (<span class="num">99</span>,) <span class="op">+</span> <span class="var">t</span>[<span class="num">2</span>:]  <span class="ret"># (1,99,3)</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card tuple-card">
+      <div class="card-header">
+        <div class="card-method">转换 &amp; 可哈希特性</div>
+        <span class="tag tag-new">核心优势</span>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="fn">list</span>((<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>))    <span class="ret"># [1,2,3]  tuple→list</span>
+<span class="fn">tuple</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>])   <span class="ret"># (1,2,3)  list→tuple</span>
+
+<span class="cm"># 元组可哈希，可作字典键 / set 元素</span>
+<span class="var">d</span> <span class="op">=</span> {(<span class="num">0</span>,<span class="num">0</span>): <span class="str">'origin'</span>, (<span class="num">1</span>,<span class="num">2</span>): <span class="str">'point'</span>}
+<span class="var">s</span> <span class="op">=</span> {(<span class="num">1</span>,<span class="num">2</span>), (<span class="num">3</span>,<span class="num">4</span>)}
+<span class="fn">hash</span>((<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>))    <span class="ret"># ✓ 有哈希值</span>
+<span class="cm"># hash([1,2,3])  → ❌ list不可哈希</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card tuple-card">
+      <div class="card-header">
+        <div class="card-method"><span class="fn">sorted</span> / <span class="fn">zip</span> / <span class="fn">map</span></div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="fn">sorted</span>((<span class="num">3</span>,<span class="num">1</span>,<span class="num">2</span>))         <span class="ret"># [1,2,3] 返回list</span>
+<span class="fn">tuple</span>(<span class="fn">sorted</span>((<span class="num">3</span>,<span class="num">1</span>,<span class="num">2</span>)))  <span class="ret"># (1,2,3) 转回tuple</span>
+<span class="fn">tuple</span>(<span class="fn">map</span>(str,(<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>))) <span class="ret"># ('1','2','3')</span>
+<span class="fn">tuple</span>(<span class="fn">zip</span>(<span class="str">'ab'</span>,<span class="str">'cd'</span>))   <span class="ret"># (('a','c'),('b','d'))</span></pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ④ 元组进阶 -->
+<div class="section-block" id="tuple-advanced">
+  <div class="section-header">
+    <div class="section-icon tuple">🚀</div>
+    <div class="section-title">
+      <h2>④ <span class="tuple-col">进阶</span> &amp; 使用场景</h2>
+      <p>vs List · 函数返回值 · 性能 · typing.NamedTuple</p>
+    </div>
+    <div class="section-num">§ 4 · Tuple</div>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card tuple-card">
+      <div class="card-header">
+        <div class="card-method">函数多值返回 &amp; 解包</div>
+        <span class="tag tag-new">最常用</span>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="kw">def</span> <span class="fn">minmax</span>(<span class="var">lst</span>):
+    <span class="kw">return</span> <span class="fn">min</span>(<span class="var">lst</span>), <span class="fn">max</span>(<span class="var">lst</span>)   <span class="ret"># 返回元组</span>
+
+<span class="var">lo</span>, <span class="var">hi</span> <span class="op">=</span> <span class="fn">minmax</span>([<span class="num">3</span>,<span class="num">1</span>,<span class="num">4</span>,<span class="num">1</span>,<span class="num">5</span>])
+<span class="fn">print</span>(<span class="var">lo</span>, <span class="var">hi</span>)   <span class="ret"># 1 5</span>
+
+<span class="cm"># divmod 返回元组</span>
+<span class="var">q</span>, <span class="var">r</span> <span class="op">=</span> <span class="fn">divmod</span>(<span class="num">17</span>, <span class="num">5</span>)  <span class="ret"># q=3, r=2</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card tuple-card">
+      <div class="card-header">
+        <div class="card-method">typing.NamedTuple</div>
+        <span class="tag tag-new">Python 3.6+</span>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="kw">from</span> typing <span class="kw">import</span> NamedTuple
+
+<span class="kw">class</span> <span class="cls">Point</span>(<span class="cls">NamedTuple</span>):
+    <span class="var">x</span>: <span class="fn">float</span>
+    <span class="var">y</span>: <span class="fn">float</span>
+    <span class="var">label</span>: <span class="fn">str</span> <span class="op">=</span> <span class="str">''</span>   <span class="ret"># 默认值</span>
+
+<span class="var">p</span> <span class="op">=</span> <span class="cls">Point</span>(<span class="num">1.0</span>, <span class="num">2.0</span>, <span class="str">'A'</span>)
+<span class="var">p</span>.<span class="var">x</span>, <span class="var">p</span>.<span class="var">y</span>          <span class="ret"># 1.0, 2.0</span>
+<span class="var">p</span>.<span class="fn">_asdict</span>()       <span class="ret"># {'x':1.0,'y':2.0,'label':'A'}</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card tuple-card">
+      <div class="card-header">
+        <div class="card-method">Tuple vs List — 选型</div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="cm"># 用 Tuple 的场景：</span>
+<span class="cm"># ✓ 数据不应被修改（坐标、RGB、配置）</span>
+<span class="cm"># ✓ 作字典的键</span>
+<span class="cm"># ✓ 函数多值返回</span>
+<span class="cm"># ✓ 内存比 list 省约 20%</span>
+<span class="kw">import</span> sys
+<span class="fn">sys</span>.getsizeof((<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>))  <span class="ret"># 64 bytes</span>
+<span class="fn">sys</span>.getsizeof([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>])  <span class="ret"># 88 bytes</span>
+<span class="cm"># ✓ 遍历速度略快于 list</span>
+
+<span class="cm"># 用 List 的场景：</span>
+<span class="cm"># ✓ 需要增删改的动态序列</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card tuple-card">
+      <div class="card-header">
+        <div class="card-method">含可变对象的"可变"元组</div>
+        <span class="tag tag-mut">注意陷阱</span>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="cm"># 元组本身不可变，但其内的可变对象可变</span>
+<span class="var">t</span> <span class="op">=</span> ([<span class="num">1</span>,<span class="num">2</span>], [<span class="num">3</span>,<span class="num">4</span>])
+<span class="var">t</span>[<span class="num">0</span>].<span class="fn">append</span>(<span class="num">99</span>)   <span class="ret"># ✓ t=([1,2,99],[3,4])</span>
+<span class="cm"># t[0] = [9]      → ❌ TypeError</span>
+<span class="cm"># 因此含列表的元组不可哈希：</span>
+<span class="cm"># hash(([1,2],[3]))  → ❌ TypeError</span></pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- /container tuple -->
+
+
+<!-- ╔══════════════════════════════════╗ -->
+<!-- ║          STR  SECTION            ║ -->
+<!-- ╚══════════════════════════════════╝ -->
+<div class="container">
+
+<div class="big-divider">
+  <span class="divider-label str">" "  Str 字符串</span>
+</div>
+
+<!-- ① 创建 str -->
+<div class="section-block" id="str-create">
+  <div class="section-header">
+    <div class="section-icon str">✍️</div>
+    <div class="section-title">
+      <h2>① <span class="str-col">创建</span> &amp; 基础</h2>
+      <p>Creating Strings — 不可变序列，Unicode</p>
+    </div>
+    <div class="section-num">§ 1 · Str</div>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card str-card">
+      <div class="card-header">
+        <div class="card-method">字面量 &amp; 特殊字符串</div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="str">'单引号'</span>  <span class="str">"双引号"</span>
+<span class="str">'''多行
+字符串'''</span>
+<span class="str">r'\n 原始字符串\t'</span>    <span class="ret"># 不转义</span>
+<span class="str">b'bytes'</span>              <span class="ret"># bytes 类型</span>
+<span class="str">f'计算 {1+1}'</span>         <span class="ret"># f-string</span>
+<span class="str">'\u4e2d\u6587'</span>        <span class="ret"># '中文' Unicode</span>
+<span class="str">'\n\t\\\''</span>            <span class="ret"># 转义字符</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card str-card">
+      <div class="card-header">
+        <div class="card-method">索引 &amp; 切片（与 List 相同）</div>
+        <span class="tag tag-O1">O(1)</span>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">s</span> <span class="op">=</span> <span class="str">'Hello, World!'</span>
+<span class="var">s</span>[<span class="num">0</span>]     <span class="ret"># 'H'</span>
+<span class="var">s</span>[<span class="op">-</span><span class="num">1</span>]    <span class="ret"># '!'</span>
+<span class="var">s</span>[<span class="num">7</span>:<span class="num">12</span>]  <span class="ret"># 'World'</span>
+<span class="var">s</span>[::<span class="op">-</span><span class="num">1</span>]  <span class="ret"># '!dlroW ,olleH'  反转</span>
+<span class="fn">len</span>(<span class="var">s</span>)   <span class="ret"># 13</span>
+<span class="cm"># 字符串不可变：s[0]='h' → ❌ TypeError</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card str-card">
+      <div class="card-header">
+        <div class="card-method">拼接 &amp; 重复 &amp; 转换</div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="str">'Hello'</span> <span class="op">+</span> <span class="str">' World'</span>     <span class="ret"># 'Hello World'</span>
+<span class="str">'ab'</span> <span class="op">*</span> <span class="num">3</span>               <span class="ret"># 'ababab'</span>
+<span class="fn">str</span>(<span class="num">42</span>)                <span class="ret"># '42'</span>
+<span class="fn">str</span>([<span class="num">1</span>,<span class="num">2</span>])             <span class="ret"># '[1, 2]'</span>
+<span class="fn">ord</span>(<span class="str">'A'</span>)               <span class="ret"># 65  字符→码点</span>
+<span class="fn">chr</span>(<span class="num">65</span>)                <span class="ret"># 'A'  码点→字符</span>
+<span class="cm"># 高效拼接多段</span>
+<span class="str">''</span>.<span class="fn">join</span>([<span class="str">'a'</span>,<span class="str">'b'</span>,<span class="str">'c'</span>]) <span class="ret"># 'abc'</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card str-card">
+      <div class="card-header">
+        <div class="card-method">成员判断 &amp; 迭代</div>
+        <span class="tag tag-On">O(n)</span>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="str">'ell'</span> <span class="kw">in</span> <span class="str">'hello'</span>        <span class="ret"># True（子串判断）</span>
+<span class="str">'z'</span> <span class="kw">not in</span> <span class="str">'hello'</span>    <span class="ret"># True</span>
+
+<span class="kw">for</span> <span class="var">ch</span> <span class="kw">in</span> <span class="str">'abc'</span>:
+    <span class="fn">print</span>(<span class="var">ch</span>)   <span class="ret"># a b c</span>
+
+<span class="kw">for</span> <span class="var">i</span>, <span class="var">ch</span> <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="str">'abc'</span>):
+    <span class="fn">print</span>(<span class="var">i</span>, <span class="var">ch</span>)</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ② 查找/判断 -->
+<div class="section-block" id="str-query">
+  <div class="section-header">
+    <div class="section-icon str">🔎</div>
+    <div class="section-title">
+      <h2>② <span class="str-col">查找</span> &amp; 判断</h2>
+      <p>Finding &amp; Testing — find · index · startswith · isXxx</p>
+    </div>
+    <div class="section-num">§ 2 · Str</div>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card str-card">
+      <div class="card-header">
+        <div class="card-method"><span class="var">s</span><span class="op">.</span><span class="fn">find</span><span class="dim">(sub[, s, e])</span> &amp; <span class="fn">rfind</span></div>
+        <span class="tag tag-On">O(n)</span>
+      </div>
+      <div class="card-body">
+        <div class="card-desc">返回首次出现位置；找不到返回 <code>-1</code>（不抛异常）</div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">s</span> <span class="op">=</span> <span class="str">'abcabc'</span>
+<span class="var">s</span>.<span class="fn">find</span>(<span class="str">'b'</span>)       <span class="ret"># 1</span>
+<span class="var">s</span>.<span class="fn">find</span>(<span class="str">'b'</span>, <span class="num">2</span>)    <span class="ret"># 4  从索引2开始</span>
+<span class="var">s</span>.<span class="fn">find</span>(<span class="str">'z'</span>)       <span class="ret"># -1  未找到</span>
+<span class="var">s</span>.<span class="fn">rfind</span>(<span class="str">'b'</span>)      <span class="ret"># 4  从右查找</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card str-card">
+      <div class="card-header">
+        <div class="card-method"><span class="var">s</span><span class="op">.</span><span class="fn">index</span><span class="dim">(sub)</span> &amp; <span class="fn">rindex</span></div>
+        <span class="tag tag-On">O(n)</span>
+      </div>
+      <div class="card-body">
+        <div class="card-desc">与 find 相同，但找不到时抛 <code>ValueError</code></div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">s</span>.<span class="fn">index</span>(<span class="str">'b'</span>)      <span class="ret"># 1</span>
+<span class="var">s</span>.<span class="fn">rindex</span>(<span class="str">'b'</span>)     <span class="ret"># 4</span>
+<span class="var">s</span>.<span class="fn">index</span>(<span class="str">'z'</span>)      <span class="ret"># ❌ ValueError</span>
+<span class="var">s</span>.<span class="fn">count</span>(<span class="str">'b'</span>)      <span class="ret"># 2  出现次数</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card str-card">
+      <div class="card-header">
+        <div class="card-method"><span class="fn">startswith</span> / <span class="fn">endswith</span></div>
+      </div>
+      <div class="card-body">
+        <div class="card-desc">支持传入元组，任一匹配即返回 True</div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">s</span> <span class="op">=</span> <span class="str">'hello.py'</span>
+<span class="var">s</span>.<span class="fn">startswith</span>(<span class="str">'he'</span>)          <span class="ret"># True</span>
+<span class="var">s</span>.<span class="fn">endswith</span>(<span class="str">'.py'</span>)            <span class="ret"># True</span>
+<span class="cm"># 多个前缀/后缀</span>
+<span class="var">s</span>.<span class="fn">endswith</span>((<span class="str">'.py'</span>,<span class="str">'.js'</span>))   <span class="ret"># True</span>
+<span class="var">s</span>.<span class="fn">startswith</span>(<span class="str">'he'</span>, <span class="num">0</span>, <span class="num">3</span>)    <span class="ret"># 可指定范围</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card str-card">
+      <div class="card-header">
+        <div class="card-method">is 系列判断方法</div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="str">'abc'</span>.<span class="fn">isalpha</span>()    <span class="ret"># True  纯字母</span>
+<span class="str">'123'</span>.<span class="fn">isdigit</span>()    <span class="ret"># True  纯数字</span>
+<span class="str">'abc123'</span>.<span class="fn">isalnum</span>() <span class="ret"># True  字母或数字</span>
+<span class="str">'   '</span>.<span class="fn">isspace</span>()    <span class="ret"># True  纯空白</span>
+<span class="str">'Hello'</span>.<span class="fn">istitle</span>()  <span class="ret"># True  标题格式</span>
+<span class="str">'ABC'</span>.<span class="fn">isupper</span>()    <span class="ret"># True  全大写</span>
+<span class="str">'abc'</span>.<span class="fn">islower</span>()    <span class="ret"># True  全小写</span>
+<span class="str">'123'</span>.<span class="fn">isdecimal</span>()  <span class="ret"># True  十进制数</span>
+<span class="str">'id_1'</span>.<span class="fn">isidentifier</span>() <span class="ret"># True 合法标识符</span></pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ③ 变换 str -->
+<div class="section-block" id="str-transform">
+  <div class="section-header">
+    <div class="section-icon str">🔄</div>
+    <div class="section-title">
+      <h2>③ <span class="str-col">变换</span></h2>
+      <p>Transforming — 大小写 · 替换 · 去空白 · 编码</p>
+    </div>
+    <div class="section-num">§ 3 · Str</div>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card str-card">
+      <div class="card-header">
+        <div class="card-method">大小写转换</div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">s</span> <span class="op">=</span> <span class="str">'hello World'</span>
+<span class="var">s</span>.<span class="fn">upper</span>()       <span class="ret"># 'HELLO WORLD'</span>
+<span class="var">s</span>.<span class="fn">lower</span>()       <span class="ret"># 'hello world'</span>
+<span class="var">s</span>.<span class="fn">title</span>()       <span class="ret"># 'Hello World'</span>
+<span class="var">s</span>.<span class="fn">capitalize</span>()  <span class="ret"># 'Hello world'</span>
+<span class="var">s</span>.<span class="fn">swapcase</span>()    <span class="ret"># 'HELLO wORLD'</span>
+<span class="var">s</span>.<span class="fn">casefold</span>()    <span class="ret"># 'hello world' 更激进</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card str-card">
+      <div class="card-header">
+        <div class="card-method"><span class="var">s</span><span class="op">.</span><span class="fn">replace</span><span class="dim">(old, new[, count])</span></div>
+        <span class="tag tag-new">新字符串</span>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">s</span> <span class="op">=</span> <span class="str">'aabbcc'</span>
+<span class="var">s</span>.<span class="fn">replace</span>(<span class="str">'b'</span>, <span class="str">'X'</span>)     <span class="ret"># 'aaXXcc'</span>
+<span class="var">s</span>.<span class="fn">replace</span>(<span class="str">'b'</span>, <span class="str">'X'</span>, <span class="num">1</span>)  <span class="ret"># 'aaXbcc'  最多替换1次</span>
+<span class="cm"># 删除子串</span>
+<span class="var">s</span>.<span class="fn">replace</span>(<span class="str">'b'</span>, <span class="str">''</span>)       <span class="ret"># 'aacc'</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card str-card">
+      <div class="card-header">
+        <div class="card-method">去除空白 &amp; 填充</div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="str">'  hi  '</span>.<span class="fn">strip</span>()      <span class="ret"># 'hi'  两端</span>
+<span class="str">'  hi  '</span>.<span class="fn">lstrip</span>()     <span class="ret"># 'hi  ' 左</span>
+<span class="str">'  hi  '</span>.<span class="fn">rstrip</span>()     <span class="ret"># '  hi' 右</span>
+<span class="str">'xxhixx'</span>.<span class="fn">strip</span>(<span class="str">'x'</span>)   <span class="ret"># 'hi'  指定字符</span>
+
+<span class="cm"># 填充对齐</span>
+<span class="str">'5'</span>.<span class="fn">zfill</span>(<span class="num">4</span>)          <span class="ret"># '0005'</span>
+<span class="str">'hi'</span>.<span class="fn">center</span>(<span class="num">10</span>,<span class="str">'-'</span>)   <span class="ret"># '----hi----'</span>
+<span class="str">'hi'</span>.<span class="fn">ljust</span>(<span class="num">8</span>,<span class="str">'.'</span>)     <span class="ret"># 'hi......'</span>
+<span class="str">'hi'</span>.<span class="fn">rjust</span>(<span class="num">8</span>,<span class="str">'.'</span>)     <span class="ret"># '......hi'</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card str-card">
+      <div class="card-header">
+        <div class="card-method">编解码 &amp; 翻译表</div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="cm"># 编码</span>
+<span class="str">'你好'</span>.<span class="fn">encode</span>(<span class="str">'utf-8'</span>)   <span class="ret"># b'\xe4\xbd\xa0\xe5\xa5\xbd'</span>
+<span class="str">b'\xe4\xbd\xa0'</span>.<span class="fn">decode</span>(<span class="str">'utf-8'</span>) <span class="ret"># '你'</span>
+
+<span class="cm"># 翻译表（批量替换字符）</span>
+<span class="var">tbl</span> <span class="op">=</span> <span class="fn">str</span>.<span class="fn">maketrans</span>(<span class="str">'aeiou'</span>,<span class="str">'12345'</span>)
+<span class="str">'hello'</span>.<span class="fn">translate</span>(<span class="var">tbl</span>)   <span class="ret"># 'h2ll4'</span>
+<span class="cm"># 删除字符</span>
+<span class="var">tbl2</span> <span class="op">=</span> <span class="fn">str</span>.<span class="fn">maketrans</span>(<span class="str">''</span>,<span class="str">''</span>,<span class="str">'aeiou'</span>)
+<span class="str">'hello'</span>.<span class="fn">translate</span>(<span class="var">tbl2</span>)  <span class="ret"># 'hll'</span></pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ④ 分割/拼接 -->
+<div class="section-block" id="str-split">
+  <div class="section-header">
+    <div class="section-icon str">✂️</div>
+    <div class="section-title">
+      <h2>④ <span class="str-col">分割</span> &amp; 拼接</h2>
+      <p>Splitting &amp; Joining — split · join · partition · lines</p>
+    </div>
+    <div class="section-num">§ 4 · Str</div>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card str-card">
+      <div class="card-header">
+        <div class="card-method"><span class="var">s</span><span class="op">.</span><span class="fn">split</span><span class="dim">(sep=None, maxsplit=-1)</span></div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="str">'a b  c'</span>.<span class="fn">split</span>()        <span class="ret"># ['a','b','c'] 按空白</span>
+<span class="str">'a,b,c'</span>.<span class="fn">split</span>(<span class="str">','</span>)      <span class="ret"># ['a','b','c']</span>
+<span class="str">'a,b,c'</span>.<span class="fn">split</span>(<span class="str">','</span>,<span class="num">1</span>)    <span class="ret"># ['a','b,c']  最多分1次</span>
+<span class="str">'a b'</span>.<span class="fn">rsplit</span>(<span class="str">' '</span>,<span class="num">1</span>)     <span class="ret"># ['a','b']  从右</span>
+<span class="str">'a\nb\nc'</span>.<span class="fn">splitlines</span>()  <span class="ret"># ['a','b','c']</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card str-card">
+      <div class="card-header">
+        <div class="card-method"><span class="var">sep</span><span class="op">.</span><span class="fn">join</span><span class="dim">(iterable)</span></div>
+        <span class="tag tag-new">高效拼接</span>
+      </div>
+      <div class="card-body">
+        <div class="card-desc">所有元素必须是字符串；比 <code>+</code> 循环快得多</div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="str">'-'</span>.<span class="fn">join</span>([<span class="str">'a'</span>,<span class="str">'b'</span>,<span class="str">'c'</span>])     <span class="ret"># 'a-b-c'</span>
+<span class="str">''</span>.<span class="fn">join</span>([<span class="str">'H'</span>,<span class="str">'i'</span>])           <span class="ret"># 'Hi'</span>
+<span class="str">'\n'</span>.<span class="fn">join</span>(<span class="var">lines</span>)              <span class="ret"># 多行拼接</span>
+<span class="str">', '</span>.<span class="fn">join</span>(<span class="fn">map</span>(str,[<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>]))  <span class="ret"># '1, 2, 3'</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card str-card">
+      <div class="card-header">
+        <div class="card-method"><span class="fn">partition</span> / <span class="fn">rpartition</span></div>
+      </div>
+      <div class="card-body">
+        <div class="card-desc">返回 3 元组 <code>(before, sep, after)</code>，sep 不存在则 after 为空</div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="str">'user@host.com'</span>.<span class="fn">partition</span>(<span class="str">'@'</span>)
+<span class="ret"># ('user', '@', 'host.com')</span>
+
+<span class="str">'user@host.com'</span>.<span class="fn">rpartition</span>(<span class="str">'.'</span>)
+<span class="ret"># ('user@host', '.', 'com')</span>
+
+<span class="cm"># 安全取文件扩展名</span>
+<span class="var">_</span>, <span class="var">_</span>, <span class="var">ext</span> <span class="op">=</span> <span class="str">'file.tar.gz'</span>.<span class="fn">rpartition</span>(<span class="str">'.'</span>)</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card str-card">
+      <div class="card-header">
+        <div class="card-method"><span class="fn">removeprefix</span> / <span class="fn">removesuffix</span></div>
+        <span class="tag tag-new">Python 3.9+</span>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="str">'test_func'</span>.<span class="fn">removeprefix</span>(<span class="str">'test_'</span>)  <span class="ret"># 'func'</span>
+<span class="str">'data.csv'</span>.<span class="fn">removesuffix</span>(<span class="str">'.csv'</span>)    <span class="ret"># 'data'</span>
+<span class="cm"># 前缀/后缀不存在时返回原字符串（不报错）</span>
+<span class="str">'hello'</span>.<span class="fn">removeprefix</span>(<span class="str">'xyz'</span>)       <span class="ret"># 'hello'</span></pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ⑤ 格式化 -->
+<div class="section-block" id="str-format">
+  <div class="section-header">
+    <div class="section-icon str">🎨</div>
+    <div class="section-title">
+      <h2>⑤ <span class="str-col">格式化</span></h2>
+      <p>Formatting — f-string · format() · % · Template</p>
+    </div>
+    <div class="section-num">§ 5 · Str</div>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card str-card">
+      <div class="card-header">
+        <div class="card-method">f-string（推荐）</div>
+        <span class="tag tag-new">Python 3.6+</span>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="var">name</span> <span class="op">=</span> <span class="str">'Alice'</span>; <span class="var">pi</span> <span class="op">=</span> <span class="num">3.14159</span>
+<span class="str">f'Hello, {name}!'</span>          <span class="ret"># 'Hello, Alice!'</span>
+<span class="str">f'{pi:.2f}'</span>                 <span class="ret"># '3.14'</span>
+<span class="str">f'{1000000:,}'</span>              <span class="ret"># '1,000,000'</span>
+<span class="str">f'{42:08b}'</span>                 <span class="ret"># '00101010' 二进制</span>
+<span class="str">f'{"hi":>10}'</span>               <span class="ret"># '        hi' 右对齐</span>
+<span class="str">f'{"hi":^10}'</span>               <span class="ret"># '    hi    ' 居中</span>
+<span class="str">f'{name!r}'</span>                 <span class="ret"># "'Alice'"  repr()</span>
+<span class="str">f'{name!s}'</span>                 <span class="ret"># 'Alice'   str()</span>
+<span class="cm"># Python 3.12+：自嵌套</span>
+<span class="str">f'{pi:{".4f"}}'</span>             <span class="ret"># '3.1416'</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card str-card">
+      <div class="card-header">
+        <div class="card-method"><span class="var">s</span><span class="op">.</span><span class="fn">format</span><span class="dim">(...)</span></div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="str">'{} + {} = {}'</span>.<span class="fn">format</span>(<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>)    <span class="ret"># '1 + 2 = 3'</span>
+<span class="str">'{0} {1} {0}'</span>.<span class="fn">format</span>(<span class="str">'a'</span>,<span class="str">'b'</span>)      <span class="ret"># 'a b a'</span>
+<span class="str">'{name}'</span>.<span class="fn">format</span>(name<span class="op">=</span><span class="str">'Bob'</span>)        <span class="ret"># 'Bob'</span>
+<span class="str">'{:.3f}'</span>.<span class="fn">format</span>(<span class="num">3.14159</span>)           <span class="ret"># '3.142'</span>
+<span class="str">'{:>8}'</span>.<span class="fn">format</span>(<span class="str">'hi'</span>)               <span class="ret"># '      hi'</span>
+
+<span class="cm"># format_map（传字典）</span>
+<span class="str">'{x} {y}'</span>.<span class="fn">format_map</span>({<span class="str">'x'</span>:<span class="num">1</span>,<span class="str">'y'</span>:<span class="num">2</span>}) <span class="ret"># '1 2'</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card str-card">
+      <div class="card-header">
+        <div class="card-method"><span class="op">%</span> 格式化（旧式）</div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="str">'%s is %d'</span> <span class="op">%</span> (<span class="str">'age'</span>, <span class="num">25</span>)    <span class="ret"># 'age is 25'</span>
+<span class="str">'%.2f'</span> <span class="op">%</span> <span class="num">3.14159</span>             <span class="ret"># '3.14'</span>
+<span class="str">'%05d'</span> <span class="op">%</span> <span class="num">42</span>                  <span class="ret"># '00042'</span>
+<span class="str">'%(name)s'</span> <span class="op">%</span> {<span class="str">'name'</span>:<span class="str">'Bob'</span>}  <span class="ret"># 'Bob'</span>
+<span class="cm"># 现代代码推荐用 f-string 代替</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card str-card">
+      <div class="card-header">
+        <div class="card-method">格式规范速查</div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="cm"># {value:[[fill]align][sign][#][0][width][,][.prec][type]}</span>
+<span class="str">f'{3.14:.2f}'</span>       <span class="ret"># '3.14'   浮点2位</span>
+<span class="str">f'{1000000:,}'</span>      <span class="ret"># '1,000,000'  千分位</span>
+<span class="str">f'{0.25:.0%}'</span>       <span class="ret"># '25%'   百分比</span>
+<span class="str">f'{255:#x}'</span>         <span class="ret"># '0xff'  十六进制</span>
+<span class="str">f'{255:#o}'</span>         <span class="ret"># '0o377' 八进制</span>
+<span class="str">f'{42:+}'</span>           <span class="ret"># '+42'   强制显示符号</span>
+<span class="str">f'{"abc":10}'</span>       <span class="ret"># 'abc       ' 宽度10</span></pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ⑥ 进阶 str -->
+<div class="section-block" id="str-advanced">
+  <div class="section-header">
+    <div class="section-icon str">🚀</div>
+    <div class="section-title">
+      <h2>⑥ <span class="str-col">进阶</span> &amp; 正则</h2>
+      <p>Advanced — re · textwrap · Template · 性能技巧</p>
+    </div>
+    <div class="section-num">§ 6 · Str</div>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card str-card">
+      <div class="card-header">
+        <div class="card-method">re 正则表达式</div>
+        <span class="tag tag-new">re 模块</span>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="kw">import</span> re
+<span class="var">s</span> <span class="op">=</span> <span class="str">'price: $12.5, tax: $1.5'</span>
+
+re.<span class="fn">search</span>(<span class="str">r'\d+'</span>, <span class="var">s</span>).<span class="fn">group</span>()  <span class="ret"># '12'  首次</span>
+re.<span class="fn">findall</span>(<span class="str">r'\d+\.?\d*'</span>, <span class="var">s</span>)   <span class="ret"># ['12.5','1.5']</span>
+re.<span class="fn">sub</span>(<span class="str">r'\$\d+\.?\d*'</span>,<span class="str">'X'</span>,<span class="var">s</span>)  <span class="ret"># 替换匹配</span>
+re.<span class="fn">split</span>(<span class="str">r'[,\s]+'</span>, <span class="var">s</span>)         <span class="ret"># 按正则分割</span>
+re.<span class="fn">match</span>(<span class="str">r'\w+'</span>, <span class="var">s</span>)            <span class="ret"># 只从开头匹配</span>
+<span class="cm"># 编译模式（复用时更快）</span>
+<span class="var">pat</span> <span class="op">=</span> re.<span class="fn">compile</span>(<span class="str">r'\d+'</span>)
+<span class="var">pat</span>.<span class="fn">findall</span>(<span class="var">s</span>)</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card str-card">
+      <div class="card-header">
+        <div class="card-method">textwrap &amp; Template</div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="kw">import</span> textwrap
+<span class="kw">from</span> string <span class="kw">import</span> <span class="cls">Template</span>
+
+textwrap.<span class="fn">wrap</span>(<span class="var">long_text</span>, width<span class="op">=</span><span class="num">40</span>)
+textwrap.<span class="fn">dedent</span>(<span class="var">indented</span>)         <span class="ret"># 去除公共缩进</span>
+textwrap.<span class="fn">indent</span>(<span class="var">text</span>, <span class="str">'    '</span>)    <span class="ret"># 添加缩进</span>
+textwrap.<span class="fn">shorten</span>(<span class="var">text</span>, <span class="num">20</span>)        <span class="ret"># 截短并加'...'</span>
+
+<span class="cm"># Template 安全替换（防注入）</span>
+<span class="var">t</span> <span class="op">=</span> <span class="cls">Template</span>(<span class="str">'$name is $age'</span>)
+<span class="var">t</span>.<span class="fn">substitute</span>(name<span class="op">=</span><span class="str">'Bob'</span>, age<span class="op">=</span><span class="num">25</span>)  <span class="ret"># 'Bob is 25'</span>
+<span class="var">t</span>.<span class="fn">safe_substitute</span>(name<span class="op">=</span><span class="str">'Bob'</span>)    <span class="ret"># 缺键不报错</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card str-card">
+      <div class="card-header">
+        <div class="card-method">字符串性能技巧</div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="cm"># ❌ 循环 + 拼慢（每次创建新对象）</span>
+<span class="var">s</span> <span class="op">=</span> <span class="str">''</span>
+<span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="var">lst</span>: <span class="var">s</span> <span class="op">+=</span> <span class="var">x</span>   <span class="ret"># O(n²)</span>
+
+<span class="cm"># ✓ join 一次拼接（推荐）</span>
+<span class="var">s</span> <span class="op">=</span> <span class="str">''</span>.<span class="fn">join</span>(<span class="var">lst</span>)          <span class="ret"># O(n)</span>
+
+<span class="cm"># ✓ io.StringIO 流式构建</span>
+<span class="kw">from</span> io <span class="kw">import</span> <span class="cls">StringIO</span>
+<span class="var">buf</span> <span class="op">=</span> <span class="cls">StringIO</span>()
+<span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="var">lst</span>: <span class="var">buf</span>.<span class="fn">write</span>(<span class="var">x</span>)
+<span class="var">result</span> <span class="op">=</span> <span class="var">buf</span>.<span class="fn">getvalue</span>()</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card str-card">
+      <div class="card-header">
+        <div class="card-method">实战技巧模板</div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<pre><span class="cm"># 回文判断</span>
+<span class="var">s</span> <span class="op">=</span> <span class="str">'racecar'</span>
+<span class="var">s</span> <span class="op">==</span> <span class="var">s</span>[::<span class="op">-</span><span class="num">1</span>]            <span class="ret"># True</span>
+
+<span class="cm"># 字谜判断（字母频率相同）</span>
+<span class="fn">sorted</span>(<span class="str">'listen'</span>) <span class="op">==</span> <span class="fn">sorted</span>(<span class="str">'silent'</span>)  <span class="ret"># True</span>
+
+<span class="cm"># 单词统计</span>
+<span class="fn">Counter</span>(<span class="var">text</span>.<span class="fn">lower</span>().<span class="fn">split</span>())
+
+<span class="cm"># 去除标点</span>
+<span class="var">clean</span> <span class="op">=</span> <span class="str">''</span>.<span class="fn">join</span>(<span class="var">c</span> <span class="kw">for</span> <span class="var">c</span> <span class="kw">in</span> <span class="var">text</span> <span class="kw">if</span> <span class="var">c</span>.<span class="fn">isalnum</span>() <span class="kw">or</span> <span class="var">c</span>.<span class="fn">isspace</span>())
+
+<span class="cm"># CSV 一行解析</span>
+<span class="var">row</span> <span class="op">=</span> <span class="fn">dict</span>(<span class="fn">zip</span>(<span class="var">headers</span>, <span class="var">line</span>.<span class="fn">strip</span>().<span class="fn">split</span>(<span class="str">','</span>)))</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ═══ FINAL 4-way comparison table ═══ -->
+<div class="section-block">
+  <div class="section-header">
+    <div class="section-icon" style="background:#1e293b;border:1.5px solid #475569;">📊</div>
+    <div class="section-title">
+      <h2>四大类型 — <span style="color:var(--accent)">完整对比表</span></h2>
+      <p>List · Dict · Tuple · Str 特性速查</p>
+    </div>
+  </div>
+  <table class="comp-table">
+    <thead>
+      <tr>
+        <th>特性 / 操作</th>
+        <th style="color:var(--list)">[ ] List</th>
+        <th style="color:var(--dict)">{ } Dict</th>
+        <th style="color:var(--tuple)">( ) Tuple</th>
+        <th style="color:var(--str)">" " Str</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>是否可变</td>
+        <td><span class="green">✓ 可变</span></td>
+        <td><span class="green">✓ 可变</span></td>
+        <td><span class="red">✗ 不可变</span></td>
+        <td><span class="red">✗ 不可变</span></td>
+      </tr>
+      <tr>
+        <td>是否有序</td>
+        <td><span class="green">✓ 有序</span></td>
+        <td><span class="green">✓ 插入序(3.7+)</span></td>
+        <td><span class="green">✓ 有序</span></td>
+        <td><span class="green">✓ 有序</span></td>
+      </tr>
+      <tr>
+        <td>是否可哈希</td>
+        <td><span class="red">✗</span></td>
+        <td><span class="red">✗</span></td>
+        <td><span class="green">✓ (元素都不可变时)</span></td>
+        <td><span class="green">✓</span></td>
+      </tr>
+      <tr>
+        <td>按位置访问</td>
+        <td><code>a[i]</code> <span class="green">O(1)</span></td>
+        <td>不支持</td>
+        <td><code>t[i]</code> <span class="green">O(1)</span></td>
+        <td><code>s[i]</code> <span class="green">O(1)</span></td>
+      </tr>
+      <tr>
+        <td>成员判断</td>
+        <td><code>x in list</code> <span class="red">O(n)</span></td>
+        <td><code>k in dict</code> <span class="green">O(1)</span></td>
+        <td><code>x in tuple</code> <span class="red">O(n)</span></td>
+        <td><code>s in str</code> <span class="red">O(n)</span></td>
+      </tr>
+      <tr>
+        <td>追加/新增</td>
+        <td><code>append</code> <span class="green">O(1)</span></td>
+        <td><code>d[k]=v</code> <span class="green">O(1)</span></td>
+        <td>需重建新元组</td>
+        <td>需重建新字符串</td>
+      </tr>
+      <tr>
+        <td>排序</td>
+        <td><code>sort()</code> 原地</td>
+        <td>转 items() 再排序</td>
+        <td><code>sorted()</code> 返回 list</td>
+        <td><code>sorted()</code> 返回 list</td>
+      </tr>
+      <tr>
+        <td>拼接</td>
+        <td><code>+</code> / <code>extend</code></td>
+        <td><code>update</code> / <code>|</code></td>
+        <td><code>+</code> 返回新元组</td>
+        <td><code>+</code> / <code>join</code></td>
+      </tr>
+      <tr>
+        <td>典型用途</td>
+        <td>动态序列、栈、队列</td>
+        <td>键值映射、计数、分组</td>
+        <td>固定记录、函数返回值、字典键</td>
+        <td>文本处理、格式化输出</td>
+      </tr>
+      <tr>
+        <td>内存</td>
+        <td>中（动态数组）</td>
+        <td>大（哈希表）</td>
+        <td>小（固定）</td>
+        <td>小（字符数组）</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</div><!-- /container str -->
+
+<div class="footer">
+  Python List · Dict · Tuple · Str 语法完全手册 &nbsp;·&nbsp; Python 3.8+ &nbsp;·&nbsp;
+  <code>list · dict · tuple · str · defaultdict · Counter · namedtuple · re · itertools · textwrap</code>
+</div>
+
+<script>
+function copyCode(btn) {
+  const block = btn.closest('.code-block');
+  const pre = block.querySelector('pre');
+  const text = pre.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ OK';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'COPY'; btn.classList.remove('copied'); }, 1500);
+  });
+}
+
+// Animate cards on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      e.target.style.animationDelay = (i * 0.05) + 's';
+      e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.card').forEach(c => observer.observe(c));
+</script>
+</body>
+</html>
