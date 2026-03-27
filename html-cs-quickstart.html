@@ -392,6 +392,17 @@
   .quiz-opt.correct { border-color: var(--accent3); color: var(--accent3); background: rgba(158,206,106,.08); }
   .quiz-opt.wrong { border-color: var(--accent4); color: var(--accent4); background: rgba(247,118,142,.08); }
   .quiz-explain { margin-top: 8px; font-size: 11px; color: var(--muted); font-family: 'JetBrains Mono', monospace; display: none; }
+
+  /* ── Bionic Reading ── */
+  b.br {
+    font-weight: 700;
+    color: var(--bright);        /* pop the bold prefix brighter */
+    font-style: inherit;
+  }
+  /* In callouts the base text is already lighter, so keep the bright pop */
+  .callout b.br { color: var(--bright); }
+  /* card-desc is muted, make the bold prefix match text color */
+  .card-desc b.br { color: var(--text); }
 </style>
 </head>
 <body>
@@ -1059,6 +1070,82 @@
     let cur = '';
     sections.forEach(s => { if (window.scrollY >= s.offsetTop - 80) cur = s.id; });
     navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + cur));
+  });
+
+  // ── Bionic Reading ──────────────────────────────────────────────
+  // How many letters to bold per word length:
+  function bionicLen(wordLen) {
+    if (wordLen <= 1) return 1;
+    if (wordLen <= 3) return 1;
+    if (wordLen <= 5) return 2;
+    if (wordLen <= 8) return 3;
+    if (wordLen <= 12) return 4;
+    return Math.ceil(wordLen * 0.4);
+  }
+
+  // Wrap the first N chars of a word in <b class="br">
+  function bionicWord(word) {
+    // Keep leading/trailing punctuation untouched
+    const m = word.match(/^([^a-zA-Z]*)([a-zA-Z][a-zA-Z'-]*)([^a-zA-Z]*)$/);
+    if (!m) return word; // no alphabetic content — skip
+    const [, pre, core, post] = m;
+    const n = bionicLen(core.length);
+    return pre + '<b class="br">' + core.slice(0, n) + '</b>' + core.slice(n) + post;
+  }
+
+  // Process a text node: split on spaces, bionic each word, re-join
+  function bionicTextNode(textNode) {
+    const text = textNode.nodeValue;
+    if (!text.trim()) return; // skip whitespace-only nodes
+
+    // Split preserving whitespace tokens
+    const tokens = text.split(/(\s+)/);
+    const html = tokens.map(t => /^\s+$/.test(t) ? t : bionicWord(t)).join('');
+
+    // Replace text node with processed HTML
+    const span = document.createElement('span');
+    span.innerHTML = html;
+    textNode.parentNode.replaceChild(span, textNode);
+  }
+
+  // Walk all text nodes inside a root element, skipping certain tags
+  const SKIP_TAGS = new Set(['SCRIPT','STYLE','CODE','PRE','KBD','SAMP','VAR','B','STRONG','EM','BUTTON','SPAN']);
+
+  function walkAndBionic(root) {
+    const walker = document.createTreeWalker(
+      root,
+      NodeFilter.SHOW_TEXT,
+      {
+        acceptNode(node) {
+          let p = node.parentElement;
+          while (p && p !== root) {
+            if (SKIP_TAGS.has(p.tagName)) return NodeFilter.FILTER_REJECT;
+            p = p.parentElement;
+          }
+          return node.nodeValue.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+        }
+      }
+    );
+    const nodes = [];
+    let n;
+    while ((n = walker.nextNode())) nodes.push(n);
+    nodes.forEach(bionicTextNode);
+  }
+
+  // Targets: prose paragraphs, callout text, card descriptions, table cells, list items
+  // Exclude: code blocks, nav, monitor panel, quiz options/explanations, h1/h2/h3
+  const BIONIC_SELECTORS = [
+    'main section p',
+    'main section li',
+    '.callout',
+    '.card-desc',
+    'main section td',
+  ];
+
+  document.addEventListener('DOMContentLoaded', () => {
+    BIONIC_SELECTORS.forEach(sel => {
+      document.querySelectorAll(sel).forEach(el => walkAndBionic(el));
+    });
   });
 </script>
 </body>
