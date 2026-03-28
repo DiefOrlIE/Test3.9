@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Bionic Reader</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── Design tokens ─────────────────────────── */
+    :root {
+      --ink:          #1c1814;
+      --ink2:         #6b6056;
+      --paper:        #f2ede4;
+      --cream:        #e8e2d6;
+      --panel-bg:     #1e1c1a;
+      --panel-border: #333028;
+      --accent:       #c0622a;
+      --r:            6px;
+
+      --reader-bg:      #ffffff;
+      --reader-ink:     #1c1814;
+      --reader-line-h:  1.8;
+      --reader-font:    'Lora', Georgia, serif;
+      --reader-size:    16px;
+      --reader-max-w:   680px;
+      --bold-opacity:   1;
+      --bold-col:       #1c1814;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--paper);
+      font-family: 'Source Sans 3', Georgia, sans-serif;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      grid-template-rows: 52px 1fr;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── Top bar ────────────────────────────────── */
+    .topbar {
+      grid-column: 1 / -1;
+      background: var(--panel-bg);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 0;
+      border-bottom: 1px solid var(--panel-border);
+      overflow: hidden;
+    }
+    .logo {
+      font-family: 'Lora', serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: #f0ebe0;
+      letter-spacing: -.01em;
+      flex-shrink: 0;
+      margin-right: 20px;
+    }
+    .logo em { color: var(--accent); font-style: normal; }
+
+    /* Mode tabs in topbar */
+    .mode-tabs {
+      display: flex;
+      height: 100%;
+      gap: 0;
+      margin-right: 16px;
+    }
+    .mode-tab {
+      display: flex; align-items: center; gap: 6px;
+      padding: 0 18px;
+      font-size: 12px;
+      color: #665e52;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      border-bottom: 2px solid transparent;
+      transition: color .15s, border-color .15s;
+      font-family: 'Source Sans 3', sans-serif;
+      white-space: nowrap;
+    }
+    .mode-tab:hover { color: #c8c0b0; }
+    .mode-tab.active { color: #f0ebe0; border-bottom-color: var(--accent); }
+    .mode-tab .tab-icon { font-size: 14px; }
+
+    .topbar-file {
+      font-size: 12px;
+      color: #888070;
+      font-style: italic;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: none; border-radius: var(--r);
+      padding: 6px 14px; font-size: 12px;
+      font-family: 'Source Sans 3', sans-serif;
+      cursor: pointer; transition: opacity .15s, transform .1s;
+      flex-shrink: 0; margin-left: 8px;
+    }
+    .btn:active { transform: scale(.97); }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-ghost   { background: transparent; color: #aaa098; border: 1px solid #3a3830; }
+    .btn:not(:disabled):hover { opacity: .82; }
+    .btn:disabled { opacity: .35; cursor: not-allowed; }
+
+    /* ── Left panel ─────────────────────────────── */
+    .panel {
+      background: var(--panel-bg);
+      border-right: 1px solid var(--panel-border);
+      overflow-y: auto;
+      padding: 0 0 40px;
+    }
+    .panel::-webkit-scrollbar { width: 4px; }
+    .panel::-webkit-scrollbar-thumb { background: #3a3830; border-radius: 2px; }
+
+    .panel-section { border-bottom: 1px solid var(--panel-border); padding: 16px 20px; }
+    .panel-section-title {
+      font-size: 9.5px; letter-spacing: .12em;
+      text-transform: uppercase; color: #665e52;
+      font-weight: 600; margin-bottom: 14px;
+    }
+
+    .ctrl-row {
+      display: flex; align-items: center;
+      justify-content: space-between; margin-bottom: 12px;
+    }
+    .ctrl-row:last-child { margin-bottom: 0; }
+    .ctrl-label { font-size: 13px; color: #c8c0b0; flex: 1; }
+    .ctrl-label small { display: block; font-size: 10px; color: #665e52; margin-top: 1px; }
+    .ctrl-val {
+      font-size: 12px; font-family: 'Courier New', monospace;
+      color: var(--accent); min-width: 34px; text-align: right;
+    }
+    input[type=range] { width: 100%; accent-color: var(--accent); margin-top: 6px; height: 3px; }
+    .ctrl-full { width: 100%; margin-bottom: 12px; }
+    .ctrl-full:last-child { margin-bottom: 0; }
+
+    .toggle-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .toggle-wrap:last-child { margin-bottom: 0; }
+    .toggle-label { font-size: 13px; color: #c8c0b0; flex: 1; }
+    .toggle-label small { display: block; font-size: 10px; color: #665e52; }
+    .toggle { position: relative; width: 36px; height: 20px; flex-shrink: 0; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-track {
+      position: absolute; inset: 0; border-radius: 20px;
+      background: #333028; transition: background .2s; cursor: pointer;
+    }
+    .toggle input:checked + .toggle-track { background: var(--accent); }
+    .toggle-track::after {
+      content: ''; position: absolute; left: 3px; top: 3px;
+      width: 14px; height: 14px; border-radius: 50%; background: #fff;
+      transition: transform .2s;
+    }
+    .toggle input:checked + .toggle-track::after { transform: translateX(16px); }
+
+    .chip-group { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+    .chip {
+      padding: 4px 10px; border-radius: 20px; font-size: 11px;
+      border: 1px solid #3a3830; cursor: pointer; color: #9a9080;
+      background: transparent; transition: all .15s;
+    }
+    .chip.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+    .chip:hover:not(.active) { border-color: #665e52; color: #c8c0b0; }
+
+    .swatch-group { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+    .swatch {
+      width: 28px; height: 28px; border-radius: 50%;
+      border: 2px solid transparent; cursor: pointer;
+      transition: transform .15s, border-color .15s;
+    }
+    .swatch:hover { transform: scale(1.1); }
+    .swatch.active { border-color: var(--accent); transform: scale(1.12); }
+
+    .gradient-preview { height: 6px; border-radius: 3px; margin-top: 8px; transition: background .3s; }
+
+    /* ── Main area ──────────────────────────────── */
+    .main {
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Shared screen slots */
+    .screen {
+      display: none;
+      flex: 1;
+      overflow-y: auto;
+      flex-direction: column;
+    }
+    .screen.active { display: flex; }
+
+    /* ── PDF screen ─────────────────────────────── */
+    #drop-zone {
+      flex: 1;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 40px; cursor: pointer;
+    }
+    #drop-zone.drag-over { background: #f0ede8; }
+    .drop-icon { font-size: 48px; margin-bottom: 16px; }
+    #drop-zone h2 {
+      font-family: 'Lora', serif; font-size: 20px; font-weight: 700;
+      color: var(--ink); margin-bottom: 8px;
+    }
+    #drop-zone p { font-size: 13px; color: var(--ink2); line-height: 1.7; }
+    .choose-link { color: var(--accent); text-decoration: underline; cursor: pointer; }
+    #file-input { display: none; }
+
+    #progress-wrap {
+      flex: 1; display: none; flex-direction: column;
+      align-items: center; justify-content: center; gap: 14px; padding: 40px;
+    }
+    .progress-label { font-size: 14px; color: var(--ink2); font-style: italic; }
+    .progress-bar-outer { width: 300px; height: 3px; background: var(--cream); border-radius: 2px; overflow: hidden; }
+    .progress-bar-inner { height: 100%; background: var(--accent); border-radius: 2px; transition: width .3s; width: 0%; }
+
+    #reader-wrap {
+      display: none; padding: 40px 32px 80px; overflow-y: auto;
+    }
+
+    /* ── Markdown screen ────────────────────────── */
+    #md-screen {
+      padding: 0;
+      flex-direction: row;
+      overflow: hidden;
+    }
+
+    /* Split: left = textarea, right = preview */
+    .md-pane {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .md-pane-header {
+      background: var(--cream);
+      border-bottom: 1px solid #d4cdc2;
+      padding: 8px 16px;
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: #8a8070;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .md-pane-header .pane-actions { display: flex; gap: 8px; }
+    .pane-btn {
+      font-size: 11px; color: var(--accent); background: none;
+      border: none; cursor: pointer; padding: 2px 4px;
+      font-family: 'Source Sans 3', sans-serif;
+      text-decoration: underline; text-underline-offset: 2px;
+    }
+    .pane-btn:hover { opacity: .7; }
+
+    #md-input {
+      flex: 1;
+      resize: none;
+      border: none;
+      outline: none;
+      padding: 24px 28px;
+      font-family: 'Courier New', 'Consolas', monospace;
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--ink);
+      background: #faf8f4;
+      overflow-y: auto;
+      tab-size: 2;
+    }
+    #md-input::placeholder { color: #c0b8ac; }
+    #md-input::-webkit-scrollbar { width: 4px; }
+    #md-input::-webkit-scrollbar-thumb { background: #d4cdc2; border-radius: 2px; }
+
+    .md-divider {
+      width: 1px;
+      background: #d4cdc2;
+      flex-shrink: 0;
+    }
+
+    #md-preview {
+      flex: 1;
+      overflow-y: auto;
+      padding: 32px 44px 60px;
+      background: var(--reader-bg);
+      font-family: var(--reader-font);
+      font-size: var(--reader-size);
+      line-height: var(--reader-line-h);
+      color: var(--reader-ink);
+      transition: background .25s, color .25s;
+    }
+    #md-preview::-webkit-scrollbar { width: 4px; }
+    #md-preview::-webkit-scrollbar-thumb { background: #d4cdc2; border-radius: 2px; }
+
+    /* Markdown element styles inside preview */
+    #md-preview b { font-weight: 800; opacity: var(--bold-opacity); color: var(--bold-col); }
+
+    #md-preview .md-h1 {
+      font-size: 1.9em; font-weight: 700; margin: .1em 0 .5em;
+      line-height: 1.2; letter-spacing: -.02em;
+      border-bottom: 2px solid currentColor; padding-bottom: .2em;
+      opacity: .95;
+    }
+    #md-preview .md-h2 {
+      font-size: 1.4em; font-weight: 700; margin: 1.2em 0 .4em;
+      line-height: 1.25; opacity: .9;
+    }
+    #md-preview .md-h3 {
+      font-size: 1.15em; font-weight: 700; margin: 1em 0 .35em;
+      line-height: 1.3; opacity: .85;
+    }
+    #md-preview .md-h4 {
+      font-size: 1em; font-weight: 700; margin: .8em 0 .3em;
+      text-transform: uppercase; letter-spacing: .06em; opacity: .75;
+    }
+    #md-preview .md-p {
+      margin: 0 0 .9em;
+    }
+    #md-preview .md-p:last-child { margin-bottom: 0; }
+    #md-preview .md-ul, #md-preview .md-ol {
+      margin: 0 0 .9em 1.4em; padding: 0;
+    }
+    #md-preview .md-li { margin: .25em 0; }
+    #md-preview .md-blockquote {
+      border-left: 3px solid var(--accent);
+      margin: 1em 0; padding: .4em 1em;
+      opacity: .8; font-style: italic;
+      background: rgba(0,0,0,.025);
+      border-radius: 0 4px 4px 0;
+    }
+    #md-preview .md-code-block {
+      font-family: 'Courier New', monospace;
+      font-size: .82em; font-style: normal;
+      background: rgba(0,0,0,.06);
+      border: 1px solid rgba(0,0,0,.1);
+      border-radius: 4px;
+      padding: .8em 1.1em; margin: .8em 0;
+      overflow-x: auto; white-space: pre;
+      display: block; line-height: 1.55;
+    }
+    #md-preview .md-inline-code {
+      font-family: 'Courier New', monospace;
+      font-size: .82em; font-style: normal;
+      background: rgba(0,0,0,.07);
+      border-radius: 3px; padding: .1em .35em;
+    }
+    #md-preview .md-hr {
+      border: none; border-top: 1px solid rgba(0,0,0,.15);
+      margin: 1.5em 0;
+    }
+    #md-preview .md-strong { font-weight: 800; }
+    #md-preview .md-em { font-style: italic; }
+
+    /* Viewer (PDF output) shared styles */
+    #viewer { max-width: var(--reader-max-w); margin: 0 auto; }
+    .page-card {
+      background: var(--reader-bg); border-radius: 4px;
+      box-shadow: 0 2px 24px #0001; margin-bottom: 28px; overflow: hidden;
+    }
+    .page-label {
+      padding: 6px 20px; font-size: 10px; font-family: 'Courier New', monospace;
+      color: #b0a898; letter-spacing: .08em; text-transform: uppercase;
+      border-bottom: 1px solid rgba(0,0,0,.05);
+    }
+    .text-layer {
+      padding: 32px 44px;
+      font-family: var(--reader-font); font-size: var(--reader-size);
+      line-height: var(--reader-line-h); color: var(--reader-ink);
+      white-space: pre-wrap; word-break: break-word; transition: all .25s;
+    }
+    .text-layer b { font-weight: 800; opacity: var(--bold-opacity); color: var(--bold-col); }
+
+    /* Empty state for preview */
+    .preview-empty {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      height: 100%; color: #c0b8ac;
+      font-style: italic; font-size: 14px; gap: 8px;
+      pointer-events: none;
+    }
+    .preview-empty .empty-icon { font-size: 36px; }
+
+    @media (max-width: 860px) {
+      body { grid-template-columns: 260px 1fr; }
+      #md-preview { padding: 20px 20px 40px; }
+      #md-input { padding: 16px; }
+    }
+    @media (max-width: 640px) {
+      body { grid-template-columns: 1fr; grid-template-rows: 52px 280px 1fr; height: auto; overflow: auto; }
+      .panel { grid-column: 1; max-height: 280px; }
+      .main  { grid-column: 1; height: calc(100vh - 332px); }
+      #md-screen { flex-direction: column; }
+      .md-divider { width: auto; height: 1px; }
+    }
+    @media print {
+      .topbar, .panel { display: none; }
+      body { display: block; grid-template-columns: 1fr; }
+      .main { overflow: visible; height: auto; }
+      #reader-wrap, #md-preview { overflow: visible; }
+      .page-card { box-shadow: none; page-break-after: always; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Top bar ──────────────────────────────────────── -->
+<header class="topbar">
+  <div class="logo"><em>Bio</em>nic</div>
+
+  <div class="mode-tabs">
+    <button class="mode-tab active" id="tab-pdf" data-mode="pdf">
+      <span class="tab-icon">📄</span> PDF
+    </button>
+    <button class="mode-tab" id="tab-md" data-mode="md">
+      <span class="tab-icon">✏️</span> Markdown / Text
+    </button>
+  </div>
+
+  <span class="topbar-file" id="topbar-file">No file loaded</span>
+  <button class="btn btn-ghost" id="reset-btn" disabled>↩ Reset</button>
+  <button class="btn btn-primary" id="download-btn" disabled>↓ Save HTML</button>
+</header>
+
+<!-- ── Left panel ───────────────────────────────────── -->
+<aside class="panel">
+
+  <div class="panel-section">
+    <div class="panel-section-title">Bionic Fixation</div>
+    <div class="ctrl-row">
+      <div class="ctrl-label">Fixation strength<small>First N% of each word bolded</small></div>
+      <span class="ctrl-val" id="fix-val">50%</span>
+    </div>
+    <div class="ctrl-full"><input type="range" id="fix-slider" min="20" max="80" value="50" step="5"></div>
+    <div class="ctrl-row">
+      <div class="ctrl-label">Bold opacity<small>Softer = less visually harsh</small></div>
+      <span class="ctrl-val" id="opacity-val">100%</span>
+    </div>
+    <div class="ctrl-full"><input type="range" id="opacity-slider" min="30" max="100" value="100" step="5"></div>
+  </div>
+
+  <div class="panel-section">
+    <div class="panel-section-title">BeeLine Color Gradient</div>
+    <div class="toggle-wrap">
+      <div class="toggle-label">Enable gradient<small>Alternating line colors aid tracking</small></div>
+      <label class="toggle"><input type="checkbox" id="beeline-toggle"><div class="toggle-track"></div></label>
+    </div>
+    <div id="beeline-opts" style="opacity:.35;pointer-events:none;transition:opacity .2s">
+      <div class="ctrl-label" style="margin-bottom:6px;font-size:12px">Color scheme</div>
+      <div class="chip-group" id="beeline-scheme">
+        <button class="chip active" data-scheme="bright">Bright</button>
+        <button class="chip" data-scheme="ocean">Ocean</button>
+        <button class="chip" data-scheme="forest">Forest</button>
+        <button class="chip" data-scheme="warm">Warm</button>
+        <button class="chip" data-scheme="mono">Mono</button>
+      </div>
+      <div class="gradient-preview" id="gradient-preview"></div>
+    </div>
+  </div>
+
+  <div class="panel-section">
+    <div class="panel-section-title">Typography</div>
+    <div class="ctrl-label" style="margin-bottom:6px">Font</div>
+    <div class="chip-group" id="font-chips" style="margin-bottom:14px">
+      <button class="chip active" data-font="lora">Lora</button>
+      <button class="chip" data-font="source">Sans</button>
+      <button class="chip" data-font="dyslexic">OpenDyslexic</button>
+    </div>
+    <div class="ctrl-row">
+      <div class="ctrl-label">Font size</div>
+      <span class="ctrl-val" id="size-val">16px</span>
+    </div>
+    <div class="ctrl-full"><input type="range" id="size-slider" min="13" max="24" value="16" step="1"></div>
+    <div class="ctrl-row">
+      <div class="ctrl-label">Line spacing<small>Wider lines reduce eye fatigue</small></div>
+      <span class="ctrl-val" id="lh-val">1.8×</span>
+    </div>
+    <div class="ctrl-full"><input type="range" id="lh-slider" min="14" max="30" value="18" step="1"></div>
+  </div>
+
+  <div class="panel-section">
+    <div class="panel-section-title">Layout</div>
+    <div class="ctrl-label" style="margin-bottom:6px">Column width</div>
+    <div class="chip-group" id="width-chips">
+      <button class="chip" data-width="480">Narrow</button>
+      <button class="chip active" data-width="680">Normal</button>
+      <button class="chip" data-width="860">Wide</button>
+      <button class="chip" data-width="100%">Full</button>
+    </div>
+  </div>
+
+  <div class="panel-section">
+    <div class="panel-section-title">Background & Color</div>
+    <div class="ctrl-label" style="margin-bottom:6px">Paper tone</div>
+    <div class="swatch-group" id="bg-swatches">
+      <div class="swatch active" data-bg="#ffffff" data-ink="#1c1814" style="background:#fff;border-color:#ddd" title="White"></div>
+      <div class="swatch" data-bg="#fdf6e3" data-ink="#2d2520" style="background:#fdf6e3" title="Sepia"></div>
+      <div class="swatch" data-bg="#f0ede4" data-ink="#1c1814" style="background:#f0ede4" title="Cream"></div>
+      <div class="swatch" data-bg="#e8f0e8" data-ink="#1a2a1a" style="background:#e8f0e8" title="Mint"></div>
+      <div class="swatch" data-bg="#1e1c1a" data-ink="#d8d0c4" style="background:#1e1c1a" title="Dark"></div>
+      <div class="swatch" data-bg="#0d1117" data-ink="#c9d1d9" style="background:#0d1117" title="Night"></div>
+    </div>
+  </div>
+
+</aside>
+
+<!-- ── Main content ──────────────────────────────────── -->
+<main class="main">
+
+  <!-- ── PDF screen ─────────────────────────────────── -->
+  <div class="screen active" id="pdf-screen">
+
+    <div id="drop-zone">
+      <div class="drop-icon">📄</div>
+      <h2>Drop your PDF here</h2>
+      <p>or <span class="choose-link" id="choose-link">browse to choose a file</span><br>
+      Processed entirely in your browser — nothing is uploaded.</p>
+      <input type="file" id="file-input" accept="application/pdf">
+    </div>
+
+    <div id="progress-wrap">
+      <div class="progress-label" id="progress-label">Reading PDF…</div>
+      <div class="progress-bar-outer"><div class="progress-bar-inner" id="progress-bar"></div></div>
+    </div>
+
+    <div id="reader-wrap">
+      <div id="viewer"></div>
+    </div>
+
+  </div>
+
+  <!-- ── Markdown / Text screen ─────────────────────── -->
+  <div class="screen" id="md-screen">
+
+    <div class="md-pane">
+      <div class="md-pane-header">
+        <span>Input — Markdown or plain text</span>
+        <div class="pane-actions">
+          <button class="pane-btn" id="load-sample">Load sample</button>
+          <button class="pane-btn" id="clear-input">Clear</button>
+        </div>
+      </div>
+      <textarea id="md-input" spellcheck="false"
+        placeholder="# Paste your text here&#10;&#10;Supports **Markdown** formatting:&#10;- Headings (# ## ###)&#10;- **bold**, *italic*, `code`&#10;- Lists, blockquotes, code blocks&#10;&#10;Or just paste plain text — it works too."></textarea>
+    </div>
+
+    <div class="md-divider"></div>
+
+    <div class="md-pane">
+      <div class="md-pane-header">
+        <span>Bionic Preview</span>
+        <div class="pane-actions">
+          <button class="pane-btn" id="md-download-btn">↓ Save HTML</button>
+        </div>
+      </div>
+      <div id="md-preview">
+        <div class="preview-empty">
+          <span class="empty-icon">👁</span>
+          Type or paste text on the left to see bionic preview
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+<!-- ── Script ─────────────────────────────────────────── -->
+<script type="module">
+import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.min.mjs';
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.worker.min.mjs';
+
+// ── BeeLine schemes ───────────────────────────────────────
+const BL_SCHEMES = {
+  bright: { a: '#c8201a', b: '#1a48c0' },
+  ocean:  { a: '#0077b6', b: '#00b4d8' },
+  forest: { a: '#2d6a4f', b: '#52b788' },
+  warm:   { a: '#9b2226', b: '#ae2012' },
+  mono:   { a: '#444',   b: '#999' },
+};
+
+// ── State ─────────────────────────────────────────────────
+let pagesData = [], pdfFileName = '';
+let currentMode = 'pdf';   // 'pdf' | 'md'
+let settings = {
+  fixation: 0.5, opacity: 1.0, beeline: false, blScheme: 'bright',
+  font: 'lora', fontSize: 16, lineHeight: 1.8,
+  maxWidth: '680px', bg: '#ffffff', ink: '#1c1814',
+};
+
+// ── Dyslexic font loader ──────────────────────────────────
+const dyslexicStyle = document.createElement('style');
+dyslexicStyle.textContent = `@import url('https://fonts.cdnfonts.com/css/opendyslexic');`;
+
+// ── DOM refs ──────────────────────────────────────────────
+const dropZone     = document.getElementById('drop-zone');
+const fileInput    = document.getElementById('file-input');
+const chooseLink   = document.getElementById('choose-link');
+const progressWrap = document.getElementById('progress-wrap');
+const progressLbl  = document.getElementById('progress-label');
+const progressBar  = document.getElementById('progress-bar');
+const readerWrap   = document.getElementById('reader-wrap');
+const viewer       = document.getElementById('viewer');
+const topbarFile   = document.getElementById('topbar-file');
+const downloadBtn  = document.getElementById('download-btn');
+const resetBtn     = document.getElementById('reset-btn');
+const mdInput      = document.getElementById('md-input');
+const mdPreview    = document.getElementById('md-preview');
+const mdDownload   = document.getElementById('md-download-btn');
+
+// ── Helpers ───────────────────────────────────────────────
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Bionic core ───────────────────────────────────────────
+function bionicWord(word, fix) {
+  const m = word.match(/^([^A-Za-z]*)([A-Za-z][A-Za-z']*)([^A-Za-z]*)$/);
+  if (!m) return escHtml(word);
+  const [, pre, core, suf] = m;
+  const n = Math.max(1, Math.round(core.length * fix));
+  return escHtml(pre) + `<b>${escHtml(core.slice(0,n))}</b>${escHtml(core.slice(n))}` + escHtml(suf);
+}
+
+// Apply bionic to a plain string, preserving whitespace
+function bionicText(text, fix) {
+  return text.split(/(\s+)/).map(tok =>
+    /^\s+$/.test(tok) ? escHtml(tok) : bionicWord(tok, fix)
+  ).join('');
+}
+
+// Apply bionic to already-HTML content (bold tags from markdown)
+// We only bionic text nodes, not tags
+function bionicHtmlContent(html, fix) {
+  // Parse text runs between HTML tags and bionic each word
+  return html.replace(/(<[^>]+>)|([^<]+)/g, (_, tag, text) => {
+    if (tag) return tag;
+    return bionicText(text, fix);
+  });
+}
+
+// ── PDF page rendering ────────────────────────────────────
+function buildPageHtml(pageText, fix, useBeeline, scheme) {
+  const lines = pageText.split('\n');
+  const { a, b } = BL_SCHEMES[scheme] || BL_SCHEMES.bright;
+  let html = ''; let li = 0;
+  for (const line of lines) {
+    if (line.trim() === '') { html += '<br>'; continue; }
+    const bionic = bionicText(line, fix);
+    if (useBeeline) {
+      html += `<span style="display:block;color:${li%2===0?a:b}">${bionic}</span>`;
+      li++;
+    } else {
+      html += `<span style="display:block">${bionic}</span>`;
+    }
+  }
+  return html;
+}
+
+// ── Markdown parser ───────────────────────────────────────
+// A focused, zero-dependency parser for the subset that matters for documents.
+function parseMarkdown(raw) {
+  const lines = raw.replace(/\r\n/g, '\n').split('\n');
+  const out = [];
+  let i = 0;
+
+  // Inline formatting (applied AFTER bionic, so we escape then re-parse)
+  function inlineFormat(text) {
+    // We apply bionic first on plain text, then wrap inline formatting.
+    // Strategy: tokenize by inline markers, bionic the plain parts.
+    let result = '';
+    // Process inline code first (must not be bionicced)
+    const segments = text.split(/(`[^`]+`)/g);
+    for (const seg of segments) {
+      if (seg.startsWith('`') && seg.endsWith('`') && seg.length > 2) {
+        result += `<span class="md-inline-code">${escHtml(seg.slice(1,-1))}</span>`;
+      } else {
+        // Bold+italic ***  **  *  _
+        let s = seg;
+        // ***bold italic***
+        s = s.replace(/\*\*\*(.+?)\*\*\*/g, (_, t) =>
+          `<span class="md-strong md-em">${bionicText(t, settings.fixation)}</span>`);
+        // **bold**
+        s = s.replace(/\*\*(.+?)\*\*/g, (_, t) =>
+          `<span class="md-strong">${bionicText(t, settings.fixation)}</span>`);
+        // *italic* or _italic_
+        s = s.replace(/\*([^*]+)\*|_([^_]+)_/g, (_, a, b2) =>
+          `<span class="md-em">${bionicText(a||b2, settings.fixation)}</span>`);
+        // Remaining plain text → bionic
+        s = bionicHtmlContent(s, settings.fixation);
+        result += s;
+      }
+    }
+    return result;
+  }
+
+  // BeeLine wrapper for a rendered HTML paragraph line
+  let blLineIdx = 0;
+  function blWrap(html, isBlock = false) {
+    if (!settings.beeline) return html;
+    const { a, b } = BL_SCHEMES[settings.blScheme];
+    const color = blLineIdx++ % 2 === 0 ? a : b;
+    return isBlock
+      ? `<span style="display:block;color:${color}">${html}</span>`
+      : `<span style="color:${color}">${html}</span>`;
+  }
+
+  while (i < lines.length) {
+    const line = lines[i];
+
+    // ── Fenced code block ────────────────────────
+    if (/^```/.test(line)) {
+      const lang = line.slice(3).trim();
+      const codeLines = [];
+      i++;
+      while (i < lines.length && !/^```/.test(lines[i])) {
+        codeLines.push(escHtml(lines[i]));
+        i++;
+      }
+      out.push(`<code class="md-code-block">${codeLines.join('\n')}</code>`);
+      i++;
+      continue;
+    }
+
+    // ── Horizontal rule ──────────────────────────
+    if (/^(\*\*\*|---|___)\s*$/.test(line)) {
+      out.push('<hr class="md-hr">');
+      i++; continue;
+    }
+
+    // ── Heading ──────────────────────────────────
+    const hm = line.match(/^(#{1,4})\s+(.+)/);
+    if (hm) {
+      const level = hm[1].length;
+      const text  = inlineFormat(hm[2]);
+      out.push(`<div class="md-h${level}">${text}</div>`);
+      i++; continue;
+    }
+
+    // ── Blockquote ───────────────────────────────
+    if (/^>\s?/.test(line)) {
+      const bqLines = [];
+      while (i < lines.length && /^>\s?/.test(lines[i])) {
+        bqLines.push(lines[i].replace(/^>\s?/, ''));
+        i++;
+      }
+      const inner = inlineFormat(bqLines.join(' '));
+      out.push(`<blockquote class="md-blockquote">${inner}</blockquote>`);
+      continue;
+    }
+
+    // ── Unordered list ───────────────────────────
+    if (/^[-*+]\s/.test(line)) {
+      const items = [];
+      while (i < lines.length && /^[-*+]\s/.test(lines[i])) {
+        items.push(`<li class="md-li">${inlineFormat(lines[i].replace(/^[-*+]\s/, ''))}</li>`);
+        i++;
+      }
+      out.push(`<ul class="md-ul">${items.join('')}</ul>`);
+      continue;
+    }
+
+    // ── Ordered list ─────────────────────────────
+    if (/^\d+\.\s/.test(line)) {
+      const items = [];
+      while (i < lines.length && /^\d+\.\s/.test(lines[i])) {
+        items.push(`<li class="md-li">${inlineFormat(lines[i].replace(/^\d+\.\s/, ''))}</li>`);
+        i++;
+      }
+      out.push(`<ol class="md-ol">${items.join('')}</ol>`);
+      continue;
+    }
+
+    // ── Blank line ───────────────────────────────
+    if (line.trim() === '') { i++; continue; }
+
+    // ── Paragraph ────────────────────────────────
+    // Collect consecutive non-blank, non-special lines
+    const paraLines = [];
+    while (
+      i < lines.length &&
+      lines[i].trim() !== '' &&
+      !/^(#{1,4}\s|>|[-*+]\s|\d+\.\s|```|(\*\*\*|---|___)\s*$)/.test(lines[i])
+    ) {
+      paraLines.push(lines[i]);
+      i++;
+    }
+    if (paraLines.length) {
+      const text = inlineFormat(paraLines.join(' '));
+      out.push(`<p class="md-p">${blWrap(text)}</p>`);
+    }
+  }
+
+  return out.join('\n');
+}
+
+// ── Refresh markdown preview ──────────────────────────────
+let mdDebounce = null;
+function refreshMdPreview() {
+  clearTimeout(mdDebounce);
+  mdDebounce = setTimeout(() => {
+    const raw = mdInput.value.trim();
+    if (!raw) {
+      mdPreview.innerHTML = `<div class="preview-empty"><span class="empty-icon">👁</span>Type or paste text on the left to see bionic preview</div>`;
+      downloadBtn.disabled = true;
+      mdDownload.disabled  = false; // always enabled once there's content? handled below
+      return;
+    }
+    mdPreview.innerHTML = parseMarkdown(raw);
+    mdDownload.disabled = false;
+    if (currentMode === 'md') {
+      downloadBtn.disabled = false;
+    }
+  }, 80);
+}
+
+// ── Apply CSS vars ────────────────────────────────────────
+function applyStyles() {
+  const fontMap = {
+    lora:     "'Lora', Georgia, serif",
+    source:   "'Source Sans 3', Arial, sans-serif",
+    dyslexic: "'OpenDyslexic', sans-serif",
+  };
+  const root = document.documentElement;
+  root.style.setProperty('--reader-bg',     settings.bg);
+  root.style.setProperty('--reader-ink',    settings.ink);
+  root.style.setProperty('--reader-line-h', settings.lineHeight);
+  root.style.setProperty('--reader-font',   fontMap[settings.font]);
+  root.style.setProperty('--reader-size',   settings.fontSize + 'px');
+  root.style.setProperty('--reader-max-w',  settings.maxWidth);
+  root.style.setProperty('--bold-opacity',  settings.opacity);
+
+  // md-preview width constraint (applied via max-width on the pane content)
+  mdPreview.style.maxWidth = settings.maxWidth === '100%' ? 'none' : settings.maxWidth;
+  mdPreview.style.margin   = settings.maxWidth === '100%' ? '0' : '0 auto';
+}
+
+// ── Render PDF viewer ─────────────────────────────────────
+function renderViewer() {
+  viewer.innerHTML = '';
+  const { fixation, beeline, blScheme } = settings;
+  for (const { pageNum, text } of pagesData) {
+    const card  = document.createElement('div'); card.className = 'page-card';
+    const label = document.createElement('div'); label.className = 'page-label';
+    label.textContent = `Page ${pageNum}`;
+    const layer = document.createElement('div'); layer.className = 'text-layer';
+    layer.innerHTML = buildPageHtml(text, fixation, beeline, blScheme);
+    card.appendChild(label); card.appendChild(layer);
+    viewer.appendChild(card);
+  }
+  applyStyles();
+}
+
+// ── Extract PDF pages ─────────────────────────────────────
+async function extractPages(buf) {
+  const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+  const pages = [];
+  for (let i = 1; i <= pdf.numPages; i++) {
+    progressLbl.textContent = `Reading page ${i} / ${pdf.numPages}…`;
+    progressBar.style.width = `${Math.round(i / pdf.numPages * 90)}%`;
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    let text = '';
+    for (const item of content.items) { text += item.str; if (item.hasEOL) text += '\n'; }
+    pages.push({ pageNum: i, text: text.trim() });
+  }
+  return pages;
+}
+
+// ── Handle PDF file ───────────────────────────────────────
+async function handleFile(file) {
+  if (!file || file.type !== 'application/pdf') { alert('Please choose a PDF.'); return; }
+  pdfFileName = file.name;
+  pagesData   = [];
+
+  dropZone.style.display     = 'none';
+  readerWrap.style.display   = 'none';
+  progressWrap.style.display = 'flex';
+  progressBar.style.width    = '0%';
+
+  try {
+    pagesData = await extractPages(await file.arrayBuffer());
+    progressBar.style.width = '100%';
+    await new Promise(r => setTimeout(r, 150));
+    progressWrap.style.display = 'none';
+    readerWrap.style.display   = 'block';
+    topbarFile.textContent = pdfFileName;
+    downloadBtn.disabled = false;
+    resetBtn.disabled    = false;
+    renderViewer();
+  } catch (err) {
+    console.error(err);
+    alert('Could not read this PDF. It may be encrypted or image-only.\n\n' + err.message);
+    progressWrap.style.display = 'none';
+    dropZone.style.display = '';
+  }
+}
+
+// ── Generate PDF download HTML ────────────────────────────
+function generatePdfDownloadHtml() {
+  const { fixation, beeline, blScheme, bg, ink, font, fontSize, lineHeight, maxWidth, opacity } = settings;
+  const fontMap = {
+    lora:     "'Lora', Georgia, serif",
+    source:   "'Source Sans 3', Arial, sans-serif",
+    dyslexic: "'OpenDyslexic', sans-serif",
+  };
+  const fontLink = font === 'dyslexic'
+    ? `<link rel="stylesheet" href="https://fonts.cdnfonts.com/css/opendyslexic">`
+    : `<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">`;
+
+  const pagesHtml = pagesData.map(({ pageNum, text }) => `
+<div class="page-card">
+  <div class="page-label">Page ${pageNum}</div>
+  <div class="text-layer">${buildPageHtml(text, fixation, beeline, blScheme)}</div>
+</div>`).join('\n');
+
+  return `<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bionic · ${escHtml(pdfFileName.replace(/\.pdf$/i,''))}</title>${fontLink}
+<style>
+:root{--reader-bg:${bg};--reader-ink:${ink};--bold-col:${ink};--bold-opacity:${opacity};}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:#f2ede4;padding:32px 16px 80px;}
+.meta{max-width:${maxWidth};margin:0 auto 16px;font-size:11px;color:#9a9080;font-family:monospace;font-style:italic;}
+.page-card{background:var(--reader-bg);max-width:${maxWidth};margin:0 auto 24px;border-radius:4px;box-shadow:0 2px 16px rgba(0,0,0,.08);overflow:hidden;}
+.page-label{padding:5px 20px;font-size:10px;font-family:monospace;color:#b0a898;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid rgba(0,0,0,.06);}
+.text-layer{padding:32px 44px;font-family:${fontMap[font]};font-size:${fontSize}px;line-height:${lineHeight};color:var(--reader-ink);white-space:pre-wrap;word-break:break-word;}
+.text-layer b{font-weight:800;opacity:var(--bold-opacity);color:var(--bold-col);}
+@media print{body{background:#fff;padding:0;}.page-card{box-shadow:none;page-break-after:always;}.meta{display:none;}}
+</style></head><body>
+<div class="meta">Bionic PDF · fixation ${Math.round(fixation*100)}% · ${font} · ${fontSize}px</div>
+${pagesHtml}
+</body></html>`;
+}
+
+// ── Generate Markdown download HTML ──────────────────────
+function generateMdDownloadHtml() {
+  const { bg, ink, font, fontSize, lineHeight, maxWidth, opacity } = settings;
+  const fontMap = {
+    lora:     "'Lora', Georgia, serif",
+    source:   "'Source Sans 3', Arial, sans-serif",
+    dyslexic: "'OpenDyslexic', sans-serif",
+  };
+  const fontLink = font === 'dyslexic'
+    ? `<link rel="stylesheet" href="https://fonts.cdnfonts.com/css/opendyslexic">`
+    : `<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">`;
+
+  const bodyHtml = parseMarkdown(mdInput.value.trim());
+
+  return `<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bionic · Document</title>${fontLink}
+<style>
+:root{--reader-bg:${bg};--reader-ink:${ink};--bold-col:${ink};--bold-opacity:${opacity};--accent:#c0622a;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:#f2ede4;padding:32px 16px 80px;}
+.doc{background:var(--reader-bg);max-width:${maxWidth};margin:0 auto;border-radius:4px;
+     box-shadow:0 2px 16px rgba(0,0,0,.08);padding:48px 52px 60px;
+     font-family:${fontMap[font]};font-size:${fontSize}px;line-height:${lineHeight};color:var(--reader-ink);}
+b{font-weight:800;opacity:var(--bold-opacity);color:var(--bold-col);}
+.md-h1{font-size:1.9em;font-weight:700;margin:.1em 0 .5em;line-height:1.2;letter-spacing:-.02em;border-bottom:2px solid currentColor;padding-bottom:.2em;opacity:.95;}
+.md-h2{font-size:1.4em;font-weight:700;margin:1.2em 0 .4em;line-height:1.25;opacity:.9;}
+.md-h3{font-size:1.15em;font-weight:700;margin:1em 0 .35em;line-height:1.3;opacity:.85;}
+.md-h4{font-size:1em;font-weight:700;margin:.8em 0 .3em;text-transform:uppercase;letter-spacing:.06em;opacity:.75;}
+.md-p{margin:0 0 .9em;}
+.md-ul,.md-ol{margin:0 0 .9em 1.4em;}
+.md-li{margin:.25em 0;}
+.md-blockquote{border-left:3px solid var(--accent);margin:1em 0;padding:.4em 1em;opacity:.8;font-style:italic;background:rgba(0,0,0,.025);border-radius:0 4px 4px 0;}
+.md-code-block{font-family:'Courier New',monospace;font-size:.82em;background:rgba(0,0,0,.06);border:1px solid rgba(0,0,0,.1);border-radius:4px;padding:.8em 1.1em;margin:.8em 0;overflow-x:auto;white-space:pre;display:block;line-height:1.55;}
+.md-inline-code{font-family:'Courier New',monospace;font-size:.82em;background:rgba(0,0,0,.07);border-radius:3px;padding:.1em .35em;}
+.md-hr{border:none;border-top:1px solid rgba(0,0,0,.15);margin:1.5em 0;}
+.md-strong{font-weight:800;}.md-em{font-style:italic;}
+@media print{body{background:#fff;padding:0;}.doc{box-shadow:none;border-radius:0;}}
+</style></head><body>
+<div class="doc">${bodyHtml}</div>
+</body></html>`;
+}
+
+// ── Gradient preview ──────────────────────────────────────
+function updateGradientPreview() {
+  const s = BL_SCHEMES[settings.blScheme];
+  document.getElementById('gradient-preview').style.background =
+    `linear-gradient(to right, ${s.a}, ${s.b}, ${s.a})`;
+}
+updateGradientPreview();
+
+// ── Mode tab switching ────────────────────────────────────
+document.querySelectorAll('.mode-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentMode = tab.dataset.mode;
+
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(currentMode === 'pdf' ? 'pdf-screen' : 'md-screen').classList.add('active');
+
+    if (currentMode === 'pdf') {
+      topbarFile.textContent = pdfFileName || 'No file loaded';
+      downloadBtn.disabled = pagesData.length === 0;
+      resetBtn.disabled    = pagesData.length === 0;
+    } else {
+      topbarFile.textContent = 'Markdown / Text mode';
+      downloadBtn.disabled = mdInput.value.trim() === '';
+      resetBtn.disabled    = false;
+    }
+  });
+});
+
+// ── Sample text ───────────────────────────────────────────
+const SAMPLE_MD = `# The Science of Readable Text
+
+Reading is not a passive activity. The human eye does not scan text smoothly — instead, it moves in rapid jumps called **saccades**, pausing briefly at fixation points to decode meaning.
+
+## How Bionic Reading Works
+
+Bionic reading guides the eye by artificially bolding the *first half* of each word. Because our brains are highly pattern-driven, they can predict the rest of the word after seeing only its beginning — similar to how experienced readers skim text.
+
+### Key Techniques
+
+- **Fixation bolding** — bold the first 40–60% of each word
+- **BeeLine gradients** — alternate line colors to prevent re-reading the same line
+- **Wider line spacing** — reduces the chance of the eye jumping to the wrong line
+- **Narrow column width** — shorter lines mean fewer saccades per line
+
+## Who Benefits Most?
+
+Research suggests non-native readers, people with dyslexia, and anyone reading in a cognitively demanding environment (noise, fatigue, time pressure) show the largest gains from these techniques.
+
+> "The goal is not to read faster, but to read with less effort — freeing cognitive resources for comprehension."
+
+## Try It Yourself
+
+Paste any English article, essay, or document into this tool and experiment with the settings on the left. Each person's optimal settings are different.
+
+---
+
+This sample text was generated to demonstrate all supported Markdown features: headings, paragraphs, **bold**, *italic*, lists, blockquotes, and horizontal rules.`;
+
+document.getElementById('load-sample').addEventListener('click', () => {
+  mdInput.value = SAMPLE_MD;
+  refreshMdPreview();
+  downloadBtn.disabled = false;
+});
+
+document.getElementById('clear-input').addEventListener('click', () => {
+  mdInput.value = '';
+  refreshMdPreview();
+  downloadBtn.disabled = currentMode === 'md';
+});
+
+// ── Wire up controls ──────────────────────────────────────
+
+// Fixation
+const fixSlider = document.getElementById('fix-slider');
+const fixVal    = document.getElementById('fix-val');
+fixSlider.addEventListener('input', () => {
+  settings.fixation = fixSlider.value / 100;
+  fixVal.textContent = fixSlider.value + '%';
+  if (pagesData.length) renderViewer();
+  if (mdInput.value.trim()) refreshMdPreview();
+});
+
+// Opacity
+const opacitySlider = document.getElementById('opacity-slider');
+const opacityVal    = document.getElementById('opacity-val');
+opacitySlider.addEventListener('input', () => {
+  settings.opacity = opacitySlider.value / 100;
+  opacityVal.textContent = opacitySlider.value + '%';
+  document.documentElement.style.setProperty('--bold-opacity', settings.opacity);
+});
+
+// BeeLine
+const beelineToggle = document.getElementById('beeline-toggle');
+const beelineOpts   = document.getElementById('beeline-opts');
+beelineToggle.addEventListener('change', () => {
+  settings.beeline = beelineToggle.checked;
+  beelineOpts.style.opacity      = settings.beeline ? '1' : '.35';
+  beelineOpts.style.pointerEvents = settings.beeline ? 'auto' : 'none';
+  if (pagesData.length) renderViewer();
+  if (mdInput.value.trim()) refreshMdPreview();
+});
+
+document.getElementById('beeline-scheme').addEventListener('click', e => {
+  const chip = e.target.closest('.chip'); if (!chip) return;
+  document.querySelectorAll('#beeline-scheme .chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  settings.blScheme = chip.dataset.scheme;
+  updateGradientPreview();
+  if (settings.beeline) {
+    if (pagesData.length) renderViewer();
+    if (mdInput.value.trim()) refreshMdPreview();
+  }
+});
+
+// Font
+document.getElementById('font-chips').addEventListener('click', e => {
+  const chip = e.target.closest('.chip'); if (!chip) return;
+  document.querySelectorAll('#font-chips .chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  settings.font = chip.dataset.font;
+  if (chip.dataset.font === 'dyslexic' && !document.head.contains(dyslexicStyle))
+    document.head.appendChild(dyslexicStyle);
+  applyStyles();
+});
+
+// Font size
+const sizeSlider = document.getElementById('size-slider');
+const sizeVal    = document.getElementById('size-val');
+sizeSlider.addEventListener('input', () => {
+  settings.fontSize = parseInt(sizeSlider.value);
+  sizeVal.textContent = sizeSlider.value + 'px';
+  applyStyles();
+});
+
+// Line height
+const lhSlider = document.getElementById('lh-slider');
+const lhVal    = document.getElementById('lh-val');
+lhSlider.addEventListener('input', () => {
+  settings.lineHeight = (lhSlider.value / 10).toFixed(1);
+  lhVal.textContent   = settings.lineHeight + '×';
+  applyStyles();
+});
+
+// Column width
+document.getElementById('width-chips').addEventListener('click', e => {
+  const chip = e.target.closest('.chip'); if (!chip) return;
+  document.querySelectorAll('#width-chips .chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  settings.maxWidth = chip.dataset.width === '100%' ? '100%' : chip.dataset.width + 'px';
+  applyStyles();
+});
+
+// Background
+document.getElementById('bg-swatches').addEventListener('click', e => {
+  const sw = e.target.closest('.swatch'); if (!sw) return;
+  document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+  sw.classList.add('active');
+  settings.bg  = sw.dataset.bg;
+  settings.ink = sw.dataset.ink;
+  const isDark = ['#1e1c1a','#0d1117'].includes(settings.bg);
+  document.documentElement.style.setProperty('--bold-col', isDark ? '#f0ebe0' : settings.ink);
+  applyStyles();
+});
+
+// Drop zone (PDF)
+chooseLink.addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
+dropZone.addEventListener('dragover',  e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault(); dropZone.classList.remove('drag-over');
+  handleFile(e.dataTransfer.files[0]);
+});
+dropZone.addEventListener('click', e => { if (e.target !== chooseLink) fileInput.click(); });
+
+// Markdown textarea
+mdInput.addEventListener('input', () => {
+  refreshMdPreview();
+  if (currentMode === 'md') downloadBtn.disabled = mdInput.value.trim() === '';
+});
+
+// Download (topbar)
+downloadBtn.addEventListener('click', () => {
+  if (currentMode === 'pdf') {
+    triggerDownload(generatePdfDownloadHtml(), pdfFileName.replace(/\.pdf$/i,'') + '_bionic.html');
+  } else {
+    triggerDownload(generateMdDownloadHtml(), 'bionic_document.html');
+  }
+});
+
+// Download (markdown pane)
+mdDownload.addEventListener('click', () => {
+  if (!mdInput.value.trim()) return;
+  triggerDownload(generateMdDownloadHtml(), 'bionic_document.html');
+});
+
+function triggerDownload(html, name) {
+  const blob = new Blob([html], { type: 'text/html' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = name; a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+}
+
+// Reset
+resetBtn.addEventListener('click', () => {
+  if (currentMode === 'pdf') {
+    pagesData = []; pdfFileName = '';
+    viewer.innerHTML = '';
+    readerWrap.style.display = 'none';
+    dropZone.style.display   = 'flex';
+    topbarFile.textContent   = 'No file loaded';
+    downloadBtn.disabled     = true;
+    resetBtn.disabled        = true;
+    fileInput.value          = '';
+  } else {
+    mdInput.value = '';
+    refreshMdPreview();
+    downloadBtn.disabled = true;
+  }
+});
+
+// Init
+applyStyles();
+</script>
+</body>
+</html>
