@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -258,44 +258,6 @@
       white-space: nowrap;
     }
 
-    .page-turn {
-      min-height: 14vh;
-      display: grid;
-      place-items: center;
-      padding: 12px 0 10px;
-    }
-
-    .page-turn-inner {
-      width: min(100%, 360px);
-      display: grid;
-      place-items: center;
-      gap: 10px;
-      color: var(--muted);
-    }
-
-    .page-turn-line {
-      width: 100%;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(22, 20, 18, 0.18), transparent);
-    }
-
-    .page-turn-copy {
-      font: 15px/1.45 "Kaiti SC", "STKaiti", "KaiTi", serif;
-      letter-spacing: 0.04em;
-    }
-
-    .page-turn-mark {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background: rgba(255, 252, 247, 0.72);
-      border: 1px solid rgba(22, 20, 18, 0.08);
-      box-shadow: 0 10px 24px rgba(64, 43, 22, 0.04);
-      animation: nudge 1.8s ease-in-out infinite;
-    }
-
     .tool-page {
       border-radius: 34px;
       background: rgba(255, 250, 244, 0.54);
@@ -327,7 +289,7 @@
 
     .row {
       display: grid;
-      grid-template-columns: 60px 110px 1fr 120px;
+      grid-template-columns: 60px 92px 1fr 120px;
       gap: 18px;
       padding: 18px 0;
       border-top: 1px solid var(--line);
@@ -349,10 +311,10 @@
     }
 
     .thumb img {
-      width: 110px;
+      width: 82px;
       height: 82px;
       display: block;
-      border-radius: 22px;
+      border-radius: 24px;
       box-shadow: 0 12px 26px rgba(64, 43, 22, 0.08);
     }
 
@@ -376,11 +338,6 @@
       font-size: 14px;
       white-space: nowrap;
       justify-self: end;
-    }
-
-    @keyframes nudge {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(6px); }
     }
 
     @media (max-width: 1240px) {
@@ -455,7 +412,7 @@
       }
 
       .row {
-        grid-template-columns: 60px 110px 1fr;
+        grid-template-columns: 60px 92px 1fr;
       }
 
       .meta {
@@ -580,14 +537,6 @@
         </div>
       </div>
       </section>
-
-      <section class="page-turn" aria-hidden="true">
-      <div class="page-turn-inner">
-        <div class="page-turn-line"></div>
-        <div class="page-turn-copy">继续往下翻，下一页会把所有页面完整排开。</div>
-        <div class="page-turn-mark">↓</div>
-      </div>
-      </section>
     </section>
 
     <section class="tool-page" id="toolbox">
@@ -651,6 +600,7 @@
   <script>
     const toolbox = document.getElementById('toolbox');
     const rows = Array.from(document.querySelectorAll('.row'));
+    const docEl = document.documentElement;
 
     const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
     const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
@@ -658,10 +608,12 @@
     const updateToolboxReveal = () => {
       const rect = toolbox.getBoundingClientRect();
       const view = window.innerHeight;
+      const maxScroll = Math.max(docEl.scrollHeight - view, 1);
+      const bottomReached = window.scrollY >= maxScroll - 2;
       const start = view * 0.82;
       const end = view * 0.20;
       const raw = clamp((start - rect.top) / (start - end), 0, 1);
-      const progress = easeOutCubic(raw);
+      const progress = bottomReached ? 1 : easeOutCubic(raw);
       const pop = Math.sin(progress * Math.PI) * 0.024;
 
       toolbox.style.opacity = progress.toFixed(4);
@@ -672,7 +624,7 @@
         const rowStart = view * 0.94;
         const rowEnd = view * 0.58;
         const rowRaw = clamp((rowStart - rowRect.top) / (rowStart - rowEnd), 0, 1);
-        const rowProgress = easeOutCubic(rowRaw);
+        const rowProgress = bottomReached ? 1 : easeOutCubic(rowRaw);
         const rowPop = Math.sin(rowProgress * Math.PI) * 0.05;
         row.style.opacity = rowProgress.toFixed(4);
         row.style.transform = `translateX(${(1 - rowProgress) * 88}px) scale(${(0.94 + rowProgress * 0.04 + rowPop).toFixed(4)})`;
