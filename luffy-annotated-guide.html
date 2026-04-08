@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LUFFY 论文导读：带注释的精读版</title>
+  <style>
+    :root {
+      --bg: #0e1218;
+      --bg-2: #121923;
+      --bg-3: #18212c;
+      --panel: rgba(20, 27, 37, 0.92);
+      --panel-soft: rgba(255, 255, 255, 0.035);
+      --text: #ede6dc;
+      --text-soft: #c8c0b4;
+      --muted: #8f897e;
+      --line: rgba(237, 230, 220, 0.12);
+      --line-strong: rgba(237, 230, 220, 0.24);
+      --accent: #d6a06f;
+      --accent-2: #8eb3cb;
+      --accent-3: #cc7c6d;
+      --term: #f2c692;
+      --shadow: 0 28px 80px rgba(0, 0, 0, 0.38);
+      --sidebar-width: 18.25rem;
+      --main-width: 61rem;
+      --radius: 24px;
+      --radius-sm: 18px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(214, 160, 111, 0.12), transparent 28rem),
+        radial-gradient(circle at top right, rgba(142, 179, 203, 0.08), transparent 26rem),
+        linear-gradient(180deg, #0b1016 0%, #111821 42%, #0d1218 100%);
+      font-family: "Noto Serif CJK SC", "Source Han Serif SC", "Songti SC", "STSong", "SimSun", "Georgia", serif;
+      line-height: 1.95;
+      letter-spacing: 0.01em;
+    }
+    h1, h2, h3, h4, p, ul, ol, blockquote { margin-top: 0; }
+    a { color: inherit; }
+    code, pre, kbd, samp { font-family: "Cascadia Code", "Fira Code", "Consolas", monospace; }
+    .sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      width: var(--sidebar-width);
+      padding: 1.35rem 1.15rem 1.2rem;
+      border-right: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(10, 14, 20, 0.98), rgba(14, 19, 27, 0.96));
+      backdrop-filter: blur(18px);
+      overflow-y: auto;
+      z-index: 10;
+    }
+    .brand {
+      padding-bottom: 1rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--line);
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-bottom: 0.8rem;
+      padding: 0.28rem 0.62rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(214, 160, 111, 0.08);
+      color: var(--accent);
+      font-size: 0.78rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    .brand h1 {
+      margin-bottom: 0.6rem;
+      font-size: 1.62rem;
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+    }
+    .toc-note, .toc-meta, .lede, .micro, .formula-note { color: var(--text-soft); }
+    .toc h2 { margin-bottom: 0.7rem; font-size: 0.96rem; }
+    .toc ol { margin: 0; padding-left: 1.18rem; }
+    .toc li { margin-bottom: 0.42rem; }
+    .toc a {
+      text-decoration: none;
+      color: var(--text-soft);
+      transition: color 180ms ease;
+    }
+    .toc a:hover, .toc a.active { color: var(--accent); }
+    .toc-meta {
+      margin-top: 1rem;
+      padding-top: 0.9rem;
+      border-top: 1px solid var(--line);
+      font-size: 0.92rem;
+    }
+    .main {
+      margin-left: var(--sidebar-width);
+      padding: 1.45rem 1.65rem 4rem 1.9rem;
+    }
+    .main-shell { max-width: calc(var(--main-width) + 8rem); }
+    .hero, .section, .closing {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(20, 27, 37, 0.96), rgba(13, 18, 25, 0.95));
+      box-shadow: var(--shadow);
+    }
+    .hero {
+      min-height: 90vh;
+      padding: 1.9rem;
+      display: grid;
+      grid-template-columns: minmax(0, 1.18fr) minmax(18rem, 0.92fr);
+      gap: 1.6rem;
+      align-items: stretch;
+    }
+    .hero-copy {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 1.25rem;
+    }
+    .hero-copy h2 {
+      margin-bottom: 1rem;
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      line-height: 1.03;
+      letter-spacing: -0.035em;
+    }
+    .hero-copy .lead {
+      max-width: 39rem;
+      margin-bottom: 1.25rem;
+      font-size: 1.08rem;
+    }
+    .hero-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      margin-bottom: 1rem;
+    }
+    .hero-tags span {
+      padding: 0.38rem 0.72rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.035);
+      color: var(--text-soft);
+      font-size: 0.92rem;
+    }
+    .hero-panel { display: grid; gap: 0.9rem; align-content: start; }
+    .board-box, .panel, .annotation, .summary, .warning, .tip, .term-box, .equation-box {
+      border-radius: var(--radius-sm);
+      padding: 1rem 1.05rem;
+      border: 1px solid var(--line);
+      background: var(--panel-soft);
+    }
+    .summary { border-style: dashed; }
+    .tip {
+      border-color: rgba(142, 179, 203, 0.28);
+      background: rgba(142, 179, 203, 0.1);
+    }
+    .warning {
+      border-color: rgba(204, 124, 109, 0.28);
+      background: rgba(204, 124, 109, 0.1);
+    }
+    .section, .closing {
+      margin-top: 1.35rem;
+      padding: 1.55rem 1.6rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .section::before, .closing::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 0.48rem;
+      background: linear-gradient(180deg, var(--accent), rgba(214, 160, 111, 0.08));
+    }
+    .section-header {
+      display: flex;
+      gap: 1rem;
+      align-items: baseline;
+      margin-bottom: 1.15rem;
+      padding-left: 0.7rem;
+    }
+    .section-no {
+      min-width: 4.9rem;
+      color: var(--accent);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-size: 0.82rem;
+    }
+    .section-title h3 {
+      margin-bottom: 0.28rem;
+      font-size: clamp(1.58rem, 2vw, 2.18rem);
+      letter-spacing: -0.02em;
+    }
+    .section-body {
+      width: min(100%, var(--main-width));
+      margin-left: 0.7rem;
+    }
+    .section-body h4 { margin: 1.5rem 0 0.65rem; font-size: 1.14rem; }
+    .section-body ul, .section-body ol { padding-left: 1.3rem; }
+    .section-body li { margin-bottom: 0.4rem; }
+    .duo, .triptych, .quad, .section-grid { display: grid; gap: 1rem; }
+    .duo { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .triptych { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .quad { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .section-grid { grid-template-columns: minmax(0, 1.18fr) minmax(16rem, 0.82fr); }
+    .label {
+      display: inline-block;
+      margin-bottom: 0.5rem;
+      color: var(--accent-2);
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .term { color: var(--term); font-weight: 600; }
+    .term-box strong, .summary strong, .tip strong, .warning strong, .annotation strong, .equation-box strong, .board-box strong {
+      display: block;
+      margin-bottom: 0.38rem;
+      color: var(--text);
+    }
+    .equation {
+      overflow-x: auto;
+      margin: 0.8rem 0 0.75rem;
+      padding: 1rem 1rem 1.05rem;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(9, 13, 18, 0.98), rgba(7, 10, 15, 0.98));
+      color: #f4ece0;
+      line-height: 1.75;
+      font-size: 0.93rem;
+    }
+    .equation code { white-space: pre-wrap; word-break: break-word; }
+    code.inline {
+      padding: 0.08rem 0.36rem;
+      border-radius: 0.42rem;
+      background: rgba(214, 160, 111, 0.12);
+      color: #f0c18e;
+      font-size: 0.92em;
+    }
+    blockquote {
+      margin: 1rem 0;
+      padding: 0.95rem 1rem;
+      border-left: 3px solid var(--accent-2);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-soft);
+    }
+    .flow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      align-items: center;
+      margin-top: 0.8rem;
+    }
+    .flow .node {
+      min-width: 8.7rem;
+      padding: 0.72rem 0.92rem;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.035);
+      text-align: center;
+    }
+    .flow .arrow { color: var(--accent); font-size: 1.15rem; }
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 420ms ease, transform 420ms ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    @media (max-width: 1220px) {
+      .sidebar {
+        position: sticky;
+        inset: 0 auto auto 0;
+        width: 100%;
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .main {
+        margin-left: 0;
+        padding: 1rem 1rem 3rem;
+      }
+      .hero {
+        min-height: auto;
+        grid-template-columns: 1fr;
+      }
+      .duo, .triptych, .quad, .section-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 760px) {
+      .main { padding: 0.9rem 0.8rem 2.4rem; }
+      .hero, .section, .closing { padding: 1.1rem; border-radius: 18px; }
+      .hero-copy h2 { font-size: clamp(2.15rem, 11vw, 3.6rem); }
+      .section-header { display: block; }
+      .section-no { margin-bottom: 0.3rem; }
+      .section-body { margin-left: 0; width: 100%; }
+      .equation { font-size: 0.87rem; }
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="eyebrow">Annotated Reading</div>
+      <h1>LUFFY 论文导读</h1>
+      <p class="toc-note">面向零基础科研训练的注释文献版。左侧定位结构，右侧负责真正带读。</p>
+    </div>
+    <nav class="toc" aria-label="论文导读目录">
+      <h2>目录</h2>
+      <ol>
+        <li><a href="#hero">论文卡片</a></li>
+        <li><a href="#overview">导读总览</a></li>
+        <li><a href="#background">读前背景补课</a></li>
+        <li><a href="#problem">核心问题</a></li>
+        <li><a href="#method-overview">方法总览</a></li>
+        <li><a href="#sec2">Sec 2 背景精讲</a></li>
+        <li><a href="#sec3">Sec 3 方法与公式</a></li>
+        <li><a href="#formula-lab">逐公式精读</a></li>
+        <li><a href="#sec4">Sec 4 实验设置</a></li>
+        <li><a href="#sec5">Sec 5 结果解读</a></li>
+        <li><a href="#glossary">术语索引</a></li>
+        <li><a href="#value">价值与局限</a></li>
+        <li><a href="#reading">科研训练视角</a></li>
+      </ol>
+      <div class="toc-meta">阅读建议：先读首屏和总览，再进入 Sec 3；如果背景不熟，再回补 Sec 2。</div>
+    </nav>
+  </aside>
+  <main class="main">
+    <div class="main-shell">
+      <header class="hero reveal" id="hero">
+        <div class="hero-copy">
+          <div>
+            <div class="eyebrow">Paper Reading Card</div>
+            <h2>Learning to Reason<br />under Off-Policy Guidance</h2>
+            <p class="lead">
+              这篇论文的核心命题很直接：如果一个模型只能从自己刚生成出来的推理轨迹中继续强化，它通常只能把“本来会一点点的能力”放大，而很难学到真正超出自己原始能力边界的新推理模式。作者提出的 <span class="term">LUFFY</span> 就是在回答这个问题。
+            </p>
+            <div class="hero-tags">
+              <span>主题：RLVR 推理训练</span>
+              <span>关键词：Off-policy Guidance</span>
+              <span>主方法：Mixed-Policy GRPO</span>
+              <span>关键补丁：Policy Shaping</span>
+            </div>
+            <p class="micro">
+              论文版本：arXiv v5，2025-06-22。默认主实验基于 <span class="term">Qwen2.5-Math-7B</span>，重点验证数学推理训练，也考察了分布外泛化和弱模型训练场景。
+            </p>
+          </div>
+          <div class="duo">
+            <div class="board-box">
+              <strong>一句话结论</strong>
+              <p class="micro">LUFFY 通过把强模型的推理轨迹混入 RLVR，让模型在“模仿强者”和“保持自身探索”之间形成动态平衡。</p>
+            </div>
+            <div class="board-box">
+              <strong>为什么值得读</strong>
+              <p class="micro">它不仅追求分数提升，更在讨论一个深层问题：强化学习能不能帮助模型跨过自身初始能力上限。</p>
+            </div>
+          </div>
+        </div>
+        <aside class="hero-panel">
+          <div class="panel">
+            <div class="label">你会在文中反复见到</div>
+            <p><span class="term">RLVR</span>：Reinforcement Learning with Verifiable Rewards，意思是“带可验证奖励的强化学习”，奖励通常只看最终答案对不对。</p>
+            <p><span class="term">On-policy</span>：训练只用当前模型自己采样出来的数据。</p>
+            <p><span class="term">Off-policy</span>：训练时允许使用别的策略或别的模型产生的数据。</p>
+          </div>
+          <div class="summary">
+            <strong>这份网页怎么读</strong>
+            <p>不是逐句翻译论文，而是保留论文主线和核心公式，再为每个第一次出现的术语补解释，并告诉你“这节真正想说什么”。</p>
+          </div>
+          <div class="tip">
+            <strong>最重要的预期</strong>
+            <p>如果你现在几乎没系统学过强化学习，也没关系。先抓住“为什么作者觉得纯 on-policy 不够”，再读公式，理解会顺很多。</p>
+          </div>
+        </aside>
+      </header>
+
+      <section class="section reveal" id="overview">
+        <div class="section-header">
+          <div class="section-no">Stage 01</div>
+          <div class="section-title">
+            <h3>导读总览</h3>
+            <p>先建立全局地图，避免一上来就淹没在术语里。</p>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="section-grid">
+            <div>
+              <p class="lede">
+                这篇论文最值得你先记住的，不是某个公式，而是一个“训练哲学”的变化。过去很多 <span class="term">大推理模型</span> 的训练思路，是让模型自己反复做题、得到奖励、继续强化；作者认为这种方式有天然上限，因为模型只能在“自己已经摸得到的区域”里打转。
+              </p>
+              <p>
+                LUFFY 的出发点是：当模型自己不会做时，不应该一味等它自己试出来，而应该允许它看见更强模型的成功推理轨迹。这样，训练不再只是“自己强化自己”，而是带着外部支架去学。
+              </p>
+              <div class="flow">
+                <div class="node">纯 On-policy RL</div>
+                <div class="arrow">→</div>
+                <div class="node">只能强化自己会一点的东西</div>
+                <div class="arrow">→</div>
+                <div class="node">容易撞到能力上限</div>
+              </div>
+              <div class="flow" style="margin-top: 0.9rem;">
+                <div class="node">LUFFY</div>
+                <div class="arrow">→</div>
+                <div class="node">引入强模型轨迹</div>
+                <div class="arrow">→</div>
+                <div class="node">模仿与探索并行</div>
+              </div>
+            </div>
+            <aside class="annotation">
+              <strong>这篇论文真正的研究问题</strong>
+              <p>不是“怎么再涨几分”，而是“RLVR 能否帮助模型学到超出初始能力边界的推理模式”。这是你后面读所有实验时都要记住的主线。</p>
+              <strong>你可以先带着这三个问题读</strong>
+              <ol>
+                <li>纯 on-policy 为什么会卡住？</li>
+                <li>off-policy 数据怎么混进 RL，而不是只做 SFT？</li>
+                <li>为什么模仿强模型不会直接把探索能力弄没？</li>
+              </ol>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="section reveal" id="background">
+        <div class="section-header">
+          <div class="section-no">Stage 02</div>
+          <div class="section-title">
+            <h3>读前背景补课</h3>
+            <p>把后面会频繁出现的概念先搭起来。</p>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="triptych">
+            <div class="term-box">
+              <strong>什么是 LRM</strong>
+              <p><span class="term">LRM</span> 是 Large Reasoning Model，意为“大推理模型”。它强调的不是普通对话，而是多步推理、反思、自我修正等能力。</p>
+            </div>
+            <div class="term-box">
+              <strong>什么是 CoT</strong>
+              <p><span class="term">CoT</span> 是 Chain-of-Thought，直译“思维链”。它指模型把中间推理步骤显式写出来，而不是只给最终答案。</p>
+            </div>
+            <div class="term-box">
+              <strong>什么是 Verifiable Reward</strong>
+              <p><span class="term">可验证奖励</span> 指奖励不依赖人工主观打分，而是能程序化判断对错，比如数学题最终答案是否正确。</p>
+            </div>
+          </div>
+
+          <h4>你需要的最小强化学习直觉</h4>
+          <p><span class="term">强化学习</span> 可以先粗糙理解成：模型先尝试产生一个动作序列，再根据奖励信号调整未来更倾向于哪些动作。对于推理模型来说，一个动作通常可以理解为“在某一位置生成哪个 token”。</p>
+          <p><span class="term">Token</span> 是模型生成文本时的基本离散单元。你可以先把它理解成一种“切分后的词片段”。当论文说某个 token 概率很低时，意思就是当前模型很不习惯在这个位置说出这一步。</p>
+
+          <div class="duo">
+            <div class="panel">
+              <strong>On-policy 的直观理解</strong>
+              <p class="micro">模型今天生成了 8 个解法，它就从这 8 个解法的好坏里学。数据和当前策略高度绑定。</p>
+            </div>
+            <div class="panel">
+              <strong>Off-policy 的直观理解</strong>
+              <p class="micro">除了模型自己生成的数据，还允许把“别人生成的轨迹”拿来学，比如一个更强模型给出的成功解题过程。</p>
+            </div>
+          </div>
+
+          <div class="warning">
+            <strong>一个关键误区</strong>
+            <p>Off-policy 不等于简单地“拿别人的答案来监督训练”。这篇论文真正做的，是把别人的轨迹放进强化学习目标里，而不是只做前置的监督微调。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section reveal" id="problem">
+        <div class="section-header">
+          <div class="section-no">Stage 03</div>
+          <div class="section-title">
+            <h3>论文核心问题</h3>
+            <p>作者究竟认为已有 RLVR 卡在哪里。</p>
+          </div>
+        </div>
+        <div class="section-body">
+          <p>引言最重要的一句潜台词是：<span class="term">On-policy RL</span> 往往只能放大模型已有的行为，而不是生成真正新的认知能力。换句话说，如果底模在某类推理模式上几乎完全不会，那你再让它自己反复采样和反馈，它也可能只是原地打转。</p>
+          <blockquote>你可以把作者的论点理解成一句很朴素的话：学生自己做不出来的题，只靠自己不断试，很可能还是不会；这时候需要一个更强老师把正确思路显式摆在他面前。</blockquote>
+          <div class="duo">
+            <div class="annotation">
+              <strong>原论文主张</strong>
+              <p>RL 在这种设置下受限于 base LLM 本身，容易出现性能平台期，尤其当模型缺乏某些基础认知行为时更明显。</p>
+            </div>
+            <div class="annotation">
+              <strong>我来翻译</strong>
+              <p>如果模型一开始就不具备某类推理模板，它可能连“踩中正确轨迹”的机会都很少，于是奖励信号几乎给不回来，训练自然推不动。</p>
+            </div>
+          </div>
+          <div class="summary">
+            <strong>读到这里你该记住</strong>
+            <p>LUFFY 不是在补一个工程小技巧，而是在挑战“只靠模型自己 roll out 就能学会推理”这个隐含前提。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section reveal" id="method-overview">
+        <div class="section-header">
+          <div class="section-no">Stage 04</div>
+          <div class="section-title">
+            <h3>方法总览</h3>
+            <p>先看全貌，再进入 Sec 3 的细节公式。</p>
+          </div>
+        </div>
+        <div class="section-body">
+          <p>LUFFY 由两个核心部件组成：<span class="term">Mixed-Policy GRPO</span> 和 <span class="term">Policy Shaping via Regularized Importance Sampling</span>。第一个负责把 on-policy 与 off-policy 轨迹真正混进同一个 RL 目标；第二个负责避免这种混合训练太快变成“机械抄老师”。</p>
+          <div class="quad">
+            <div class="panel"><strong>输入</strong><p class="micro">题目、当前策略模型自己的 rollout、强模型提供的成功推理轨迹。</p></div>
+            <div class="panel"><strong>组内比较</strong><p class="micro">把 on-policy 和 off-policy 放进同一组，用统一的奖励统计来算 advantage。</p></div>
+            <div class="panel"><strong>概率修正</strong><p class="micro">用 importance sampling 修正不同数据来源带来的梯度偏差。</p></div>
+            <div class="panel"><strong>塑形</strong><p class="micro">额外强调当前模型还不擅长、但在强轨迹中很关键的低概率动作。</p></div>
+          </div>
+          <div class="tip">
+            <strong>这一节的核心直觉</strong>
+            <p>如果模型自己做错，强模型轨迹会成为更优参考；如果模型自己也能做对，就保留它自己的探索空间。LUFFY 追求的不是单向模仿，而是动态切换重心。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section reveal" id="sec2">
+        <div class="section-header">
+          <div class="section-no">Sec 2</div>
+          <div class="section-title">
+            <h3>背景精讲：RLVR 与 GRPO</h3>
+            <p>这一节是方法部分的地基，不懂它就难看懂后面公式。</p>
+          </div>
+        </div>
+        <div class="section-body">
+          <h4>2.1 Verifiable Reward Function</h4>
+          <p><span class="term">Outcome Reward</span> 指只根据最终结果给奖励，不直接对中间过程做人工打分。本文里的奖励最简单：最终答案对，奖励为 1；否则为 0。</p>
+          <div class="equation-box">
+            <strong>论文里的奖励定义</strong>
+            <div class="equation"><code>R(τ) = 1, if τ outputs the correct final answer to q
+R(τ) = 0, otherwise</code></div>
+            <p class="formula-note">白话理解：这不是奖励“过程像不像人类”，而是奖励“最后答对没”。它简单、干净、可自动判断，所以很适合大规模训练。</p>
+          </div>
+
+          <h4>2.2 GRPO 是什么</h4>
+          <p><span class="term">GRPO</span> 全称是 Group Relative Policy Optimization。你可以把它看成一种“组内相对比较”的 RL 方法。对于同一道题，模型采样出一组解法，然后根据这组解法内部谁更好、谁更差来计算每条轨迹的 <span class="term">Advantage</span>。</p>
+          <p><span class="term">Advantage</span> 可以先理解成“这条轨迹相对于同组其他轨迹，多值得被鼓励多少”。它不是绝对分数，而是相对位置。</p>
+          <div class="equation-box">
+            <strong>GRPO 的 advantage 计算</strong>
+            <div class="equation"><code>A_i = (R(τ_i) - mean({R(τ_i)})) / std({R(τ_i)})</code></div>
+            <p class="formula-note">白话理解：如果一组样本里只有你答对了，而其他都错了，你的 advantage 就会比较高；如果大家都差不多，你的相对优势就不大。</p>
+          </div>
+
+          <div class="duo">
+            <div class="annotation">
+              <strong>为什么要用组内相对比较</strong>
+              <p>这样可以避免额外训练一个 value model。论文这里沿用的是 RLVR 实践里已经比较常见的思路。</p>
+            </div>
+            <div class="annotation">
+              <strong>你真正该懂什么</strong>
+              <p>GRPO 的关键不是名字，而是它把“同题多个解法的相对成败”变成了学习信号。</p>
+            </div>
+          </div>
+
+          <h4>2.3 Importance Sampling 第一次出现</h4>
+          <p><span class="term">Importance Sampling</span> 直译是“重要性采样”，这里更准确的理解是“分布校正”。因为当前在更新的策略 <code class="inline">πθ</code> 和生成这些轨迹时所用的旧策略 <code class="inline">πθold</code> 并不完全一样，所以梯度需要乘一个概率比值来修正。</p>
+          <div class="equation-box">
+            <strong>在 GRPO 里出现的比值</strong>
+            <div class="equation"><code>r_{i,t}(θ) = π_θ(τ_{i,t} | q, τ_{i,&lt;t}) / π_{θold}(τ_{i,t} | q, τ_{i,&lt;t})</code></div>
+            <p class="formula-note">白话理解：如果当前策略比旧策略更喜欢这个动作，那这个比值更大；反之更小。它的作用是让更新更符合 policy gradient 的理论要求。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section reveal" id="sec3">
+        <div class="section-header">
+          <div class="section-no">Sec 3</div>
+          <div class="section-title">
+            <h3>方法与公式拆解</h3>
+            <p>这是整篇论文最关键的部分，也是你需要最耐心读的一节。</p>
+          </div>
+        </div>
+        <div class="section-body">
+          <h4>3.1 Mixed-Policy GRPO：先把两种轨迹混在一起</h4>
+          <p>论文的第一步改动，是把 <span class="term">Off-policy Rollouts</span> 直接并入用于组内比较的轨迹集合。这里的 <span class="term">Rollout</span> 可以理解成“模型从题目出发一路生成到答案的完整轨迹”。</p>
+          <div class="equation-box">
+            <strong>混合后的 advantage</strong>
+            <div class="equation"><code>Â_i = (R(τ_i) - mean(G_on ∪ G_off)) / std(G_on ∪ G_off)</code></div>
+            <p class="formula-note">白话理解：以前只跟自己生成的其他答案比较，现在还要跟强模型给出的答案一起比较。于是，当你自己都做错时，强模型轨迹会自然显得“更值得学”。</p>
+          </div>
+
+          <div class="duo">
+            <div class="annotation">
+              <strong>术语首次解释：Behavior Policy</strong>
+              <p><span class="term">Behavior Policy</span> 指产生训练样本的那个策略。对 on-policy 样本来说，它接近旧策略；对 off-policy 样本来说，它来自另一个外部模型。</p>
+            </div>
+            <div class="annotation">
+              <strong>这一招真正妙在哪里</strong>
+              <p>作者没有简单把强模型答案当“标准答案”硬塞给学生，而是让它们参与同一个相对比较机制，从而使模仿的强度随模型自身表现动态变化。</p>
+            </div>
+          </div>
+
+          <div class="equation-box">
+            <strong>Mixed-Policy GRPO 总目标</strong>
+            <div class="equation"><code>J_Mixed(θ) = 1 / Z * (
+  Σ_off Σ_t CLIP(r̂_{j,t}(θ, ϕ), Â_j, ε)
+  +
+  Σ_on  Σ_t CLIP(r_{i,t}(θ), Â_i, ε)
+)</code></div>
+            <p class="formula-note">白话理解：总目标由两部分组成，一部分是学习强模型轨迹，一部分是学习自己采样出来的轨迹。两种信号被放在同一个优化目标里。</p>
+          </div>
+
+          <h4>3.1 里第二个关键点：off-policy importance sampling</h4>
+          <p>对 off-policy 轨迹，论文引入了新的概率比值 <code class="inline">r̂</code>。这里的分母不再是旧策略，而是外部策略 <code class="inline">πϕ</code>。这一步反映的是：你现在在用“别人生成的数据”更新当前策略，所以需要校正两者的分布差异。</p>
+          <div class="equation-box">
+            <strong>Off-policy 的概率修正</strong>
+            <div class="equation"><code>r̂_{j,t}(θ, ϕ) = π_θ(τ_{j,t} | q, τ_{j,&lt;t}) / π_ϕ(τ_{j,t} | q, τ_{j,&lt;t})</code></div>
+            <p class="formula-note">白话理解：如果当前模型对某个老师动作也越来越认可，这个动作的学习信号会更强；如果它离当前模型很远，更新就会经过校正，不会盲目照搬。</p>
+          </div>
+
+          <div class="warning">
+            <strong>这里有一个工程上的简化</strong>
+            <p>论文实践中直接采用 <code class="inline">πϕ = 1</code>，目的是方便整合不同来源的强模型轨迹，避免重新计算外部模型概率和处理不同 tokenizer 的复杂性。这是一个值得你以后继续追问的地方：它在工程上很实用，但和标准 off-policy 修正并不完全一样。</p>
+          </div>
+
+          <h4>3.2 为什么还要 Policy Shaping</h4>
+          <p>作者发现，只做 Mixed-Policy GRPO 会带来一个新问题：训练收敛更快了，但探索也更快消失了。这里的 <span class="term">Entropy</span> 指策略分布的“发散程度”或“不确定性”。如果 entropy 很快掉下去，通常意味着模型越来越死板，只会选少数高概率动作。</p>
+          <div class="duo">
+            <div class="annotation">
+              <strong>作者观察到的现象</strong>
+              <p>模型会优先强化那些“强模型轨迹里有、而且自己本来就不太陌生”的 token，却忽略那些真正关键但当前概率很低的 token。</p>
+            </div>
+            <div class="annotation">
+              <strong>我来翻译</strong>
+              <p>学生最容易学到的，是老师答案里自己也差不多会写的部分；最难学到的，恰恰是自己最不熟的那几步关键思路。</p>
+            </div>
+          </div>
+
+          <h4>3.2 Policy Shaping 的核心函数</h4>
+          <p>所以作者引入一个 <span class="term">Shaping Function</span>，把原本的 importance ratio 做一个变换，目的是给低概率但关键的动作更大的梯度权重。</p>
+          <div class="equation-box">
+            <strong>Shaping 后的目标</strong>
+            <div class="equation"><code>J_Shaping(θ) = 1 / Z * (
+  Σ_off Σ_t f(r̂_{j,t}(θ, ϕ)) * Â_j
+  +
+  Σ_on  Σ_t CLIP(r_{i,t}(θ), Â_i, ε)
+)</code></div>
+            <p class="formula-note">白话理解：对 off-policy 部分，不再直接用原始比值，而是用变换后的权重来重新分配学习力度。</p>
+          </div>
+          <div class="equation-box">
+            <strong>作者选择的 shaping function</strong>
+            <div class="equation"><code>f(x) = x / (x + γ),   γ = 0.1</code></div>
+            <p class="formula-note">白话理解：这个函数的目的不是简单放大所有 off-policy 信号，而是重新平衡梯度，让当前模型低概率区域也能得到更有力的学习。</p>
+          </div>
+          <h4>你真正该怎么读 Eq. 7 和 Eq. 8</h4>
+          <p>论文接着推导梯度，说明 shaping function 的导数 <code class="inline">f'(πθ)</code> 实际上在决定不同动作的梯度权重。你不必一开始就完全推懂推导细节，但要抓住作者想说明的逻辑：</p>
+          <ol>
+            <li>如果直接用线性函数 <code class="inline">f(π)=π</code>，当动作概率很低时，梯度容易太小。</li>
+            <li>而论文希望的恰恰是：对那些当前模型还很不会、但强轨迹中很重要的动作，给予更多学习力度。</li>
+            <li>于是 shaping 本质上是在重新分配“该把注意力放在哪些 off-policy 动作上”。</li>
+          </ol>
+          <div class="summary">
+            <strong>Sec 3 的一句话总结</strong>
+            <p>Mixed-Policy GRPO 解决“怎么把强模型轨迹真正混入 RL”；Policy Shaping 解决“混进来以后别学成死板模仿”。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section reveal" id="formula-lab">
+        <div class="section-header">
+          <div class="section-no">Formula Lab</div>
+          <div class="section-title">
+            <h3>逐公式精读</h3>
+            <p>把关键公式拆成“变量是什么意思、这项为什么存在、删掉会怎样”。</p>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="triptych">
+            <div class="equation-box">
+              <strong>Eq. 2：组内 Advantage</strong>
+              <div class="equation"><code>A_i = (R(τ_i) - mean({R(τ_i)})) / std({R(τ_i)})</code></div>
+              <p class="formula-note">这一步把“绝对对错”转成“相对值得鼓励多少”。如果去掉均值和标准差，模型就只知道对错，不知道自己在同组里赢了多少。</p>
+            </div>
+            <div class="equation-box">
+              <strong>Eq. 5：Mixed Objective</strong>
+              <div class="equation"><code>J_Mixed(θ) = on-policy term + off-policy term</code></div>
+              <p class="formula-note">你可以把它理解成“两个老师一起给分”：一个是当前模型自己的试错轨迹，一个是外部强模型的成功轨迹。</p>
+            </div>
+            <div class="equation-box">
+              <strong>Eq. 6：Shaping Objective</strong>
+              <div class="equation"><code>J_Shaping(θ) = f(r̂) * Â + on-policy term</code></div>
+              <p class="formula-note">这一式子的关键不是形式，而是策略：把 off-policy 学习重点转向“模型当前还不熟”的那部分。</p>
+            </div>
+          </div>
+
+          <h4>Eq. 2 应该怎么看</h4>
+          <div class="duo">
+            <div class="annotation">
+              <strong>变量表</strong>
+              <p><code class="inline">τ_i</code> 是第 i 条轨迹，<code class="inline">R(τ_i)</code> 是它的最终奖励，<code class="inline">mean</code> 和 <code class="inline">std</code> 是这一组轨迹奖励的均值和标准差。</p>
+            </div>
+            <div class="annotation">
+              <strong>真正作用</strong>
+              <p>它把“对不对”变成“在这一题里你比同伴强多少”。这就是为什么 GRPO 的学习信号本质上是组内相对信号，而不是全局绝对信号。</p>
+            </div>
+          </div>
+
+          <h4>Eq. 5 应该怎么看</h4>
+          <p>这条式子最应该盯住的是“off-policy 项终于进入了正式 RL 目标函数”。如果没有它，强模型轨迹通常只能以 SFT 数据的形式出现；而有了它，强轨迹不再是训练前的一次性热身，而是训练过程中的持续指导。</p>
+          <div class="warning">
+            <strong>如果去掉 off-policy 项会怎样</strong>
+            <p>模型就会退回到纯 on-policy RLVR，只能依靠自己已经能采样到的轨迹学习。对弱模型来说，这常常意味着根本拿不到足够的正反馈。</p>
+          </div>
+
+          <h4>Eq. 6 到 Eq. 8 应该怎么看</h4>
+          <p>这几条式子连起来看的重点是：作者不是说“多学一点老师答案”就够了，而是说“要把梯度预算优先花在最值得补的低概率动作上”。这是一种非常具体的训练偏置设计。</p>
+          <div class="tip">
+            <strong>推荐记忆法</strong>
+            <p>Eq. 2 负责“谁更值得鼓励”；Eq. 5 负责“把谁放进训练目标”；Eq. 6 到 Eq. 8 负责“该把更大的学习力气花在哪些动作上”。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section reveal" id="sec4">
+        <div class="section-header">
+          <div class="section-no">Sec 4</div>
+          <div class="section-title">
+            <h3>实验设置</h3>
+            <p>实验部分不是陪衬，它决定了你该不该相信前面的论点。</p>
+          </div>
+        </div>
+        <div class="section-body">
+          <h4>训练数据</h4>
+          <p>作者使用 OpenR1-Math-220k 的一个子集，原始默认子集有约 94k prompts，过滤掉过长和验证错误的强模型轨迹后，最终保留约 45k 条训练样本。这里的 off-policy reasoning traces 来自 DeepSeek-R1。</p>
+          <div class="annotation">
+            <strong>这意味着什么</strong>
+            <p>LUFFY 的成功很大程度上依赖高质量强模型轨迹，所以你不能把它误解成“单靠训练框架就自然学会了”。数据质量本身是这个方法成立的重要前提。</p>
+          </div>
+          <h4>训练配比</h4>
+          <p>每题总共用 8 个 rollout。纯 on-policy 基线是 8 条 on-policy；LUFFY 则使用 1 条 off-policy 加 7 条 on-policy。这一点很关键，因为它说明作者不是把训练变成“老师答案主导”，而是只插入少量外部指导。</p>
+          <h4>评测任务</h4>
+          <p>In-distribution 数学基准包括 AIME 2024/2025、AMC、Minerva、OlympiadBench、MATH-500。OOD 评测包括 ARC-c、GPQA-diamond 和 MMLU-Pro。</p>
+          <div class="duo">
+            <div class="panel"><strong>为什么要看 In-distribution</strong><p class="micro">看方法在目标任务域里到底涨了多少。</p></div>
+            <div class="panel"><strong>为什么要看 OOD</strong><p class="micro">看模型到底学到了可迁移的推理能力，还是只学会了训练数据风格。</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section reveal" id="sec5">
+        <div class="section-header">
+          <div class="section-no">Sec 5</div>
+          <div class="section-title">
+            <h3>结果解读</h3>
+            <p>结果不只要看高低，还要看它们支持了哪条论证链。</p>
+          </div>
+        </div>
+        <div class="section-body">
+          <h4>5.1 主结果：平均提升明显</h4>
+          <p>在 Qwen2.5-Math-7B 上，LUFFY 在 6 个数学 benchmark 上的平均分达到 50.1，比之前 RLVR 方法平均高约 6.4 分，也比作者自己复现的 on-policy RL 高约 4.6 分。单看数字，它已经很强；但更重要的是，它在 AIME 2025 这种更具挑战性的测试上展现了明显优势。</p>
+          <div class="summary">
+            <strong>你应该怎么解读这组结果</strong>
+            <p>作者想证明的不是“off-policy 也能用”，而是“off-policy guidance 真的能帮助模型学到一些单靠自己 roll out 不容易学到的模式”。分数提升是这个主张的外在证据。</p>
+          </div>
+          <h4>5.1 OOD 结果：这是非常关键的一点</h4>
+          <p>LUFFY 在 ARC-c、GPQA、MMLU-Pro 上的平均 OOD 成绩也优于最佳对比 RLVR 方法约 6.2 分。这一点非常重要，因为如果它只是死记强模型风格，通常不太容易在分布外任务上表现这么稳。</p>
+          <div class="warning">
+            <strong>但也不能过度解读</strong>
+            <p>OOD 提升不自动等于“真正学会了通用推理”。它只是说明这个训练策略比简单 SFT 或纯 on-policy 更有机会获得迁移收益。</p>
+          </div>
+          <h4>5.2 弱模型实验：整篇论文最有分量的证据之一</h4>
+          <p>作者特别强调，在 LLaMA-3.1-8B 上，纯 on-policy RL 在 Hard 训练集上奖励会掉到接近 0，也就是几乎学不动；而 LUFFY 在 Easy 和 Hard 上都能稳定提升。这直接支撑了论文的中心论点：当模型自己摸不到正反馈时，外部指导能够提供必要的支架。</p>
+          <h4>5.3 训练动态：为什么作者坚持“不是盲目模仿”</h4>
+          <p>论文展示的训练动态表明，LUFFY 早期会更像在模仿强模型轨迹，生成长度逐渐接近 off-policy reasoning traces；但随着训练进行，模型自己的 on-policy rollout 逐渐变得更有价值，于是探索重新变重要。</p>
+          <div class="annotation">
+            <strong>这说明了什么</strong>
+            <p>作者想强调的是一种“先借外力起步，再逐步把外部模式内化为自己的能力”的学习过程，而不是全程照抄老师答案。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section reveal" id="glossary">
+        <div class="section-header">
+          <div class="section-no">Index</div>
+          <div class="section-title">
+            <h3>术语索引</h3>
+            <p>把这篇文章里最常见的概念压成一张可回看的词表。</p>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="triptych">
+            <div class="term-box">
+              <strong>RLVR</strong>
+              <p>带可验证奖励的强化学习。奖励通常只看最终答案是否正确。</p>
+            </div>
+            <div class="term-box">
+              <strong>On-policy</strong>
+              <p>训练数据主要来自当前模型自己生成的轨迹。</p>
+            </div>
+            <div class="term-box">
+              <strong>Off-policy</strong>
+              <p>训练允许使用别的策略或别的模型产生的数据。</p>
+            </div>
+            <div class="term-box">
+              <strong>GRPO</strong>
+              <p>按同题多个解法的相对成败来计算 advantage 的 RL 方法。</p>
+            </div>
+            <div class="term-box">
+              <strong>Advantage</strong>
+              <p>某条轨迹相对于同组其他轨迹，多值得被鼓励多少。</p>
+            </div>
+            <div class="term-box">
+              <strong>Importance Sampling</strong>
+              <p>当训练数据和当前策略不完全同分布时，用概率比值做分布校正。</p>
+            </div>
+            <div class="term-box">
+              <strong>Behavior Policy</strong>
+              <p>产生训练样本的策略。对 off-policy 轨迹来说，它不是当前训练策略。</p>
+            </div>
+            <div class="term-box">
+              <strong>Entropy</strong>
+              <p>策略分布的不确定性或发散程度。掉得太快常意味着探索塌缩。</p>
+            </div>
+            <div class="term-box">
+              <strong>Policy Shaping</strong>
+              <p>通过变换 importance ratio，重新分配 off-policy 学习时的梯度权重。</p>
+            </div>
+          </div>
+          <div class="summary">
+            <strong>怎么使用这张词表</strong>
+            <p>如果你哪一段读到卡住，不要硬往下推。先回来查它属于“奖励定义”“组内比较”“分布校正”还是“探索保持”中的哪一类，再回去看原段落，理解会顺很多。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section reveal" id="value">
+        <div class="section-header">
+          <div class="section-no">Stage 05</div>
+          <div class="section-title">
+            <h3>这篇论文的价值与局限</h3>
+            <p>真正的科研阅读，不是只接受结论，还要学会追问边界。</p>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="duo">
+            <div class="tip">
+              <strong>我认为它最有价值的地方</strong>
+              <ol>
+                <li>它明确提出了纯 on-policy RL 的能力上限问题。</li>
+                <li>它把强模型轨迹整合进 RL，而不是只停留在 SFT 蒸馏。</li>
+                <li>它关注“探索别丢掉”这个很容易被忽视的问题。</li>
+              </ol>
+            </div>
+            <div class="warning">
+              <strong>我认为你该继续追问的地方</strong>
+              <ol>
+                <li>效果有多少来自 LUFFY 框架本身，有多少来自强轨迹质量？</li>
+                <li>只看最终答案对错，是否足以说明中间推理真的更好？</li>
+                <li>数学任务上的成功，能否稳定迁移到代码、科学推理、规划等场景？</li>
+              </ol>
+            </div>
+          </div>
+          <p>从科研训练角度，这篇论文最大的启发不是某个工程技巧，而是一个研究姿势：当已有范式取得成功时，不要只问“怎么把它再做大一点”，也要问“它的基本假设哪里可能错了”。LUFFY 正是在质疑 RLVR 默认依赖 on-policy 的前提。</p>
+        </div>
+      </section>
+
+      <section class="closing reveal" id="reading">
+        <div class="section-header">
+          <div class="section-no">Stage 06</div>
+          <div class="section-title">
+            <h3>科研训练视角下，怎么继续读这篇</h3>
+            <p>如果你打算把它当作科研训练材料，这里是最推荐的复习路径。</p>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="triptych">
+            <div class="panel"><strong>第一轮</strong><p class="micro">只盯住一个问题：作者为什么觉得纯 on-policy 学不到超出底模边界的东西。</p></div>
+            <div class="panel"><strong>第二轮</strong><p class="micro">专读 Sec 3，把 Eq.4、Eq.5、Eq.6 和 shaping function 的作用关系连起来。</p></div>
+            <div class="panel"><strong>第三轮</strong><p class="micro">带着批判性去读实验：哪些结果支持作者论点，哪些地方仍然需要更多证据。</p></div>
+          </div>
+          <h4>你现在最值得记住的三句话</h4>
+          <ol>
+            <li>这篇论文的主问题是：纯 on-policy RLVR 为什么会撞到模型初始能力上限。</li>
+            <li>LUFFY 的主方法是：把强模型推理轨迹作为 off-policy guidance 混入 RL，而不是只做监督蒸馏。</li>
+            <li>Policy Shaping 的主目的不是提分小技巧，而是防止模型学成“表面模仿 + 失去探索”。</li>
+          </ol>
+          <div class="summary">
+            <strong>最后的阅读建议</strong>
+            <p>如果你接下来还想继续精读，最好的下一步不是再看一遍摘要，而是专门把“GRPO / advantage / importance sampling / entropy”这四个概念各自写成一页自己的笔记。等你能用自己的话解释它们，这篇论文就算真正开始读进去了。</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <script>
+    const revealNodes = document.querySelectorAll('.reveal');
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.12 });
+    revealNodes.forEach((node) => revealObserver.observe(node));
+
+    const sectionTargets = [...document.querySelectorAll('header[id], section[id]')];
+    const tocLinks = [...document.querySelectorAll('.toc a')];
+    const linkMap = new Map(tocLinks.map((link) => [link.getAttribute('href').slice(1), link]));
+    const tocObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        tocLinks.forEach((link) => link.classList.remove('active'));
+        const active = linkMap.get(entry.target.id);
+        if (active) active.classList.add('active');
+      });
+    }, { rootMargin: '-35% 0px -45% 0px', threshold: 0.01 });
+    sectionTargets.forEach((section) => tocObserver.observe(section));
+  </script>
+</body>
+</html>

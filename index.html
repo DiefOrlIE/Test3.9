@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -481,7 +481,7 @@
           </div>
 
           <div class="stats">
-            <div><strong>5</strong><span>工具入口</span></div>
+            <div><strong data-tool-count>0</strong><span>工具入口</span></div>
             <div><strong>One</strong><span>统一首页</span></div>
             <div><strong>Quick</strong><span>直接进入</span></div>
           </div>
@@ -494,47 +494,7 @@
           <p>这一页先把页面列出来，继续往下滚时，第二页会带着图标和更完整的说明一起弹出来。</p>
         </div>
 
-        <div class="rail">
-          <a class="rail-item" href="gulou-what-to-eat.html">
-            <div class="rail-copy">
-              <strong>鼓楼今天吃什么</strong>
-              <span>随机工具</span>
-            </div>
-            <div class="go">打开</div>
-          </a>
-
-          <a class="rail-item" href="bionic_reader.html">
-            <div class="rail-copy">
-              <strong>Bionic Reader</strong>
-              <span>阅读工具</span>
-            </div>
-            <div class="go">打开</div>
-          </a>
-
-          <a class="rail-item" href="python_bro.html">
-            <div class="rail-copy">
-              <strong>Python 语法手册</strong>
-              <span>语法资料</span>
-            </div>
-            <div class="go">打开</div>
-          </a>
-
-          <a class="rail-item" href="htmlqs.html">
-            <div class="rail-copy">
-              <strong>HTML Fundamentals</strong>
-              <span>基础资料</span>
-            </div>
-            <div class="go">打开</div>
-          </a>
-
-          <a class="rail-item" href="vocabulary_units_1_2_tabs.html">
-            <div class="rail-copy">
-              <strong>Vocabulary Units 1-2</strong>
-              <span>词汇页面</span>
-            </div>
-            <div class="go">打开</div>
-          </a>
-        </div>
+        <div class="rail" id="rail-list"></div>
       </div>
       </section>
     </section>
@@ -545,65 +505,57 @@
         <p>下面这些都是独立页面，点开后就能直接进入，也可以把它们当作这个小网站的完整目录来看。</p>
       </div>
 
-      <a class="row" href="gulou-what-to-eat.html" data-row-index="0">
-        <div class="no">01</div>
-        <div class="thumb"><img src="icons/tool-food.svg" alt="鼓楼今天吃什么图标"></div>
-        <div class="copy">
-          <strong>鼓楼今天吃什么</strong>
-          <span>一个随机帮我决定去哪吃饭的小页面，适合临时拿来做个简单选择。</span>
-        </div>
-        <div class="meta">随机选择用</div>
-      </a>
-
-      <a class="row" href="bionic_reader.html" data-row-index="1">
-        <div class="no">02</div>
-        <div class="thumb"><img src="icons/tool-reader.svg" alt="Bionic Reader 图标"></div>
-        <div class="copy">
-          <strong>Bionic Reader</strong>
-          <span>更偏阅读体验的页面，适合放文本、看排版，或者试一试不同的阅读节奏。</span>
-        </div>
-        <div class="meta">文本阅读用</div>
-      </a>
-
-      <a class="row" href="python_bro.html" data-row-index="2">
-        <div class="no">03</div>
-        <div class="thumb"><img src="icons/tool-python.svg" alt="Python 语法手册图标"></div>
-        <div class="copy">
-          <strong>Python 语法手册</strong>
-          <span>把常用的 List、Dict 这些内容收在一页里，复习的时候翻起来会更快一些。</span>
-        </div>
-        <div class="meta">语法复习用</div>
-      </a>
-
-      <a class="row" href="htmlqs.html" data-row-index="3">
-        <div class="no">04</div>
-        <div class="thumb"><img src="icons/tool-html.svg" alt="HTML Fundamentals 图标"></div>
-        <div class="copy">
-          <strong>HTML Fundamentals</strong>
-          <span>这是我整理的 HTML 基础页，适合从结构、标签和表单这些内容开始往下看。</span>
-        </div>
-        <div class="meta">基础学习用</div>
-      </a>
-
-      <a class="row" href="vocabulary_units_1_2_tabs.html" data-row-index="4">
-        <div class="no">05</div>
-        <div class="thumb"><img src="icons/tool-vocab.svg" alt="Vocabulary Units 1-2 图标"></div>
-        <div class="copy">
-          <strong>Vocabulary Units 1-2</strong>
-          <span>这页主要整理英语词汇，按单元分开，背单词或者回看课堂内容都会更清楚一点。</span>
-        </div>
-        <div class="meta">词汇整理用</div>
-      </a>
+      <div id="tool-list"></div>
     </section>
   </div>
 
+  <script src="tools.js"></script>
   <script>
+    const toolEntries = Array.isArray(window.toolEntries) ? window.toolEntries : [];
     const toolbox = document.getElementById('toolbox');
-    const rows = Array.from(document.querySelectorAll('.row'));
+    const railList = document.getElementById('rail-list');
+    const toolList = document.getElementById('tool-list');
+    const toolCount = document.querySelector('[data-tool-count]');
     const docEl = document.documentElement;
 
     const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
     const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+    const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (char) => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    }[char]));
+
+    const renderEntries = () => {
+      railList.innerHTML = toolEntries.map((entry) => `
+        <a class="rail-item" href="${escapeHtml(entry.href)}">
+          <div class="rail-copy">
+            <strong>${escapeHtml(entry.title)}</strong>
+            <span>${escapeHtml(entry.railTag)}</span>
+          </div>
+          <div class="go">打开</div>
+        </a>
+      `).join('');
+
+      toolList.innerHTML = toolEntries.map((entry, index) => `
+        <a class="row" href="${escapeHtml(entry.href)}" data-row-index="${index}">
+          <div class="no">${String(index + 1).padStart(2, '0')}</div>
+          <div class="thumb"><img src="${escapeHtml(entry.icon)}" alt="${escapeHtml(entry.iconAlt)}"></div>
+          <div class="copy">
+            <strong>${escapeHtml(entry.title)}</strong>
+            <span>${escapeHtml(entry.description)}</span>
+          </div>
+          <div class="meta">${escapeHtml(entry.meta)}</div>
+        </a>
+      `).join('');
+
+      toolCount.textContent = String(toolEntries.length);
+    };
+
+    renderEntries();
+    const rows = Array.from(document.querySelectorAll('.row'));
 
     const updateToolboxReveal = () => {
       const rect = toolbox.getBoundingClientRect();
