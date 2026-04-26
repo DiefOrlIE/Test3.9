@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>听说 Quiz 单词表</title>
+<style>
+  :root {
+    --bg: #1e2230;
+    --panel: #262b3d;
+    --text: #e6e3d8;
+    --muted: #9aa0b4;
+    --accent: #f4c873;
+    --accent-bg: rgba(244, 200, 115, 0.14);
+    --border: #353b52;
+    --pos: #b3a1d4;
+  }
+  * { box-sizing: border-box; }
+  html, body { background: var(--bg); }
+  body {
+    font-family: "Cambria", "Georgia", "Times New Roman", "宋体", "SimSun", serif;
+    color: var(--text);
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 2.5em 1.4em 4em;
+    line-height: 1.75;
+    font-size: 17px;
+  }
+  h1.title {
+    font-size: 1.8em;
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.3em;
+    margin-bottom: 1em;
+  }
+  h2.unit {
+    font-size: 1.35em;
+    color: var(--accent);
+    margin-top: 2.2em;
+    margin-bottom: 0.6em;
+    padding: 0.4em 0.7em;
+    background: var(--panel);
+    border-left: 4px solid var(--accent);
+    border-radius: 2px;
+  }
+  .word {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1em 1.2em;
+    margin: 0.8em 0;
+  }
+  .head {
+    display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.5em;
+    margin-bottom: 0.4em;
+  }
+  .num { color: var(--muted); font-weight: bold; min-width: 2.4em; }
+  .form { font-size: 1.25em; font-weight: bold; color: var(--accent); }
+  .base { color: var(--muted); font-size: 0.92em; font-style: italic; }
+  .pos { color: var(--pos); font-style: italic; font-size: 0.95em; }
+  .row { margin-top: 0.35em; }
+  .label {
+    color: var(--muted); font-weight: bold; margin-right: 0.5em; letter-spacing: 0.04em;
+  }
+  .example {
+    color: #d4d0c0; font-style: italic;
+    background: rgba(0,0,0,0.18);
+    padding: 0.6em 0.9em;
+    border-left: 3px solid var(--border);
+    border-radius: 3px; margin-top: 0.5em;
+  }
+  .hl {
+    background: var(--accent-bg); color: var(--accent);
+    font-weight: bold; font-style: normal;
+    padding: 0 3px; border-radius: 2px;
+  }
+  .tabs {
+    display: flex; gap: 0.4em; flex-wrap: wrap;
+    position: sticky; top: 0;
+    background: var(--bg);
+    padding: 0.6em 0; margin-bottom: 1.2em;
+    border-bottom: 1px solid var(--border);
+    z-index: 10;
+  }
+  .tab {
+    font-family: inherit; font-size: 0.95em;
+    background: var(--panel); color: var(--text);
+    border: 1px solid var(--border);
+    padding: 0.5em 1em; border-radius: 4px;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .tab:hover { border-color: var(--accent); }
+  .tab.active {
+    background: var(--accent); color: var(--bg);
+    border-color: var(--accent); font-weight: bold;
+  }
+  .unit-section { display: none; }
+  .unit-section.active { display: block; }
+  .unit-section > h2.unit { margin-top: 0.5em; }
+</style>
+</head>
+<body>
+<h1 class="title">听说 Quiz 高亮单词整理</h1>
+<div class="tabs">
+  <button class="tab active" data-target="unit-U3">Unit 3</button>
+  <button class="tab" data-target="unit-U4P1">Unit 4 · Part 1</button>
+  <button class="tab" data-target="unit-U4P2">Unit 4 · Part 2</button>
+</div>
+
+<section id="unit-U3" class="unit-section active">
+<h2 class="unit">Unit 3 — Human Interaction</h2>
+<div class="word">
+  <div class="head"><span class="num">01.</span><span class="form">posture</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>姿势；体态</div>
+  <div class="row"><span class="label">英英</span>the position in which someone holds their body when standing or sitting</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>So, I want to start by offering you a free no-tech life hack, and all it requires of you is this: that you change your <span class="hl">posture</span> for two minutes.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">02.</span><span class="form">audit</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>审查；核查</div>
+  <div class="row"><span class="label">英英</span>an official inspection or careful examination of something</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>But before I give it away, I want to ask you to right now do a little <span class="hl">audit</span> of your body and what you&#x27;re doing with your body.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">03.</span><span class="form">hunching</span><span class="base">（原型: hunch）</span><span class="pos">v.</span></div>
+  <div class="row"><span class="label">中文</span>弓背；耸肩</div>
+  <div class="row"><span class="label">英英</span>to raise one’s shoulders and bend the top of one’s body forward</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>Maybe you&#x27;re <span class="hl">hunching</span>, crossing your legs, maybe wrapping your ankles.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">04.</span><span class="form">tweak</span><span class="pos">v.</span></div>
+  <div class="row"><span class="label">中文</span>微调；稍作调整</div>
+  <div class="row"><span class="label">英英</span>to make small adjustments to something in order to improve it</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>We&#x27;re going to come back to that in a few minutes, and I&#x27;m hoping that if you learn to <span class="hl">tweak</span> this a little bit, it could significantly change the way your life unfolds.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">05.</span><span class="form">contemptuous</span><span class="pos">adj.</span></div>
+  <div class="row"><span class="label">中文</span>轻蔑的；鄙视的</div>
+  <div class="row"><span class="label">英英</span>showing contempt; scornful</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>You know, we&#x27;re interested in, like, you know — (Laughter) — an awkward interaction, or a smile, or a <span class="hl">contemptuous</span> glance, or maybe a very awkward wink, or maybe even something like a handshake.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">06.</span><span class="form">valid</span><span class="pos">adj.</span></div>
+  <div class="row"><span class="label">中文</span>有效的；合理的</div>
+  <div class="row"><span class="label">英英</span>having a sound basis in logic or fact; reasonable</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>And there&#x27;s a lot of reason to believe that this is a <span class="hl">valid</span> way to look at this.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">07.</span><span class="form">sweeping</span><span class="pos">adj.</span></div>
+  <div class="row"><span class="label">中文</span>笼统的；影响广泛的</div>
+  <div class="row"><span class="label">英英</span>wide in range or effect; taking everything into account</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>And we make <span class="hl">sweeping</span> judgments and inferences from body language.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">08.</span><span class="form">physiology</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>生理机能；生理学</div>
+  <div class="row"><span class="label">英英</span>the way in which a living organism or bodily part functions</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>We are also influenced by our nonverbals, our thoughts and our feelings and our <span class="hl">physiology</span>.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">09.</span><span class="form">prejudice</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>偏见</div>
+  <div class="row"><span class="label">英英</span>preconceived opinion that is not based on reason or actual experience</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>I study <span class="hl">prejudice</span>, and I teach at a competitive business school, so it was inevitable that I would become interested in power dynamics.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">10.</span><span class="form">dynamics</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>动力；相互作用</div>
+  <div class="row"><span class="label">英英</span>the forces or properties which stimulate growth, development, or change within a system</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>I study prejudice, and I teach at a competitive business school, so it was inevitable that I would become interested in power <span class="hl">dynamics</span>.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">11.</span><span class="form">dominance</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>支配地位；优势</div>
+  <div class="row"><span class="label">英英</span>power and influence over others</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>I became especially interested in nonverbal expressions of power and <span class="hl">dominance</span>.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">12.</span><span class="form">chronically</span><span class="pos">adv.</span></div>
+  <div class="row"><span class="label">中文</span>长期地；慢性地</div>
+  <div class="row"><span class="label">英英</span>in a way that persists for a long time or constantly recurs</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>(Laughter) So they do this both when they have power sort of <span class="hl">chronically</span>, and also when they&#x27;re feeling powerful in the moment.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">13.</span><span class="form">congenitally</span><span class="pos">adv.</span></div>
+  <div class="row"><span class="label">中文</span>先天地</div>
+  <div class="row"><span class="label">英英</span>in a way that exists from birth</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>She shows that people who are born with sight and people who are <span class="hl">congenitally</span> blind do this when they win at a physical competition.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">14.</span><span class="form">complement</span><span class="pos">v.</span></div>
+  <div class="row"><span class="label">中文</span>补足；与……相配</div>
+  <div class="row"><span class="label">英英</span>to add to something in a way that improves or completes it</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>So what we tend to do when it comes to power is that we <span class="hl">complement</span> the other&#x27;s nonverbals.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">15.</span><span class="form">caricatures</span><span class="base">（原型: caricature）</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>漫画式人物；夸张化形象</div>
+  <div class="row"><span class="label">英英</span>a picture, description, or imitation of a person in which certain features are exaggerated</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>So you have people who are like <span class="hl">caricatures</span> of alphas, really coming into the room, they get right into the middle of the room before class even starts, like they really want to occupy space.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">16.</span><span class="form">alphas</span><span class="base">（原型: alpha）</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>头领；占主导的个体</div>
+  <div class="row"><span class="label">英英</span>the dominant member of a group; a person tending to assume a dominant role</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>So you have people who are like caricatures of <span class="hl">alphas</span>, really coming into the room, they get right into the middle of the room before class even starts, like they really want to occupy space.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">17.</span><span class="form">virtually</span><span class="pos">adv.</span></div>
+  <div class="row"><span class="label">中文</span>几乎；实际上</div>
+  <div class="row"><span class="label">英英</span>nearly; almost</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>You have other people who are <span class="hl">virtually</span> collapsing when they come in.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">18.</span><span class="form">collapsing</span><span class="base">（原型: collapse）</span><span class="pos">v.</span></div>
+  <div class="row"><span class="label">中文</span>瘫倒；萎缩</div>
+  <div class="row"><span class="label">英英</span>to fall down or in suddenly; to lose strength and become weak</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>You have other people who are virtually <span class="hl">collapsing</span> when they come in.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">19.</span><span class="form">chronically</span><span class="pos">adv.</span></div>
+  <div class="row"><span class="label">中文</span>长期地；慢性地</div>
+  <div class="row"><span class="label">英英</span>in a way that persists for a long time or constantly recurs</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>Women feel <span class="hl">chronically</span> less powerful than men, so this is not surprising.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">20.</span><span class="form">extent</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>程度；范围</div>
+  <div class="row"><span class="label">英英</span>the area covered by something; the size or scope of something</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>But the other thing I noticed is that it also seemed to be related to the <span class="hl">extent</span> to which the students were participating, and how well they were participating.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">21.</span><span class="form">attributable</span><span class="pos">adj.</span></div>
+  <div class="row"><span class="label">中文</span>可归因于……的</div>
+  <div class="row"><span class="label">英英</span>able to be regarded as caused by</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>You get these equally qualified women and men coming in and then you get these differences in grades, and it seems to be partly <span class="hl">attributable</span> to participation.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">22.</span><span class="form">collaborator</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>合作者</div>
+  <div class="row"><span class="label">英英</span>a person who works jointly on an activity or project</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>So, my main <span class="hl">collaborator</span> Dana Carney, who&#x27;s at Berkeley, and I really wanted to know, can you fake it till you make it?</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">23.</span><span class="form">hormones</span><span class="base">（原型: hormone）</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>荷尔蒙；激素</div>
+  <div class="row"><span class="label">英英</span>a regulatory substance produced in an organism and transported in body fluids to stimulate specific cells or tissues</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>So, I&#x27;m talking about thoughts and feelings and the sort of physiological things that make up our thoughts and feelings, and in my case, that&#x27;s <span class="hl">hormones</span>.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">24.</span><span class="form">poses</span><span class="base">（原型: pose）</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>姿势；姿态</div>
+  <div class="row"><span class="label">英英</span>a particular way of standing or sitting, usually adopted for effect or in order to be photographed</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>We decided to bring people into the lab and run a little experiment, and these people adopted, for two minutes, either high-power <span class="hl">poses</span> or low-power poses, and I&#x27;m just going to show you five of the poses, although they took on only two.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">25.</span><span class="form">dubbed</span><span class="base">（原型: dub）</span><span class="pos">v.</span></div>
+  <div class="row"><span class="label">中文</span>把……称为；给……起绰号</div>
+  <div class="row"><span class="label">英英</span>to give an unofficial name or nickname to</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>This one has been <span class="hl">dubbed</span> the &quot;Wonder Woman&quot; by the media.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">26.</span><span class="form">vial</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>小瓶</div>
+  <div class="row"><span class="label">英英</span>a small container, typically cylindrical and made of glass, used for holding liquids</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>They come in, they spit into a <span class="hl">vial</span>, for two minutes, we say, &quot;You need to do this or this.&quot; They don&#x27;t look at pictures of the poses.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">27.</span><span class="form">gamble</span><span class="pos">v.</span></div>
+  <div class="row"><span class="label">中文</span>赌博；冒险</div>
+  <div class="row"><span class="label">英英</span>to play games of chance for money; to take risky action in the hope of a desired result</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>We then ask them, &quot;How powerful do you feel?&quot; on a series of items, and then we give them an opportunity to <span class="hl">gamble</span>, and then we take another saliva sample.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">28.</span><span class="form">saliva</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>唾液</div>
+  <div class="row"><span class="label">英英</span>watery liquid secreted into the mouth by glands, providing lubrication for chewing and swallowing</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>We then ask them, &quot;How powerful do you feel?&quot; on a series of items, and then we give them an opportunity to gamble, and then we take another <span class="hl">saliva</span> sample.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">29.</span><span class="form">testosterone</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>睾酮（雄性激素）</div>
+  <div class="row"><span class="label">英英</span>a steroid hormone that stimulates development of male secondary sexual characteristics</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>Here&#x27;s what we find on <span class="hl">testosterone</span>.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">30.</span><span class="form">cortisol</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>皮质醇（应激激素）</div>
+  <div class="row"><span class="label">英英</span>a steroid hormone produced by the adrenal cortex, released in response to stress</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>Here&#x27;s what you get on <span class="hl">cortisol</span>.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">31.</span><span class="form">hormonal</span><span class="pos">adj.</span></div>
+  <div class="row"><span class="label">中文</span>激素的；荷尔蒙的</div>
+  <div class="row"><span class="label">英英</span>relating to or affected by hormones</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>So two minutes lead to these <span class="hl">hormonal</span> changes that configure your brain to basically be either assertive, confident and comfortable, or really stress-reactive, and feeling sort of shut down.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">32.</span><span class="form">configure</span><span class="pos">v.</span></div>
+  <div class="row"><span class="label">中文</span>配置；使成形</div>
+  <div class="row"><span class="label">英英</span>to arrange or put together in a particular form or configuration</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>So two minutes lead to these hormonal changes that <span class="hl">configure</span> your brain to basically be either assertive, confident and comfortable, or really stress-reactive, and feeling sort of shut down.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">33.</span><span class="form">assertive</span><span class="pos">adj.</span></div>
+  <div class="row"><span class="label">中文</span>自信而果断的</div>
+  <div class="row"><span class="label">英英</span>having or showing a confident and forceful personality</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>So two minutes lead to these hormonal changes that configure your brain to basically be either <span class="hl">assertive</span>, confident and comfortable, or really stress-reactive, and feeling sort of shut down.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">34.</span><span class="form">horrified</span><span class="pos">adj.</span></div>
+  <div class="row"><span class="label">中文</span>感到震惊的；惊骇的</div>
+  <div class="row"><span class="label">英英</span>filled with horror; greatly shocked</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>(Laughter) You know, so we were of course <span class="hl">horrified</span>, and said, Oh, my God, no, that&#x27;s not what we meant at all.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">35.</span><span class="form">numerous</span><span class="pos">adj.</span></div>
+  <div class="row"><span class="label">中文</span>许多的</div>
+  <div class="row"><span class="label">英英</span>great in number; many</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>For <span class="hl">numerous</span> reasons, no, don&#x27;t do that.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">36.</span><span class="form">heckled</span><span class="base">（原型: heckle）</span><span class="pos">v.</span></div>
+  <div class="row"><span class="label">中文</span>起哄；诘问</div>
+  <div class="row"><span class="label">英英</span>to interrupt a public speaker with derisive or aggressive comments</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>So, for five minutes, nothing, and this is worse than being <span class="hl">heckled</span>.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">37.</span><span class="form">spikes</span><span class="base">（原型: spike）</span><span class="pos">v.</span></div>
+  <div class="row"><span class="label">中文</span>急剧上升</div>
+  <div class="row"><span class="label">英英</span>to rise sharply and then fall</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>It&#x27;s what Marianne LaFrance calls &quot;standing in social quicksand.&quot; So, this really <span class="hl">spikes</span> your cortisol.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">38.</span><span class="form">coders</span><span class="base">（原型: coder）</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>编码员；评分员</div>
+  <div class="row"><span class="label">英英</span>a person whose job is to assign codes to data; a person who codes/categorizes observations</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>We then have these <span class="hl">coders</span> look at these tapes, four of them.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">39.</span><span class="form">hypothesis</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>假设</div>
+  <div class="row"><span class="label">英英</span>a supposition made on the basis of limited evidence as a starting point for further investigation</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>They&#x27;re blind to the <span class="hl">hypothesis</span>.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">40.</span><span class="form">fraud</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>骗子；欺诈</div>
+  <div class="row"><span class="label">英英</span>a person or thing intended to deceive others; wrongful or criminal deception</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>I don&#x27;t want to get there and then still feel like a <span class="hl">fraud</span>.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">41.</span><span class="form">impostor</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>冒充者；骗子</div>
+  <div class="row"><span class="label">英英</span>a person who pretends to be someone else in order to deceive others</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>I don&#x27;t want to feel like an <span class="hl">impostor</span>.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">42.</span><span class="form">resonated</span><span class="base">（原型: resonate）</span><span class="pos">v.</span></div>
+  <div class="row"><span class="label">中文</span>引起共鸣</div>
+  <div class="row"><span class="label">英英</span>to evoke or suggest images, memories, or emotions; to have particular meaning or importance for someone</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>And that really <span class="hl">resonated</span> with me, because I want to tell you a little story about being an impostor and feeling like I&#x27;m not supposed to be here.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">43.</span><span class="form">rehab ward</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>康复病房</div>
+  <div class="row"><span class="label">英英</span>a ward in a hospital where patients receive rehabilitation treatment</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>And I woke up in a head injury <span class="hl">rehab ward</span>, and I had been withdrawn from college, and I learned that my IQ had dropped by two standard deviations, which was very traumatic.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">44.</span><span class="form">withdrawn</span><span class="base">（原型: withdraw）</span><span class="pos">v.</span></div>
+  <div class="row"><span class="label">中文</span>退出；使退学</div>
+  <div class="row"><span class="label">英英</span>to remove or take away; to remove (a person) from a place or institution</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>And I woke up in a head injury rehab ward, and I had been <span class="hl">withdrawn</span> from college, and I learned that my IQ had dropped by two standard deviations, which was very traumatic.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">45.</span><span class="form">deviations</span><span class="base">（原型: deviation）</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>偏差；标准差</div>
+  <div class="row"><span class="label">英英</span>the action of departing from an established course or accepted standard; (statistics) the amount by which a value differs from a mean</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>And I woke up in a head injury rehab ward, and I had been withdrawn from college, and I learned that my IQ had dropped by two standard <span class="hl">deviations</span>, which was very traumatic.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">46.</span><span class="form">traumatic</span><span class="pos">adj.</span></div>
+  <div class="row"><span class="label">中文</span>创伤的；令人痛苦的</div>
+  <div class="row"><span class="label">英英</span>deeply distressing or disturbing; relating to or causing psychological trauma</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>And I woke up in a head injury rehab ward, and I had been withdrawn from college, and I learned that my IQ had dropped by two standard deviations, which was very <span class="hl">traumatic</span>.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">47.</span><span class="form">identified</span><span class="base">（原型: identify）</span><span class="pos">v.</span></div>
+  <div class="row"><span class="label">中文</span>认同；视……为同一</div>
+  <div class="row"><span class="label">英英</span>to associate someone or something closely with; to regard oneself as sharing the characteristics of</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>I knew my IQ because I had <span class="hl">identified</span> with being smart, and I had been called gifted as a child.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">48.</span><span class="form">core</span><span class="pos">n./adj.</span></div>
+  <div class="row"><span class="label">中文</span>核心（的）</div>
+  <div class="row"><span class="label">英英</span>the central or most important part of something</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>So, I really struggled with this, and I have to say, having your identity taken from you, your <span class="hl">core</span> identity, and for me it was being smart, having that taken from you, there&#x27;s nothing that leaves you feeling more powerless than that.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">49.</span><span class="form">peers</span><span class="base">（原型: peer）</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>同辈；同龄人</div>
+  <div class="row"><span class="label">英英</span>a person of the same age, status, or ability as another</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>It took me four years longer than my <span class="hl">peers</span>, and I convinced someone, my angel advisor, Susan Fiske, to take me on, and so I ended up at Princeton, and I was like, I am not supposed to be here.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">50.</span><span class="form">advisor</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>导师；顾问</div>
+  <div class="row"><span class="label">英英</span>a person who gives advice, typically professionally</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>It took me four years longer than my peers, and I convinced someone, my angel <span class="hl">advisor</span>, Susan Fiske, to take me on, and so I ended up at Princeton, and I was like, I am not supposed to be here.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">51.</span><span class="form">terrified</span><span class="pos">adj.</span></div>
+  <div class="row"><span class="label">中文</span>极度恐惧的</div>
+  <div class="row"><span class="label">英英</span>very frightened</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>You&#x27;re just going to do it and do it and do it, even if you&#x27;re <span class="hl">terrified</span> and just paralyzed and having an out-of-body experience, until you have this moment where you say, &#x27;Oh my gosh, I&#x27;m doing it.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">52.</span><span class="form">paralyzed</span><span class="pos">adj.</span></div>
+  <div class="row"><span class="label">中文</span>瘫痪的；动弹不得的</div>
+  <div class="row"><span class="label">英英</span>unable to move or act</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>You&#x27;re just going to do it and do it and do it, even if you&#x27;re terrified and just <span class="hl">paralyzed</span> and having an out-of-body experience, until you have this moment where you say, &#x27;Oh my gosh, I&#x27;m doing it.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">53.</span><span class="form">grad school</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>研究生院</div>
+  <div class="row"><span class="label">英英</span>graduate school; a division of a university offering advanced programs beyond the bachelor’s degree</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>Five years in <span class="hl">grad school</span>, a few years, you know, I&#x27;m at Northwestern, I moved to Harvard, I&#x27;m at Harvard, I&#x27;m not really thinking about it anymore, but for a long time I had been thinking, &quot;Not supposed to be here.&quot;</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">54.</span><span class="form">semester</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>学期</div>
+  <div class="row"><span class="label">英英</span>a half-year term in a school or university</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>So, at the end of my first year at Harvard, a student who had not talked in class the entire <span class="hl">semester</span>, who I had said, &quot;Look, you&#x27;ve gotta participate or else you&#x27;re going to fail,&quot; came into my office.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">55.</span><span class="form">defeated</span><span class="pos">adj.</span></div>
+  <div class="row"><span class="label">中文</span>挫败的；垂头丧气的</div>
+  <div class="row"><span class="label">英英</span>having been beaten in a battle or contest; demoralized</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>She came in totally <span class="hl">defeated</span>, and she said, &quot;I&#x27;m not supposed to be here.&quot; And that was the moment for me.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">56.</span><span class="form">internalize</span><span class="pos">v.</span></div>
+  <div class="row"><span class="label">中文</span>内化；将……变成自己的一部分</div>
+  <div class="row"><span class="label">英英</span>to make (attitudes or behavior) part of one’s nature by learning or unconscious assimilation</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>It’s not - Do it enough until you actually become it and <span class="hl">internalize</span>.</div>
+</div>
+</section>
+<section id="unit-U4P1" class="unit-section">
+<h2 class="unit">Unit 4 — The Art of Negotiation (Part 1)</h2>
+<div class="word">
+  <div class="head"><span class="num">01.</span><span class="form">reciprocity</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>互惠；互利</div>
+  <div class="row"><span class="label">英英</span>the practice of exchanging things with others for mutual benefit</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>If we start off just kind of at the top and work our way down, if we think about the idea of <span class="hl">reciprocity</span>, reciprocity is this very powerful sense of that when I do somebody a favor, they feel a compunction to do a favor back for me in return.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">02.</span><span class="form">compunction</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>内疚；良心不安</div>
+  <div class="row"><span class="label">英英</span>a feeling of guilt or moral scruple that prevents or follows the doing of something bad</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>If we start off just kind of at the top and work our way down, if we think about the idea of reciprocity, reciprocity is this very powerful sense of that when I do somebody a favor, they feel a <span class="hl">compunction</span> to do a favor back for me in return.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">03.</span><span class="form">negotiations</span><span class="base">（原型: negotiation）</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>谈判</div>
+  <div class="row"><span class="label">英英</span>discussion aimed at reaching an agreement</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>So in <span class="hl">negotiations</span>, we know this very well that if, for instance, we want the other side to share information about their priorities, actually a really really good way of trying to start that process is to share a little bit of information with them.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">04.</span><span class="form">priorities</span><span class="base">（原型: priority）</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>优先事项</div>
+  <div class="row"><span class="label">英英</span>a thing that is regarded as more important than another</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>So in negotiations, we know this very well that if, for instance, we want the other side to share information about their <span class="hl">priorities</span>, actually a really really good way of trying to start that process is to share a little bit of information with them.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">05.</span><span class="form">surveys</span><span class="base">（原型: survey）</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>调查；问卷</div>
+  <div class="row"><span class="label">英英</span>a general view, examination, or description of someone or something; a set of questions used to collect data</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>So this is a study that was done some years back, and they were trying to figure out how to get people to respond to <span class="hl">surveys</span>.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">06.</span><span class="form">feedback</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>反馈</div>
+  <div class="row"><span class="label">英英</span>information about reactions to a product or a person’s performance, used as a basis for improvement</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>We want <span class="hl">feedback</span> from you.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">07.</span><span class="form">decent</span><span class="pos">adj.</span></div>
+  <div class="row"><span class="label">中文</span>像样的；不错的</div>
+  <div class="row"><span class="label">英英</span>of an acceptable standard; satisfactory</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>It&#x27;s a <span class="hl">decent</span> amount of money.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">08.</span><span class="form">cynics</span><span class="base">（原型: cynic）</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>愤世嫉俗者</div>
+  <div class="row"><span class="label">英英</span>a person who believes that people are motivated purely by self-interest</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>Now, <span class="hl">cynics</span> in the room are probably going, hang on a second.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">09.</span><span class="form">cash</span><span class="pos">v.</span></div>
+  <div class="row"><span class="label">中文</span>兑现（支票）</div>
+  <div class="row"><span class="label">英英</span>to give or obtain notes or coins for a cheque</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>They tend not to <span class="hl">cash</span> the check unless they actually completed the survey.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">10.</span><span class="form">tactic</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>策略；手段</div>
+  <div class="row"><span class="label">英英</span>an action or strategy carefully planned to achieve a specific end</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>Another <span class="hl">tactic</span> that Cialdini talks about is this idea of commitment and consistency.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">11.</span><span class="form">commitment</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>承诺；投入</div>
+  <div class="row"><span class="label">英英</span>the state or quality of being dedicated to a cause or activity</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>Another tactic that Cialdini talks about is this idea of <span class="hl">commitment</span> and consistency.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">12.</span><span class="form">consistency</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>一致性；连贯性</div>
+  <div class="row"><span class="label">英英</span>conformity in the application of something, typically that which is necessary for the sake of logic, accuracy, or fairness</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>Another tactic that Cialdini talks about is this idea of commitment and <span class="hl">consistency</span>.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">13.</span><span class="form">resolution</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>决心；决议</div>
+  <div class="row"><span class="label">英英</span>a firm decision to do or not to do something</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>You can imagine, right, if you stand up and immediately start saying things about, you know, I am going to, you know, New Year&#x27;s is coming, and I&#x27;m going to make a <span class="hl">resolution</span> to start going to the gym.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">14.</span><span class="form">ensuring</span><span class="base">（原型: ensure）</span><span class="pos">v.</span></div>
+  <div class="row"><span class="label">中文</span>确保</div>
+  <div class="row"><span class="label">英英</span>to make certain that something will occur or be the case</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>If you make that sort of, like, public commitment, it becomes much more effective in <span class="hl">ensuring</span> that you become consistent with that course of action down the road.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">15.</span><span class="form">bumper sticker</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>保险杠贴纸</div>
+  <div class="row"><span class="label">英英</span>a sticker attached to the bumper of a vehicle bearing a slogan, advertisement, or joke</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>A <span class="hl">bumper sticker</span>.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">16.</span><span class="form">election</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>选举</div>
+  <div class="row"><span class="label">英英</span>a formal and organized choice by vote of a person for a political office</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>And then come <span class="hl">election</span> time, also very prevalent.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">17.</span><span class="form">prevalent</span><span class="pos">adj.</span></div>
+  <div class="row"><span class="label">中文</span>普遍的；流行的</div>
+  <div class="row"><span class="label">英英</span>widespread in a particular area or at a particular time</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>Why are these bumper stickers so <span class="hl">prevalent</span>?</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">18.</span><span class="form">comply with</span><span class="pos">v.</span></div>
+  <div class="row"><span class="label">中文</span>遵从；服从</div>
+  <div class="row"><span class="label">英英</span>to act in accordance with a wish, command, or rule</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>And they were kind of curious about how to get people to <span class="hl">comply with</span> this request.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">19.</span><span class="form">lawn</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>草坪</div>
+  <div class="row"><span class="label">英英</span>an area of short, mown grass in a yard, garden, or park</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>Would you be willing to put this big ugly sign saying “drive carefully” on your front <span class="hl">lawn</span>?</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">20.</span><span class="form">escalation</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>升级；逐步加剧</div>
+  <div class="row"><span class="label">英英</span>a rapid increase or rise; the intensification of a situation</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>There&#x27;s a very very powerful area of literature that talks about something called <span class="hl">escalation</span> of commitment.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">21.</span><span class="form">standpoint</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>立场；观点</div>
+  <div class="row"><span class="label">英英</span>an attitude to or view of something; a position from which something is viewed or considered</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>So, from an economic <span class="hl">standpoint</span>, this is considered irrational.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">22.</span><span class="form">irrational</span><span class="pos">adj.</span></div>
+  <div class="row"><span class="label">中文</span>不理性的</div>
+  <div class="row"><span class="label">英英</span>not logical or reasonable</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>So, from an economic standpoint, this is considered <span class="hl">irrational</span>.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">23.</span><span class="form">personnel</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>人员；员工</div>
+  <div class="row"><span class="label">英英</span>people employed in an organization or engaged in an organized undertaking</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>And this escalation phenomenon has been used to explain anything ranging from R&amp;D investments to commitment to <span class="hl">personnel</span>.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">24.</span><span class="form">gracefully</span><span class="pos">adv.</span></div>
+  <div class="row"><span class="label">中文</span>优雅地；体面地</div>
+  <div class="row"><span class="label">英英</span>in a smooth, elegant, or pleasing way; in a tactful and polite manner</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>Well, let&#x27;s give them more training and more training and more training, even though maybe we should be thinking about exiting them <span class="hl">gracefully</span>.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">25.</span><span class="form">recruited</span><span class="base">（原型: recruit）</span><span class="pos">v.</span></div>
+  <div class="row"><span class="label">中文</span>招募</div>
+  <div class="row"><span class="label">英英</span>to enlist (someone) in the armed forces; to enroll (someone) as a member or worker</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>But even then, if these basketball players were <span class="hl">recruited</span> with a big lump sum of money, they ended up having more playing time on the court.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">26.</span><span class="form">lump</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>大笔（钱款）；团块</div>
+  <div class="row"><span class="label">英英</span>a compact mass of a substance; (here) a single payment of a large sum</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>But even then, if these basketball players were recruited with a big <span class="hl">lump</span> sum of money, they ended up having more playing time on the court.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">27.</span><span class="form">Social proof</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>社会认同；从众证明</div>
+  <div class="row"><span class="label">英英</span>a psychological phenomenon where people copy the actions of others in an attempt to behave correctly in a given situation</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span><span class="hl">Social proof</span> is this thing that when the course of action is not completely clear, we very often look to other people around us as to what it is that we should do.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">28.</span><span class="form">proximity</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>接近；邻近</div>
+  <div class="row"><span class="label">英英</span>nearness in space, time, or relationship</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>We&#x27;re much more likely to follow people who are like us, who are in close <span class="hl">proximity</span> to us, and this can result in a lot of interesting things.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">29.</span><span class="form">sessions</span><span class="base">（原型: session）</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>一段时间；课程</div>
+  <div class="row"><span class="label">英英</span>a period devoted to a particular activity</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>So, the difficulty with doing these <span class="hl">sessions</span> is that I have so many examples to share with you, and I&#x27;m, like, picking and choosing amongst my kids.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">30.</span><span class="form">Laugh tracks</span><span class="base">（原型: laugh track）</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>罐头笑声（音轨）</div>
+  <div class="row"><span class="label">英英</span>a recording of laughter added to the soundtrack of a comedy show</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span><span class="hl">Laugh tracks</span>.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">31.</span><span class="form">canned</span><span class="pos">adj.</span></div>
+  <div class="row"><span class="label">中文</span>罐装的；预先录制的</div>
+  <div class="row"><span class="label">英英</span>recorded for subsequent reproduction; not spontaneous</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>The <span class="hl">canned</span> laughter.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">32.</span><span class="form">sitcoms</span><span class="base">（原型: sitcom）</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>情景喜剧</div>
+  <div class="row"><span class="label">英英</span>a situation comedy: a television or radio series in which the same characters appear in different comic situations</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>So in a lot of TV shows, a lot of these <span class="hl">sitcoms</span>, there&#x27;s this canned laughter in the background.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">33.</span><span class="form">ambiguously</span><span class="pos">adv.</span></div>
+  <div class="row"><span class="label">中文</span>模棱两可地</div>
+  <div class="row"><span class="label">英英</span>in a way open to more than one interpretation</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>And it&#x27;s particularly effective if the show is <span class="hl">ambiguously</span> funny.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">34.</span><span class="form">trends</span><span class="base">（原型: trend）</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>趋势；潮流</div>
+  <div class="row"><span class="label">英英</span>a general direction in which something is developing or changing; a fashion</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>It&#x27;s like this happens with <span class="hl">trends</span>.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">35.</span><span class="form">auctions</span><span class="base">（原型: auction）</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>拍卖</div>
+  <div class="row"><span class="label">英英</span>a public sale in which goods are sold to the highest bidder</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>Within a more business example, these sorts of social proof ideas have a lot to do with both <span class="hl">auctions</span> themselves.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">36.</span><span class="form">bidding</span><span class="base">（原型: bid）</span><span class="pos">v.</span></div>
+  <div class="row"><span class="label">中文</span>出价；竞价</div>
+  <div class="row"><span class="label">英英</span>to offer (a certain price) for something, especially at an auction</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>So, if somebody&#x27;s <span class="hl">bidding</span> right, you&#x27;re not very sure whether this has value or not.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">37.</span><span class="form">imprecations</span><span class="base">（原型: imprecation）</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>咒骂（此处为口误，应为 implications 含义/影响）</div>
+  <div class="row"><span class="label">英英</span>a spoken curse; (note: speaker likely meant &quot;implications&quot; — consequences/effects)</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>But then as a result of that, it has <span class="hl">imprecations</span> for things like M&amp;A.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">38.</span><span class="form">slew</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>大量；许多</div>
+  <div class="row"><span class="label">英英</span>a large number or quantity of something</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>There will now be a whole <span class="hl">slew</span> of people who are interested in buying this company, because these ideas of social proof kick in.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">39.</span><span class="form">kick in</span><span class="pos">v.</span></div>
+  <div class="row"><span class="label">中文</span>开始起作用</div>
+  <div class="row"><span class="label">英英</span>to come into effect or operation</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>There will now be a whole slew of people who are interested in buying this company, because these ideas of social proof <span class="hl">kick in</span>.</div>
+</div>
+</section>
+<section id="unit-U4P2" class="unit-section">
+<h2 class="unit">Unit 4 — The Art of Negotiation (Part 2)</h2>
+<div class="word">
+  <div class="head"><span class="num">01.</span><span class="form">Terminator</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>终结者</div>
+  <div class="row"><span class="label">英英</span>a person or thing that terminates something; (here) reference to the film &quot;The Terminator&quot;</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>Now, you might remember that “The <span class="hl">Terminator</span>” became the governor of California, right?</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">02.</span><span class="form">governor</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>州长；总督</div>
+  <div class="row"><span class="label">英英</span>the elected executive head of a state in the U.S.</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>Now, you might remember that “The Terminator” became the <span class="hl">governor</span> of California, right?</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">03.</span><span class="form">recall elections</span><span class="base">（原型: recall election）</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>罢免选举</div>
+  <div class="row"><span class="label">英英</span>an election in which voters can remove an elected official from office before the end of their term</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>This happened during these <span class="hl">recall elections</span> and the other, there were a lot of people who ran for these recall elections, but the other big contender was this guy, Cruz Bustamante.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">04.</span><span class="form">contender</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>竞争者</div>
+  <div class="row"><span class="label">英英</span>a person or group competing with others to achieve something</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>This happened during these recall elections and the other, there were a lot of people who ran for these recall elections, but the other big <span class="hl">contender</span> was this guy, Cruz Bustamante.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">05.</span><span class="form">lieutenant</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>副职；中尉</div>
+  <div class="row"><span class="label">英英</span>a deputy or substitute acting for a superior; a rank of officer</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>He was the <span class="hl">lieutenant</span> governor.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">06.</span><span class="form">Latino</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>拉丁裔人</div>
+  <div class="row"><span class="label">英英</span>a person of Latin American origin or descent, especially a man or boy</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>In fact, up until that time, he was like the highest ranking <span class="hl">Latino</span> in public office.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">07.</span><span class="form">represents</span><span class="base">（原型: represent）</span><span class="pos">v.</span></div>
+  <div class="row"><span class="label">中文</span>代表；象征</div>
+  <div class="row"><span class="label">英英</span>to be entitled or appointed to act or speak for; to amount to or constitute</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>He <span class="hl">represents</span> all these cool things.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">08.</span><span class="form">presidential</span><span class="pos">adj.</span></div>
+  <div class="row"><span class="label">中文</span>总统的</div>
+  <div class="row"><span class="label">英英</span>relating to a president or presidency</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>In the <span class="hl">presidential</span> elections in the US, the taller of the 2 candidates tends to win the electoral vote.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">09.</span><span class="form">symbolizes</span><span class="base">（原型: symbolize）</span><span class="pos">v.</span></div>
+  <div class="row"><span class="label">中文</span>象征</div>
+  <div class="row"><span class="label">英英</span>to be a symbol of; to represent</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>It&#x27;s a little bit messier with the other vote, but we like tall, apparently, or tall <span class="hl">symbolizes</span>, I don&#x27;t know, power or authority or something.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">10.</span><span class="form">authority</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>权威；权力</div>
+  <div class="row"><span class="label">英英</span>the power or right to give orders, make decisions, and enforce obedience</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>It&#x27;s a little bit messier with the other vote, but we like tall, apparently, or tall symbolizes, I don&#x27;t know, power or <span class="hl">authority</span> or something.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">11.</span><span class="form">bizarre</span><span class="pos">adj.</span></div>
+  <div class="row"><span class="label">中文</span>奇异的；古怪的</div>
+  <div class="row"><span class="label">英英</span>very strange or unusual</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>And we tend to vote in the person who is tall, which is really <span class="hl">bizarre</span>, right?</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">12.</span><span class="form">podiums</span><span class="base">（原型: podium）</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>讲台；指挥台</div>
+  <div class="row"><span class="label">英英</span>a small platform on which a person may stand to be seen by an audience</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>There are images of him standing on boxes in front of <span class="hl">podiums</span>, right?</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">13.</span><span class="form">lectern</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>演讲台；读经台</div>
+  <div class="row"><span class="label">英英</span>a tall stand with a sloping top from which someone can read while standing up</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>If there&#x27;s, like, a <span class="hl">lectern</span> and a mic and everything, he&#x27;s standing on a box.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">14.</span><span class="form">conveys</span><span class="base">（原型: convey）</span><span class="pos">v.</span></div>
+  <div class="row"><span class="label">中文</span>传达；表达</div>
+  <div class="row"><span class="label">英英</span>to make (an idea, impression, or feeling) known or understandable</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>So there is the sense that I want to seem tall, and being tall <span class="hl">conveys</span> good things that people like, bizarrely enough.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">15.</span><span class="form">scrubs</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>手术服</div>
+  <div class="row"><span class="label">英英</span>a hard-wearing uniform worn by surgeons and other medical staff</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>So they put on a lab coat, they put on <span class="hl">scrubs</span>, they have a set of scope, and then they&#x27;ll go into a hospital.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">16.</span><span class="form">random</span><span class="pos">adj.</span></div>
+  <div class="row"><span class="label">中文</span>随机的；任意的</div>
+  <div class="row"><span class="label">英英</span>made, done, or happening without method or conscious decision</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>They&#x27;ll find a nurse and start giving <span class="hl">random</span> instructions to the nurse on how to take care of patients.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">17.</span><span class="form">authoritative</span><span class="pos">adj.</span></div>
+  <div class="row"><span class="label">中文</span>有权威的；可信的</div>
+  <div class="row"><span class="label">英英</span>able to be trusted as accurate or reliable; commanding</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>But the idea is this person seems like an <span class="hl">authoritative</span> figure, and therefore people say yes to what they&#x27;re saying, to what they&#x27;re asking for.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">18.</span><span class="form">fatalities</span><span class="base">（原型: fatality）</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>死亡（事故中）</div>
+  <div class="row"><span class="label">英英</span>an occurrence of death by accident, in war, or from disease</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>And thankfully, people were generally not hurt, there were not that many <span class="hl">fatalities</span>, and the plane managed to land fairly safely.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">19.</span><span class="form">simultaneously</span><span class="pos">adv.</span></div>
+  <div class="row"><span class="label">中文</span>同时地</div>
+  <div class="row"><span class="label">英英</span>at the same time</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>But <span class="hl">simultaneously</span>, I think it&#x27;s important to realize, especially with people who have a lot of seniority and manage other individuals, your own seniority, your own authority could be suppressing your employees’ abilities to think creatively, to voice their opinions, because they&#x27;re just kind of concerned, hang on, I better not speak up against my superior, against my boss, Right?</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">20.</span><span class="form">seniority</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>资历；地位高</div>
+  <div class="row"><span class="label">英英</span>the fact or state of being older or higher in position than someone else</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>But simultaneously, I think it&#x27;s important to realize, especially with people who have a lot of <span class="hl">seniority</span> and manage other individuals, your own seniority, your own authority could be suppressing your employees’ abilities to think creatively, to voice their opinions, because they&#x27;re just kind of concerned, hang on, I better not speak up against my superior, against my boss, Right?</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">21.</span><span class="form">suppressing</span><span class="base">（原型: suppress）</span><span class="pos">v.</span></div>
+  <div class="row"><span class="label">中文</span>压制；抑制</div>
+  <div class="row"><span class="label">英英</span>to forcibly put an end to; to restrain or hold back</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>But simultaneously, I think it&#x27;s important to realize, especially with people who have a lot of seniority and manage other individuals, your own seniority, your own authority could be <span class="hl">suppressing</span> your employees’ abilities to think creatively, to voice their opinions, because they&#x27;re just kind of concerned, hang on, I better not speak up against my superior, against my boss, Right?</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">22.</span><span class="form">atrocities</span><span class="base">（原型: atrocity）</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>暴行</div>
+  <div class="row"><span class="label">英英</span>an extremely wicked or cruel act, typically one involving physical violence</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>In the 1950s and 1960s, a guy by the name of Stanley Milgram wanted to try and understand why the <span class="hl">atrocities</span> of World War II happened.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">23.</span><span class="form">collaboration</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>合作</div>
+  <div class="row"><span class="label">英英</span>the action of working with someone to produce something</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>And they were supposed to teach a student, who was this guy, who is actually working in <span class="hl">collaboration</span> with the experimenter.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">24.</span><span class="form">psychiatrists</span><span class="base">（原型: psychiatrist）</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>精神科医生</div>
+  <div class="row"><span class="label">英英</span>a medical practitioner specializing in the diagnosis and treatment of mental illness</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>Now, they asked a few <span class="hl">psychiatrists</span> beforehand.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">25.</span><span class="form">beforehand</span><span class="pos">adv.</span></div>
+  <div class="row"><span class="label">中文</span>事先；预先</div>
+  <div class="row"><span class="label">英英</span>before an event or before doing something; in advance</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>Now, they asked a few psychiatrists <span class="hl">beforehand</span>.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">26.</span><span class="form">nutty</span><span class="pos">adj.</span></div>
+  <div class="row"><span class="label">中文</span>古怪的；疯疯癫癫的</div>
+  <div class="row"><span class="label">英英</span>(informal) eccentric or crazy</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>It&#x27;s only the <span class="hl">nutty</span> people, the psychotics, the sociopaths who are going to do that.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">27.</span><span class="form">psychotics</span><span class="base">（原型: psychotic）</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>精神病患者</div>
+  <div class="row"><span class="label">英英</span>a person suffering from a severe mental disorder in which thought and emotions are so impaired that contact is lost with external reality</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>It&#x27;s only the nutty people, the <span class="hl">psychotics</span>, the sociopaths who are going to do that.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">28.</span><span class="form">sociopaths</span><span class="base">（原型: sociopath）</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>反社会人格者</div>
+  <div class="row"><span class="label">英英</span>a person with a personality disorder manifesting in extreme antisocial attitudes and behavior</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>It&#x27;s only the nutty people, the psychotics, the <span class="hl">sociopaths</span> who are going to do that.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">29.</span><span class="form">fainted</span><span class="base">（原型: faint）</span><span class="pos">v.</span></div>
+  <div class="row"><span class="label">中文</span>晕倒</div>
+  <div class="row"><span class="label">英英</span>to lose consciousness for a short time because of a temporarily insufficient flow of blood to the brain</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>They didn&#x27;t stop when the student <span class="hl">fainted</span> dead away, right?</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">30.</span><span class="form">clipboard</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>带夹写字板</div>
+  <div class="row"><span class="label">英英</span>a small board with a clip at the top for holding papers, used as a portable writing surface</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>Because this guy who was the experimenter was standing there in his white lab coat, with a <span class="hl">clipboard</span> there.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">31.</span><span class="form">prompts</span><span class="base">（原型: prompt）</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>提示；催促</div>
+  <div class="row"><span class="label">英英</span>an act of assisting or encouraging a hesitating speaker; a thing said to encourage someone to speak</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>And he never held a gun to the guy&#x27;s head and said, you have to go, nothing like that, but just <span class="hl">prompts</span> along the lines of, the experiment requires you to continue, please continue, Right?</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">32.</span><span class="form">verbal</span><span class="pos">adj.</span></div>
+  <div class="row"><span class="label">中文</span>口头的；言语的</div>
+  <div class="row"><span class="label">英英</span>relating to or in the form of words; spoken rather than written</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>So they were lots of, there were <span class="hl">verbal</span> prompts, but it was never anything physical that said, you have to do this.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">33.</span><span class="form">profusely</span><span class="pos">adv.</span></div>
+  <div class="row"><span class="label">中文</span>大量地；不停地</div>
+  <div class="row"><span class="label">英英</span>in large quantities; abundantly</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>They were sweating <span class="hl">profusely</span>, they were shaking, they were traumatized from doing it, but they still did it.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">34.</span><span class="form">traumatized</span><span class="base">（原型: traumatize）</span><span class="pos">v.</span></div>
+  <div class="row"><span class="label">中文</span>使受到精神创伤</div>
+  <div class="row"><span class="label">英英</span>to subject to lasting shock as a result of a disturbing experience</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>They were sweating profusely, they were shaking, they were <span class="hl">traumatized</span> from doing it, but they still did it.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">35.</span><span class="form">enticing</span><span class="pos">adj.</span></div>
+  <div class="row"><span class="label">中文</span>诱人的</div>
+  <div class="row"><span class="label">英英</span>attractive or tempting; alluring</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>I have just a few minutes left with you, so I want to give you this last idea to think about, and hopefully that&#x27;s <span class="hl">enticing</span> ideas, which is that when something is limited, we want it more.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">36.</span><span class="form">tap into</span><span class="pos">v.</span></div>
+  <div class="row"><span class="label">中文</span>利用；开发</div>
+  <div class="row"><span class="label">英英</span>to make use of (a resource, source, or opportunity)</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>It&#x27;s trying to <span class="hl">tap into</span> this principle of scarcity, getting you to get the sense of, I need to get in on this action now before that opportunity goes away.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">37.</span><span class="form">scarcity</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>稀缺；不足</div>
+  <div class="row"><span class="label">英英</span>the state of being scarce or in short supply; shortage</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>It&#x27;s trying to tap into this principle of <span class="hl">scarcity</span>, getting you to get the sense of, I need to get in on this action now before that opportunity goes away.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">38.</span><span class="form">bid</span><span class="pos">v.</span></div>
+  <div class="row"><span class="label">中文</span>出价；投标</div>
+  <div class="row"><span class="label">英英</span>to offer a particular price for something, especially at an auction</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>There&#x27;s time pressure because you have to <span class="hl">bid</span> very quickly, or the item goes away.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">39.</span><span class="form">beware</span><span class="pos">v.</span></div>
+  <div class="row"><span class="label">中文</span>谨防；当心</div>
+  <div class="row"><span class="label">英英</span>to be cautious of; to be on one’s guard against</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>In general, we really need to <span class="hl">beware</span> this adrenaline rush, especially in a sort of auction type setting.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">40.</span><span class="form">adrenaline</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>肾上腺素</div>
+  <div class="row"><span class="label">英英</span>a hormone secreted by the adrenal glands that increases rates of blood circulation, breathing, and carbohydrate metabolism in response to stress</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>In general, we really need to beware this <span class="hl">adrenaline</span> rush, especially in a sort of auction type setting.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">41.</span><span class="form">rush</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>一阵兴奋；冲动</div>
+  <div class="row"><span class="label">英英</span>a sudden strong emotion or feeling; a sudden movement or surge</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>In general, we really need to beware this adrenaline <span class="hl">rush</span>, especially in a sort of auction type setting.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">42.</span><span class="form">confer</span><span class="pos">v.</span></div>
+  <div class="row"><span class="label">中文</span>商讨；协商</div>
+  <div class="row"><span class="label">英英</span>to have discussions; to exchange opinions</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>Take a break, think carefully, <span class="hl">confer</span> with your colleagues, but fundamentally understand your motivations for buying something or doing something.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">43.</span><span class="form">fundamentally</span><span class="pos">adv.</span></div>
+  <div class="row"><span class="label">中文</span>根本上</div>
+  <div class="row"><span class="label">英英</span>in central or primary respects; basically</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>Take a break, think carefully, confer with your colleagues, but <span class="hl">fundamentally</span> understand your motivations for buying something or doing something.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">44.</span><span class="form">motivations</span><span class="base">（原型: motivation）</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>动机</div>
+  <div class="row"><span class="label">英英</span>a reason or reasons for acting or behaving in a particular way</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>Take a break, think carefully, confer with your colleagues, but fundamentally understand your <span class="hl">motivations</span> for buying something or doing something.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">45.</span><span class="form">perceived</span><span class="base">（原型: perceive）</span><span class="pos">v.</span></div>
+  <div class="row"><span class="label">中文</span>感知；视为</div>
+  <div class="row"><span class="label">英英</span>to become aware or conscious of; to regard as</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>It makes it to be a <span class="hl">perceived</span> value, combined with some clever marketing and biggity, bam, boom, we really really want them.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">46.</span><span class="form">stereo</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>立体声音响</div>
+  <div class="row"><span class="label">英英</span>a stereophonic record player or sound system</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>I don&#x27;t know whether it&#x27;s the iPhone or the watch or the <span class="hl">stereo</span> or the gadget, or the limited edition print or whatever it is, but you guys, women and men, have things that they covet because of scarcity.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">47.</span><span class="form">gadget</span><span class="pos">n.</span></div>
+  <div class="row"><span class="label">中文</span>小玩意；新奇电子设备</div>
+  <div class="row"><span class="label">英英</span>a small mechanical or electronic device or tool, especially an ingenious or novel one</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>I don&#x27;t know whether it&#x27;s the iPhone or the watch or the stereo or the <span class="hl">gadget</span>, or the limited edition print or whatever it is, but you guys, women and men, have things that they covet because of scarcity.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">48.</span><span class="form">covet</span><span class="pos">v.</span></div>
+  <div class="row"><span class="label">中文</span>觊觎；垂涎</div>
+  <div class="row"><span class="label">英英</span>to yearn to possess or have something</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>I don&#x27;t know whether it&#x27;s the iPhone or the watch or the stereo or the gadget, or the limited edition print or whatever it is, but you guys, women and men, have things that they <span class="hl">covet</span> because of scarcity.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">49.</span><span class="form">strategically</span><span class="pos">adv.</span></div>
+  <div class="row"><span class="label">中文</span>战略性地</div>
+  <div class="row"><span class="label">英英</span>in a way relating to the identification of long-term aims and the means of achieving them</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>You guys have been trained to <span class="hl">strategically</span> think about the content of your message.</div>
+</div>
+<div class="word">
+  <div class="head"><span class="num">50.</span><span class="form">framing</span><span class="base">（原型: frame）</span><span class="pos">v.</span></div>
+  <div class="row"><span class="label">中文</span>构思；表述</div>
+  <div class="row"><span class="label">英英</span>to formulate (a concept, plan, or idea); to put into words in a particular way</div>
+  <div class="example"><span class="label" style="font-style:normal">例句</span>But when you&#x27;re trying to influence and persuade somebody, think also about how you&#x27;re creating that relationship, how you&#x27;re <span class="hl">framing</span> the information that you&#x27;re conveying.</div>
+</div>
+</section>
+<script>
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.unit-section').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.target).classList.add('active');
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  });
+});
+</script>
+</body></html>
